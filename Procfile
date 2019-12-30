@@ -1,1 +1,1 @@
-worker: py starter.py
+worker: python starter.py

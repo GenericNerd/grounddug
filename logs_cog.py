@@ -91,8 +91,8 @@ class Logs(commands.Cog):
 			if guild["edit_log"]:
 				msg = (await utils.embedGen("Message edit",f"{before.author.name}#{before.author.discriminator} edited a message in <#{channel.id}>",0xf5c242))
 				msg.set_author(name=before.author.name,icon_url=before.author.avatar_url)
-				msg.add_field(name="Previous",value=before.message.content,inline=False)
-				msg.add_field(name="After",value=after.message.content,inline=False)
+				msg.add_field(name="Previous",value=before.content,inline=False)
+				msg.add_field(name="After",value=after.content,inline=False)
 				await channel.send(embed=msg)
 
 	@commands.Cog.listener("on_guild_join")

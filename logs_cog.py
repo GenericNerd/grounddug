@@ -22,7 +22,10 @@ async def template_data(gid):
 		"channel": 0,
 		"misc_log": False,
 		"logs_log": False,
-		"admin_log": False
+		"admin_log": False,
+		"edit_log": False,
+		"advertising_toggle": False,
+		"delete_msg_toggle": False
 	}
 
 async def moduleLogChange(self,ctx,boolean,status,module=None):
@@ -65,7 +68,7 @@ class Logs(commands.Cog):
 			(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))
 
 	@commands.Cog.listener("on_command")
-	async def logging(self,ctx):
+	async def on_command_logging(self,ctx):
 		if ctx.guild != None:
 			guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
 			channel = self.bot.get_channel(guild["channel"])
@@ -79,6 +82,19 @@ class Logs(commands.Cog):
 			elif command_base != "admin" and command_base != "logs" and guild["misc_log"]:
 				(await channel.send(embed=(await logGen(ctx))))
 			await ctx.message.delete()
+
+	@commands.Cog.listener("on_message_edit")
+	async def on_msg_edit_logging(self,before,after):
+		if before.guild != None:
+			guild = (await db.dbFind("guilds",{"id": before.guild.id}))
+			channel = self.bot.get_channel(guild["channel"])
+			if guild["edit_log"]:
+				msg = (await utils.embedGen("Message edit",f"{before.user.name}#{before.user.discriminator} edited a message in <#{channel.id}>",0xf5c242))
+				msg.set_author(before.author.name)
+				msg.set_thumbnail(url=before.user.avatar_url)
+				msg.add_field(name="Previous",value=before.message.content,inline=False)
+				msg.add_field(name="After",value=after.message.content,inline=False)
+				await channel.send(embed=msg)
 
 	@commands.Cog.listener("on_guild_join")
 	async def _gSetup(self, guild):

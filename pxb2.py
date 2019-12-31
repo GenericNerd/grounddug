@@ -92,7 +92,7 @@ async def botinfo(ctx):
 		guildCount =+ 1
 		for user in guild.members:
 			userCount =+ 1
-	msg = (await utils.embedGen("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{bot.name} version: {version}"))
+	msg = (await utils.embedGen("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{bot.user.name} version: {version}"))
 
 @bot.command(name="setprefix",description="<prefix> | Sets a local prefix for the bot")
 async def setPrefix(ctx,prefix):

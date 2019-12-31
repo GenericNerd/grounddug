@@ -25,7 +25,7 @@ async def template_data(gid):
 		"admin_log": False,
 		"edit_log": False,
 		"advertising_toggle": False,
-		"delete_msg_toggle": False
+		"delete_log": False
 	}
 
 async def moduleLogChange(self,ctx,boolean,status,module=None):
@@ -89,10 +89,21 @@ class Logs(commands.Cog):
 			guild = (await db.dbFind("guilds",{"id": before.guild.id}))
 			channel = self.bot.get_channel(guild["channel"])
 			if guild["edit_log"]:
-				msg = (await utils.embedGen("Message edit",f"{before.author.name}#{before.author.discriminator} edited a message in <#{channel.id}>",0xf5c242))
+				msg = (await utils.embedGen("Message edit",None,0xf5c242))
 				msg.set_author(name=before.author.name,icon_url=before.author.avatar_url)
-				msg.add_field(name="Previous",value=before.content,inline=False)
-				msg.add_field(name="After",value=after.content,inline=False)
+				msg.add_field(name="Previous",value=before.content,inline=True)
+				msg.add_field(name="After",value=after.content,inline=True)
+				await channel.send(embed=msg)
+
+	@commands.Cog.listener("on_message_delete")
+	async def on_msg_del_logging(self,message):
+		if message.guild != None:
+			guild = (await db.dbFind("guilds",{"id": message.guild.id}))
+			channel = self.bot.get_channel(guild["channel"])
+			if guild["delete_log"]:
+				msg = (await utils.embedGen("Message delete",None,0xff5555))
+				msg.set_author(name=message.author.name,icon_url=message.author.avatar_url)
+				msg.add_field(name="Content",value=message.content,inline=False)
 				await channel.send(embed=msg)
 
 	@commands.Cog.listener("on_guild_join")

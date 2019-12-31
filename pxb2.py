@@ -42,11 +42,11 @@ async def userCheck(user):
 	embed = (await utils.embedGen(f"{user.name}#{user.discriminator}",user.mention)).set_thumbnail(url=user.avatar_url)
 	embed.add_field(name="Status",value=user.status,inline=True)
 	embed.add_field(name="Server join date",value=f"{str(user.joined_at).split('.')[0]} - `{str(datetime.utcnow()-user.joined_at).split('.')[0]} ago`",inline=True)
-	embed.add_field(name="Account age",value=f"{str(datetime.utcnow()-user.created_at).split('.')[0]} - `{str(user.created_at).split('.')[0]}`",inline=True)
+	embed.add_field(name="Account age",value=f"{str(user.created_at).split('.')[0]} - `{str(datetime.utcnow()-user.created_at).split('.')[0]} ago`",inline=True)
 	roles = "@everyone"
 	for role in user.roles:
 		if role.name != "@everyone":
-			roles = roles + f", {role.name}"
+			roles = roles + f", <@{role.name}>"
 	if roles == "@everyone":
 		embed.add_field(name="Roles",value="No significant roles",inline=False)
 	else:

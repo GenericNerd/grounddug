@@ -66,8 +66,6 @@ async def on_ready():
 async def on_command_error(ctx,error):
 	if isinstance(error,commands.MissingRequiredArgument):
 		(await utils.error(ctx,f"{error} - Use {(await utils.getPrefix(bot,ctx))}help {str(ctx.message.content).split(' ')[0].split((await utils.getPrefix(bot,ctx)))[1]}"))
-	elif isinstance(error,commands.CheckFailure):
-		(await utils.error(ctx,f"You do not have enough permissions to run the command {ctx.message.content}. Contact an Administrator if you believe this is a mistake"))
 	else:
 		with open("errors.txt","a",encoding="UTF-8") as f:
 			f.write(f"[ERROR] [{str(datetime.utcnow()).split('.')[0]}] - {error} - '{ctx.message.content}'\n")
@@ -85,11 +83,24 @@ async def userinfo(ctx,user:discord.Member=None):
 	else:
 		await ctx.send(embed=(await userCheck(user)))
 
+@bot.command(name="botinfo",description="| Returns information about the bot")
+async def botinfo(ctx):
+	guildCount = 0
+	userCount = 0
+	version = open("version.txt").read()
+	for guild in bot.guilds:
+		guildCount =+ 1
+		for user in guild:
+			userCount =+ 1
+	msg = (await utils.embedGen("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{bot.name} version: {version}"))
+
 @bot.command(name="setprefix",description="<prefix> | Sets a local prefix for the bot")
-@commands.has_permissions(administrator=True)
 async def setPrefix(ctx,prefix):
-	(await db.dbUpdate("guilds",{"id": ctx.guild.id},{"prefix": prefix}))
-	await ctx.send(embed=(await utils.embedGen("Prefix changed!",f"`{prefix}` is now the prefix for this guild")))
+	if (await getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
+		(await db.dbUpdate("guilds",{"id": ctx.guild.id},{"prefix": prefix}))
+		await ctx.send(embed=(await utils.embedGen("Prefix changed!",f"`{prefix}` is now the prefix for this guild")))
+	else:
+		(await utils.error(ctx,"You are missing 'Administrator' permission to run this command."))
 
 # # # #### # # #
 # HELP COMMAND #

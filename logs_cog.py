@@ -89,9 +89,9 @@ class Logs(commands.Cog):
 			guild = (await db.dbFind("guilds",{"id": before.guild.id}))
 			channel = self.bot.get_channel(guild["channel"])
 			if guild["edit_log"]:
-				msg = (await utils.embedGen("Message edit",f"{before.user.name}#{before.user.discriminator} edited a message in <#{channel.id}>",0xf5c242))
+				msg = (await utils.embedGen("Message edit",f"{before.author.name}#{before.author.discriminator} edited a message in <#{channel.id}>",0xf5c242))
 				msg.set_author(before.author.name)
-				msg.set_thumbnail(url=before.user.avatar_url)
+				msg.set_thumbnail(url=before.author.avatar_url)
 				msg.add_field(name="Previous",value=before.message.content,inline=False)
 				msg.add_field(name="After",value=after.message.content,inline=False)
 				await channel.send(embed=msg)

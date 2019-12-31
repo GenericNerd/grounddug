@@ -94,6 +94,10 @@ async def botinfo(ctx):
 			userCount += 1
 	await ctx.send(embed=(await utils.embedGen("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: **{discord.__version__}**\n{bot.user.name} version: **{version}**")))
 
+@bot.command(name="invite",description="| Invite PXB to your server")
+async def invite(ctx):
+	await ctx.author.send(embed=(await utils.embedGen("Invite PXB to your server","[Click here](https://discordapp.com/oauth2/authorize?client_id=553602353962549249&scope=bot&permissions=8) to invite PXB to your server")))
+
 @bot.command(name="setprefix",description="<prefix> | Sets a local prefix for the bot")
 async def setPrefix(ctx,prefix):
 	if (await getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:

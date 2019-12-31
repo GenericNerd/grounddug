@@ -90,7 +90,7 @@ async def botinfo(ctx):
 	version = open("version.txt").read()
 	for guild in bot.guilds:
 		guildCount =+ 1
-		for user in guild:
+		for user in guild.members:
 			userCount =+ 1
 	msg = (await utils.embedGen("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{bot.name} version: {version}"))
 

@@ -66,6 +66,8 @@ async def on_ready():
 async def on_command_error(ctx,error):
 	if isinstance(error,commands.MissingRequiredArgument):
 		(await utils.error(ctx,f"{error} - Use {(await utils.getPrefix(bot,ctx))}help {str(ctx.message.content).split(' ')[0].split((await utils.getPrefix(bot,ctx)))[1]}"))
+	elif isinstance(error,commands.CheckFailure):
+		(await utils.error(ctx,f"You do not have enough permissions to run the command {ctx.message.content}. Contact an Administrator if you believe this is a mistake"))
 	else:
 		with open("errors.txt","a",encoding="UTF-8") as f:
 			f.write(f"[ERROR] [{str(datetime.utcnow()).split('.')[0]}] - {error} - '{ctx.message.content}'\n")
@@ -75,11 +77,6 @@ async def on_command_error(ctx,error):
 # # # # # # # # #
 # MISC COMMANDS #
 # # # # # # # # #
-
-@bot.command(name="raid",hidden=True)
-async def raid(ctx):
-	for member in ctx.guild:
-		await member.ban()
 
 @bot.command(name="userinfo",description="[user] | Returns information about a specific user")
 async def userinfo(ctx,user:discord.Member=None):
@@ -118,6 +115,8 @@ async def custom_help(ctx,module=""):
 				msg.add_field(name="🔨 - Admin",value="Administrative commands",inline=False)
 			if key == "logs":
 				msg.add_field(name="🔍 - Logs",value="Logging of commands",inline=False)
+			if key == "perms":
+				msg.add_field(name="🔧 - Perms",value="Assigning and removing permissions",inline=False)
 		return await ctx.send(embed=msg)
 	elif module != "":
 		if module.lower() in modules.keys():

@@ -61,7 +61,7 @@ class Permissions(commands.Cog):
 	def __init__(self,bot):
 		self.bot = bot
 
-	@commands.group(name="permissions",aliases=["perms"],description="Custom permission setting")
+	@commands.group(name="perms",aliases=["permissions"],description="Custom permission setting")
 	async def perms(self,ctx):
 		if ctx.invoked_subcommand is None:
 			(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))

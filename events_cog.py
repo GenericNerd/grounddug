@@ -101,10 +101,9 @@ class Events(commands.Cog):
 	async def on_message_edit(self,before,after):
 		guild = (await db.dbFind("guilds",{"id": before.guild.id}))
 		if guild["edit_log"]:
-			channel = self.bot.get_channel(guild["channel"])
 			msg = (await utils.embedGen("Message edit",f"**Before:** {before.content}\n**After:** {after.content}",0xf5c242))
 			msg.set_author(name=before.author.name,icon_url=before.author.avatar_url)
-			await channel.send(embed=msg)
+			await before.send(embed=msg)
 
 	@commands.Cog.listener()
 	async def on_message_delete(self,message):

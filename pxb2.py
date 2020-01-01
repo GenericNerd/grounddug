@@ -17,7 +17,7 @@ import db_handle as db
 # VARIABLES #
 # # # # # # #
 
-startUpExtensions = ["admin","logs","permissions"]
+startUpExtensions = ["admin","logs","permissions","events"]
 bot = commands.Bot(command_prefix=utils.getPrefix)
 cwd = os.getcwd()
 
@@ -171,17 +171,6 @@ async def modules(ctx):
 # # # # ## # # # #
 # DEVELOPER CMDS #
 # # # # ## # # # #
-
-@developer.command(name="restart",description="Restart the bot",hidden=True)
-async def _restart(ctx):
-	await ctx.send(embed=(await utils.embedGen("Bot is restarting",None)))
-	os._exit(100)
-	
-@developer.command(name="shutdown",description="Shuts the bot down",hidden=True)
-async def _shutdown(ctx):
-	await ctx.send(embed=(await utils.embedGen("Bot is shutting down",None)))
-	await bot.logout()
-	os._exit(0)
 	
 @developer.command(name="eval",description="<command> | Seriously no touchy",hidden=True)
 async def _eval(ctx,cmd:str):

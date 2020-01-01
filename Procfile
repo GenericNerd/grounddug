@@ -1,1 +1,1 @@
-worker: python starter.py
+worker: python pxb2.py

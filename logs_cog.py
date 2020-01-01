@@ -64,31 +64,6 @@ class Logs(commands.Cog):
 		if ctx.invoked_subcommand is None:
 			(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))
 
-	@commands.Cog.listener("on_command")
-	async def logging(self,ctx):
-		if ctx.guild != None:
-			guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
-			channel = self.bot.get_channel(guild["channel"])
-			command_base = (ctx.message.content).split((await utils.getPrefix(self.bot,ctx)))[1].split(" ")[0]
-			if command_base == "admin" and guild["admin_log"]:
-				(await channel.send(embed=(await logGen(ctx))))
-			elif command_base == "logs" and guild["logs_log"]:
-				(await channel.send(embed=(await logGen(ctx))))
-			elif command_base == "developer" or command_base == "modules":
-				pass
-			elif command_base != "admin" and command_base != "logs" and guild["misc_log"]:
-				(await channel.send(embed=(await logGen(ctx))))
-			await ctx.message.delete()
-
-	@commands.Cog.listener("on_guild_join")
-	async def _gSetup(self, guild):
-		data = (await template_data(guild))
-		(await db.dbInsert("guilds",data))
-
-	@commands.Cog.listener("on_guild_remove")
-	async def _gRemove(self,guild):
-		(await db.dbInsert("guilds",{"id": guild.id}))
-
 	@logs.command(name="setup",description="| Initial guild setup (developer only)",hidden=True)
 	@commands.check(utils.checkDev)
 	async def _setup(self,ctx):

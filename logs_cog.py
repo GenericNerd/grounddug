@@ -47,9 +47,9 @@ async def moduleLogChange(self,ctx,boolean,status,module=None):
 		else:
 			(await db.dbUpdate("guilds",{"id": ctx.guild.id},{f"{module}_log": not boolean}))
 			if boolean == False:
-				await ctx.send(embed=(await utils.embedGen("Updated logging settings",f"`{module}` commands will now be logged")))
+				await ctx.send(embed=(await utils.embedGen("Updated logging settings",f"`{module}` events will now be logged")))
 			else:
-				await ctx.send(embed=(await utils.embedGen("Updated logging settings",f"`{module}` commands will now not be logged")))
+				await ctx.send(embed=(await utils.embedGen("Updated logging settings",f"`{module}` events will now not be logged")))
 
 async def logGen(ctx):
 	return (await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))

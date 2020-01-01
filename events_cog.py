@@ -75,7 +75,7 @@ class Events(commands.Cog):
 	@commands.Cog.listener()
 	async def on_message(self,ctx):
 		guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
-		if re.search("discord.gg/......",ctx.content) and guild["advertising_toggle"]:
+		if re.search("discord.gg/......",ctx.content) and guild["advertising_log"]:
 			await ctx.delete()
 			channel = self.bot.get_channel(guild["channel"])
 			await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator} tried to advertise in <#{ctx.channel.id}>",None)))

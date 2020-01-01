@@ -25,7 +25,7 @@ class Admin(commands.Cog):
 
 	@commands.Cog.listener("on_message")
 	async def on_msg_log(self,ctx):
-		if "discord.gg/" in ctx.message.content:
+		if "discord.gg/" in ctx.content:
 			await ctx.delete()
 		await self.bot.process_commands(ctx)
 

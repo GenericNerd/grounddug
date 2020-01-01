@@ -23,6 +23,12 @@ class Admin(commands.Cog):
 		if ctx.invoked_subcommand is None:
 			await utils.error(ctx,"NO INVOKED SUBCOMMAND")
 
+	@commands.Cog.listener("on_message")
+	async def on_msg_log(self,ctx):
+		if "discord.gg/" in ctx.message.content:
+			await ctx.delete()
+		await self.bot.process_commands(ctx)
+
 	@admin.command(name="ban",description="<member> [reason] | Ban a member from your server")
 	async def _ban(self,ctx,member:discord.Member,reason=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["BAN_MEMBERS"]:

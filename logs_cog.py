@@ -48,9 +48,9 @@ async def moduleLogChange(self,ctx,boolean,status,module=None):
 		else:
 			(await db.dbUpdate("guilds",{"id": ctx.guild.id},{f"{module}_log": not boolean}))
 			if boolean == False:
-				await ctx.send(embed=(await utils.embedGen("Updated logging settings",f"`{module}` commands will now be logged")))
+				await ctx.send(embed=(await utils.embedGen("Updated logging settings",f"`{module}` events will now be logged")))
 			else:
-				await ctx.send(embed=(await utils.embedGen("Updated logging settings",f"`{module}` commands will now not be logged")))
+				await ctx.send(embed=(await utils.embedGen("Updated logging settings",f"`{module}` events will now not be logged")))
 
 async def logGen(ctx):
 	return (await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))
@@ -81,7 +81,6 @@ class Logs(commands.Cog):
 				pass
 			elif command_base != "admin" and command_base != "logs" and guild["misc_log"]:
 				(await channel.send(embed=(await logGen(ctx))))
-			await ctx.message.delete()
 
 	@commands.Cog.listener("on_message_edit")
 	async def on_msg_edit_logging(self,before,after):
@@ -97,14 +96,13 @@ class Logs(commands.Cog):
 
 	@commands.Cog.listener("on_message_delete")
 	async def on_msg_del_logging(self,message):
-		if message.guild != None:
+		if message.guild != None and not "discord.gg/" in message.content:
 			guild = (await db.dbFind("guilds",{"id": message.guild.id}))
-			channel = self.bot.get_channel(guild["channel"])
 			if guild["delete_log"]:
 				msg = (await utils.embedGen("Message delete",None,0xff5555))
 				msg.set_author(name=message.author.name,icon_url=message.author.avatar_url)
 				msg.add_field(name="Content",value=message.content,inline=False)
-				await channel.send(embed=msg)
+				await message.channel.send(embed=msg)
 
 	@commands.Cog.listener("on_guild_join")
 	async def _gSetup(self, guild):

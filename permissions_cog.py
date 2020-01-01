@@ -30,6 +30,7 @@ async def getPermissions(guild,member):
 
 async def changePermission(self,ctx,user,change,permission=None):
 	if permission == None:
+		prefix = (await utils.getPrefix(self.bot,ctx))
 		msg = (await utils.embedGen("Permissions",f"{user.name}'s current permissions"))
 		for permission in (await getPermissions(ctx.guild.id,user.id)):
 			if len(permission.split("_")) >= 2:
@@ -37,7 +38,7 @@ async def changePermission(self,ctx,user,change,permission=None):
 			else:
 				perm = permission.lower()
 			if not (await getPermissions(ctx.guild.id,user.id))[permission]:
-				msg.add_field(name=perm,value=f"Change by using `{(await utils.getPrefix(self.bot,ctx))}permissions <add/remove> @{user.name}#{user.discriminator} {permission.lower()}`")
+				msg.add_field(name=perm,value=f"Change by using `{prefix}permissions <add/remove> @{user.name}#{user.discriminator} {permission.lower()}`")
 		await ctx.send(embed=msg)
 	else:
 		permission = permission.upper()
@@ -99,9 +100,9 @@ class Permissions(commands.Cog):
 		for guild in self.bot.guilds:
 			for member in guild.members:
 				if member.id == guild.owner_id:
-					result = (await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}}))
+					(await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}}))
 				else:
-					result = (await db.dbInsert("permissions",(await template_data(guild,member))))
+					(await db.dbInsert("permissions",(await template_data(guild,member))))
 				msg.add_field(name=f"Inserted object",value=f"{guild.name} `{guild.id}` {member.name} `{member.id}`",inline=False)
 		(await ctx.send(embed=msg))
 

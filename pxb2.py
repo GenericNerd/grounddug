@@ -12,6 +12,7 @@ from datetime import datetime
 import utils
 from bson.objectid import ObjectId
 import db_handle as db
+import permissions_cog as perms
 
 # # # # # # #
 # VARIABLES #
@@ -65,7 +66,8 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx,error):
 	if isinstance(error,commands.MissingRequiredArgument):
-		(await utils.error(ctx,f"{error} - Use {(await utils.getPrefix(bot,ctx))}help {str(ctx.message.content).split(' ')[0].split((await utils.getPrefix(bot,ctx)))[1]}"))
+		prefix = (await utils.getPrefix(bot,ctx))
+		(await utils.error(ctx,f"{error} - Use {prefix}help {str(ctx.message.content).split(' ')[0].split(prefix)[1]}"))
 	else:
 		with open("errors.txt","a",encoding="UTF-8") as f:
 			f.write(f"[ERROR] [{str(datetime.utcnow()).split('.')[0]}] - {error} - '{ctx.message.content}'\n")
@@ -96,7 +98,7 @@ async def botinfo(ctx):
 
 @bot.command(name="setprefix",description="<prefix> | Sets a local prefix for the bot")
 async def setPrefix(ctx,prefix):
-	if (await getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
+	if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 		(await db.dbUpdate("guilds",{"id": ctx.guild.id},{"prefix": prefix}))
 		await ctx.send(embed=(await utils.embedGen("Prefix changed!",f"`{prefix}` is now the prefix for this guild")))
 	else:

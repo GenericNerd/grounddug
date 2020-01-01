@@ -8,6 +8,7 @@ import discord
 from discord.ext import commands
 import asyncio
 from datetime import datetime
+import re
 import utils
 import permissions_cog as perms
 	
@@ -25,8 +26,11 @@ class Admin(commands.Cog):
 
 	@commands.Cog.listener("on_message")
 	async def on_msg_log(self,ctx):
-		if "discord.gg/" in ctx.content:
+		if re.search("discord.gg/......",ctx.content):
 			await ctx.delete()
+			guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
+			channel = self.bot.get_channel(guild["channel"])
+			await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator} tried to advertise in <#{ctx.channel.id}>",None)))
 		await self.bot.process_commands(ctx)
 
 	@admin.command(name="ban",description="<member> [reason] | Ban a member from your server")

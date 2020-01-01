@@ -98,7 +98,7 @@ class Events(commands.Cog):
 				(await channel.send(embed=(await logGen(ctx))))
 
 	@commands.Cog.listener("on_message_edit")
-	async def on_msg_edit_logging(self,before,after):
+	async def on_edit_log(self,before,after):
 		guild = (await db.dbFind("guilds",{"id": before.guild.id}))
 		if guild["edit_log"]:
 			msg = (await utils.embedGen("Message edit",f"**Before:** {before.content}\n**After:** {after.content}",0xf5c242)).set_author(name=before.author.name,icon_url=before.author.avatar_url)

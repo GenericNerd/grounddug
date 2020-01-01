@@ -111,6 +111,7 @@ async def setPrefix(ctx,prefix):
 bot.remove_command("help")
 @bot.command(name="help",description="[module] | Returns a list of all commands with their usage")
 async def custom_help(ctx,module=""):
+	print("received help")
 	msg = (await utils.embedGen("Help",None))
 	modules = dict()
 	modules["misc"] = []

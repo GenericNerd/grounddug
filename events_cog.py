@@ -50,8 +50,8 @@ class Events(commands.Cog):
 	def __init__(self,bot):
 		self.bot = bot
 
-	@commands.Cog.listener("on_guild_join")
-	async def guild_join(self,guild):
+	@commands.Cog.listener()
+	async def on_guild_join(self,guild):
 		data = (await logs_template_data(guild))
 		(await db.dbInsert("guilds",data))
 		for member in guild.members:
@@ -60,21 +60,21 @@ class Events(commands.Cog):
 			else:
 				(await db.dbInsert("permissions",(await perms_template_data(guild.id,member))))
 	
-	@commands.Cog.listener("on_guild_remove")
-	async def guild_leave(self,guild):
+	@commands.Cog.listener()
+	async def on_guild_remove(self,guild):
 		(await db.dbRemoveMany("permissions",{"guild": guild.id}))
 		(await db.dbRemove("guilds",{"id": guild.id}))
 
-	@commands.Cog.listener("on_member_join")
-	async def mem_join(self,member):
+	@commands.Cog.listener()
+	async def on_member_join(self,member):
 		(await db.dbInsert("permissions",(await perms_template_data(member.guild,member))))
 
-	@commands.Cog.listener("on_member_leave")
-	async def mem_leave(self,member):
+	@commands.Cog.listener()
+	async def on_member_leave(self,member):
 		(await db.dbRemove("permissions",{"guild": member.guild,"user":member}))
 
-	@commands.Cog.listener("on_message")
-	async def on_msg_log(self,ctx):
+	@commands.Cog.listener()
+	async def on_message(self,ctx):
 		guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
 		if re.search("discord.gg/......",ctx.content) and guild["advertising_toggle"]:
 			await ctx.delete()
@@ -82,8 +82,8 @@ class Events(commands.Cog):
 			await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator} tried to advertise in <#{ctx.channel.id}>",None)))
 		await self.bot.process_commands(ctx)
 
-	@commands.Cog.listener("on_command")
-	async def on_command_logging(self,ctx):
+	@commands.Cog.listener()
+	async def on_command(self,ctx):
 		if ctx.guild != None:
 			guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
 			channel = self.bot.get_channel(guild["channel"])
@@ -97,8 +97,8 @@ class Events(commands.Cog):
 			elif command_base != "admin" and command_base != "logs" and guild["misc_log"]:
 				(await channel.send(embed=(await logGen(ctx))))
 
-	@commands.Cog.listener("on_message_edit")
-	async def on_edit_log(self,before,after):
+	@commands.Cog.listener()
+	async def on_message_edit(self,before,after):
 		guild = (await db.dbFind("guilds",{"id": before.guild.id}))
 		if guild["edit_log"]:
 			channel = self.bot.get_channel(guild["channel"])
@@ -106,8 +106,8 @@ class Events(commands.Cog):
 			msg.set_author(name=before.author.name,icon_url=before.author.avatar_url)
 			await channel.send(embed=msg)
 
-	@commands.Cog.listener("on_message_delete")
-	async def on_msg_del_logging(self,message):
+	@commands.Cog.listener()
+	async def on_message_delete(self,message):
 		if message.guild != None and not "discord.gg/" in message.content:
 			guild = (await db.dbFind("guilds",{"id": message.guild.id}))
 			if guild["delete_log"]:

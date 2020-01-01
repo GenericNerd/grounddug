@@ -1,5 +1,5 @@
 #PXB Core
-print("launched")
+
 # # # # # # # # # #
 # LIBRARY IMPORTS #
 # # # # # # # # # #
@@ -111,7 +111,6 @@ async def setPrefix(ctx,prefix):
 bot.remove_command("help")
 @bot.command(name="help",description="[module] | Returns a list of all commands with their usage")
 async def custom_help(ctx,module=""):
-	print("received help")
 	msg = (await utils.embedGen("Help",None))
 	modules = dict()
 	modules["misc"] = []
@@ -219,5 +218,5 @@ async def _load(ctx,module=None):
 
 for module in startUpExtensions:
 	bot.load_extension(f"{module}_cog")
-print(f"running bot token {utils.getToken()}")
-bot.run(utils.getToken())``
+
+bot.run(utils.getToken())

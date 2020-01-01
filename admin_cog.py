@@ -8,9 +8,7 @@ import discord
 from discord.ext import commands
 import asyncio
 from datetime import datetime
-import re
 import utils
-import db_handle as db
 import permissions_cog as perms
 	
 # # # # # # # #

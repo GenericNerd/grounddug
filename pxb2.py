@@ -17,7 +17,7 @@ import db_handle as db
 # VARIABLES #
 # # # # # # #
 
-startUpExtensions = ["admin","logs","permissions"]
+startUpExtensions = ["admin","logs","permissions","events"]
 bot = commands.Bot(command_prefix=utils.getPrefix)
 cwd = os.getcwd()
 

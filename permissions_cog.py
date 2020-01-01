@@ -14,17 +14,6 @@ import db_handle as db
 # FUNCTIONS #
 # # # # # # #
 
-async def template_data(guild,member):
-	return {
-		"guild": guild.id, "user": member.id, "permissions": {
-			"MANAGE_MESSAGES": False,
-			"MUTE_MEMBERS": False,
-			"KICK_MEMBERS": False,
-			"BAN_MEMBERS": False,
-			"ADMINISTRATOR": False
-		}
-	}
-
 async def getPermissions(guild,member):
 	return (await db.dbFind("permissions",{"guild": guild,"user": member}))["permissions"]
 
@@ -65,26 +54,6 @@ class Permissions(commands.Cog):
 	async def perms(self,ctx):
 		if ctx.invoked_subcommand is None:
 			(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))
-
-	@commands.Cog.listener("on_guild_join")
-	async def guild_join(self,guild):
-		for member in guild.members:
-			if member.id == guild.owner_id:
-				(await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True, "MUTE_MEMBERS": True, "KICK_MEMBERS": True, "BAN_MEMBERS": True, "ADMINISTRATOR": True}}))
-			else:
-				(await db.dbInsert("permissions",(await template_data(guild.id,member))))
-	
-	@commands.Cog.listener("on_guild_remove")
-	async def guild_leave(self,guild):
-		(await db.dbRemoveMany("permissions",{"guild": guild.id}))
-
-	@commands.Cog.listener("on_member_join")
-	async def mem_join(self,member):
-		(await db.dbInsert("permissions",(await template_data(member.guild,member))))
-
-	@commands.Cog.listener("on_member_leave")
-	async def mem_leave(self,member):
-		(await db.dbRemove("permissions",{"guild": member.guild,"user":member}))
 
 	@perms.command(name="list",description="<user> | List a users' permissions")
 	async def _list(self,ctx,user:discord.Member):

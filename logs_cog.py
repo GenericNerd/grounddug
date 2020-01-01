@@ -8,25 +8,13 @@ import discord
 from discord.ext import commands
 import asyncio
 import utils
+import re
 import db_handle as db
 import permissions_cog as perms
 
 # # # # # # #
 # FUNCTIONS #
 # # # # # # #
-
-async def template_data(gid):
-	return {
-		"id": gid,
-		"prefix": "p!",
-		"channel": 0,
-		"misc_log": False,
-		"logs_log": False,
-		"admin_log": False,
-		"edit_log": False,
-		"advertising_log": False,
-		"delete_log": False
-	}
 
 async def moduleLogChange(self,ctx,boolean,status,module=None):
 	if module == None:
@@ -35,7 +23,7 @@ async def moduleLogChange(self,ctx,boolean,status,module=None):
 		for item,result in (await db.dbFind("guilds", {"id": ctx.guild.id})).items():
 			if result == boolean and len(item.split("_log")) > 1:
 				item = item.split("_log")[0]
-				msg.add_field(name=item,value=f"Run `{prefix}logs {status} {item}` to log",inline=False)
+				msg.add_field(name=item,value=f"Run `{prefix}logs {status} {item}` to change",inline=False)
 		await ctx.send(embed=msg)
 	else:
 		for item,result in (await db.dbFind("guilds", {"id": ctx.guild.id})).items():
@@ -52,9 +40,6 @@ async def moduleLogChange(self,ctx,boolean,status,module=None):
 			else:
 				await ctx.send(embed=(await utils.embedGen("Updated logging settings",f"`{module}` events will now not be logged")))
 
-async def logGen(ctx):
-	return (await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))
-
 # # # ## # # #
 # LOGS CLASS #
 # # # ## # # #
@@ -67,67 +52,12 @@ class Logs(commands.Cog):
 		if ctx.invoked_subcommand is None:
 			(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))
 
-	@commands.Cog.listener("on_message")
-	async def on_msg_log(self,ctx):
-		guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
-		if re.search("discord.gg/......",ctx.content) and guild["advertising_toggle"]:
-			await ctx.delete()
-			channel = self.bot.get_channel(guild["channel"])
-			await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator} tried to advertise in <#{ctx.channel.id}>",None)))
-		await self.bot.process_commands(ctx)
-
-	@commands.Cog.listener("on_command")
-	async def on_command_logging(self,ctx):
-		if ctx.guild != None:
-			guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
-			channel = self.bot.get_channel(guild["channel"])
-			command_base = (ctx.message.content).split((await utils.getPrefix(self.bot,ctx)))[1].split(" ")[0]
-			if command_base == "admin" and guild["admin_log"]:
-				(await channel.send(embed=(await logGen(ctx))))
-			elif command_base == "logs" and guild["logs_log"]:
-				(await channel.send(embed=(await logGen(ctx))))
-			elif command_base == "developer" or command_base == "modules":
-				pass
-			elif command_base != "admin" and command_base != "logs" and guild["misc_log"]:
-				(await channel.send(embed=(await logGen(ctx))))
-
-	@commands.Cog.listener("on_message_edit")
-	async def on_msg_edit_logging(self,before,after):
-		if before.guild != None:
-			guild = (await db.dbFind("guilds",{"id": before.guild.id}))
-			channel = self.bot.get_channel(guild["channel"])
-			if guild["edit_log"]:
-				msg = (await utils.embedGen("Message edit",None,0xf5c242))
-				msg.set_author(name=before.author.name,icon_url=before.author.avatar_url)
-				msg.add_field(name="Previous",value=before.content,inline=True)
-				msg.add_field(name="After",value=after.content,inline=True)
-				await channel.send(embed=msg)
-
-	@commands.Cog.listener("on_message_delete")
-	async def on_msg_del_logging(self,message):
-		if message.guild != None and not "discord.gg/" in message.content:
-			guild = (await db.dbFind("guilds",{"id": message.guild.id}))
-			if guild["delete_log"]:
-				msg = (await utils.embedGen("Message delete",None,0xff5555))
-				msg.set_author(name=message.author.name,icon_url=message.author.avatar_url)
-				msg.add_field(name="Content",value=message.content,inline=False)
-				await message.channel.send(embed=msg)
-
-	@commands.Cog.listener("on_guild_join")
-	async def _gSetup(self, guild):
-		data = (await template_data(guild))
-		(await db.dbInsert("guilds",data))
-
-	@commands.Cog.listener("on_guild_remove")
-	async def _gRemove(self,guild):
-		(await db.dbInsert("guilds",{"id": guild.id}))
-
 	@logs.command(name="setup",description="| Initial guild setup (developer only)",hidden=True)
 	@commands.check(utils.checkDev)
 	async def _setup(self,ctx):
 		msg = (await utils.embedGen("The following guilds were added to the database",None))
 		for guild in self.bot.guilds:
-			data = (await template_data(guild.id))
+			data = {"id": guild.id,"prefix": "p!","channel": 0,"misc_log": False,"logs_log": False,"admin_log": False,"edit_log": False,"advertising_log": False,"delete_log": False}
 			if (await db.dbFind("guilds",{"id": guild.id})) == None:
 				result = (await db.dbInsert("guilds",data))
 				msg.add_field(name=f"Created {guild.name} ({guild.id})",value=f"Object ID {result.inserted_id}",inline=False)

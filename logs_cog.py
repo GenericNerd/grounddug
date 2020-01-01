@@ -22,7 +22,9 @@ async def template_data(gid):
 		"channel": 0,
 		"misc_log": False,
 		"logs_log": False,
-		"admin_log": False
+		"admin_log": False,
+		"advertising_log": False,
+		"delete_log": False
 	}
 
 async def moduleLogChange(self,ctx,boolean,status,module=None):

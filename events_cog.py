@@ -23,7 +23,6 @@ async def logs_template_data(gid):
 		"misc_log": False,
 		"logs_log": False,
 		"admin_log": False,
-		"edit_log": False,
 		"advertising_log": False,
 		"delete_log": False
 	}
@@ -96,15 +95,6 @@ class Events(commands.Cog):
 				pass
 			elif command_base != "admin" and command_base != "logs" and guild["misc_log"]:
 				(await channel.send(embed=(await logGen(ctx))))
-
-	@commands.Cog.listener()
-	async def on_message_edit(self,before,after):
-		guild = (await db.dbFind("guilds",{"id": before.guild.id}))
-		if guild["edit_log"]:
-			msg = (await utils.embedGen("Message edit",f"**Before:** {before.content}\n**After:** {after.content}",0xf5c242))
-			msg.set_author(name=before.author.name,icon_url=before.author.avatar_url)
-			await before.channel.send(embed=msg)
-			print(before.id)
 
 	@commands.Cog.listener()
 	async def on_message_delete(self,message):

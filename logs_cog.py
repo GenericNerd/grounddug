@@ -24,7 +24,7 @@ async def template_data(gid):
 		"logs_log": False,
 		"admin_log": False,
 		"edit_log": False,
-		"advertising_toggle": False,
+		"advertising_log": False,
 		"delete_log": False
 	}
 
@@ -66,6 +66,15 @@ class Logs(commands.Cog):
 	async def logs(self,ctx):
 		if ctx.invoked_subcommand is None:
 			(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))
+
+	@commands.Cog.listener("on_message")
+	async def on_msg_log(self,ctx):
+		guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
+		if re.search("discord.gg/......",ctx.content) and guild["advertising_toggle"]:
+			await ctx.delete()
+			channel = self.bot.get_channel(guild["channel"])
+			await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator} tried to advertise in <#{ctx.channel.id}>",None)))
+		await self.bot.process_commands(ctx)
 
 	@commands.Cog.listener("on_command")
 	async def on_command_logging(self,ctx):

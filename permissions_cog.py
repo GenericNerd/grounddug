@@ -1,4 +1,4 @@
-#PXB Custom Permissions System
+#GroundDug Custom Permissions System
 
 # # # # # # # # # #
 # LIBRARY IMPORTS #

@@ -1,4 +1,4 @@
-#PXB Logs
+#GroundDug Logs
 
 # # # # # # # # # #
 # LIBRARY IMPORTS #

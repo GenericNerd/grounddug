@@ -1,4 +1,4 @@
-#PXB Database handling
+#GroundDug Database handling
 
 # # # # # # # # # #
 # LIBRARY IMPORTS #
@@ -16,7 +16,7 @@ from bson.objectid import ObjectId
 # # # # # # #
 
 client = pymongo.MongoClient("mongodb+srv://Fabio:^P*4k6A$c1I4@pxb-z0fef.mongodb.net/test?retryWrites=true&w=majority")
-db = client.pxb
+db = client.grounddug
 
 # # # # # # #
 # FUNCTIONS #

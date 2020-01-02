@@ -1,1 +1,1 @@
-worker: python pxb2.py
+worker: python grounddug.py

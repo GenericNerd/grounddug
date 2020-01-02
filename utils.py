@@ -38,7 +38,7 @@ async def error(ctx,error):
     await msg.delete()
 
 async def checkDev(ctx):
-    if ctx.author.id in (await db.dbFind("settings",{"_id": ObjectId("5dfa4f75baf44abfa409b0d7")}))["developers"]:
+    if ctx.author.id in (await db.dbFind("settings",{"_id": ObjectId("5e0e79e9610b77df8202a1e7")}))["developers"]:
         return True
     else:
         return False

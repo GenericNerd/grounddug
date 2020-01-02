@@ -39,6 +39,8 @@ async def changePermission(self,ctx,user,change,permission=None):
 				perm = permission.lower()
 			if not (await getPermissions(ctx.guild.id,user.id))[permission]:
 				msg.add_field(name=perm,value=f"Change by using `{prefix}permissions <add/remove> @{user.name}#{user.discriminator} {permission.lower()}`")
+		if msg.fields == []:
+			msg.add_field(name="All permissions",value=f"`{change}` - `{prefix}permissions list {user.mention}` to check them")
 		await ctx.send(embed=msg)
 	else:
 		permission = permission.upper()

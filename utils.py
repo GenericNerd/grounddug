@@ -16,7 +16,7 @@ import db_handle as db
 
 def getToken():
     #Production Token
-    return db.dbNSyncFind("settings",{"_id": ObjectId("5dfa4f75baf44abfa409b0d7")})["token"]
+    return db.dbNSyncFind("settings",{"_id": ObjectId("5e0e79e9610b77df8202a1e7")})["token"]
 
 async def embedGen(title,desc,cl=None):
     if cl is None:

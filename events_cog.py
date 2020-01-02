@@ -51,13 +51,13 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_guild_join(self,guild):
-		data = (await logs_template_data(guild))
+		data = (await logs_template_data(guild.id))
 		(await db.dbInsert("guilds",data))
 		for member in guild.members:
 			if member.id == guild.owner_id:
 				(await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True, "MUTE_MEMBERS": True, "KICK_MEMBERS": True, "BAN_MEMBERS": True, "ADMINISTRATOR": True}}))
 			else:
-				(await db.dbInsert("permissions",(await perms_template_data(guild.id,member))))
+				(await db.dbInsert("permissions",(await perms_template_data(guild,member))))
 	
 	@commands.Cog.listener()
 	async def on_guild_remove(self,guild):
@@ -69,8 +69,8 @@ class Events(commands.Cog):
 		(await db.dbInsert("permissions",(await perms_template_data(member.guild,member))))
 
 	@commands.Cog.listener()
-	async def on_member_leave(self,member):
-		(await db.dbRemove("permissions",{"guild": member.guild,"user":member}))
+	async def on_member_remove(self,member):
+		(await db.dbRemove("permissions",{"guild": member.guild.id,"user":member.id}))
 
 	@commands.Cog.listener()
 	async def on_message(self,ctx):

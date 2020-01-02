@@ -21,7 +21,7 @@ class Admin(commands.Cog):
 	@commands.group(name="admin",description="Administrative commands")
 	async def admin(self,ctx):
 		if ctx.invoked_subcommand is None:
-			await utils.error(ctx,"NO INVOKED SUBCOMMAND")
+			(await ctx.invoke(self.bot.get_command("help"),"admin"))
 
 	@admin.command(name="ban",description="<member> [reason] | Ban a member from your server")
 	async def _ban(self,ctx,member:discord.Member,reason=None):

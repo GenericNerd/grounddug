@@ -69,10 +69,7 @@ async def on_command_error(ctx,error):
 		prefix = (await utils.getPrefix(bot,ctx))
 		(await utils.error(ctx,f"{error} - Use {prefix}help {str(ctx.message.content).split(' ')[0].split(prefix)[1]}"))
 	else:
-		with open("errors.txt","a",encoding="UTF-8") as f:
-			f.write(f"[ERROR] [{str(datetime.utcnow()).split('.')[0]}] - {error} - '{ctx.message.content}'\n")
-			f.close()
-		(await utils.error(ctx,error))
+		(await utils.error(ctx,f"error - Report to developers"))
 
 # # # # # # # # #
 # MISC COMMANDS #

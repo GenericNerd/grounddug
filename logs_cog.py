@@ -64,7 +64,7 @@ class Logs(commands.Cog):
 	@commands.group(name="logs",description="Logging commands")
 	async def logs(self,ctx):
 		if ctx.invoked_subcommand is None:
-			(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))
+			(await ctx.invoke(self.bot.get_command("help"),"logs"))
 
 	@logs.command(name="setup",description="| Initial guild setup (developer only)",hidden=True)
 	@commands.check(utils.checkDev)

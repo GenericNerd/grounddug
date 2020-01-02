@@ -40,7 +40,7 @@ async def changePermission(self,ctx,user,change,permission=None):
 			if not (await getPermissions(ctx.guild.id,user.id))[permission]:
 				msg.add_field(name=perm,value=f"Change by using `{prefix}permissions <add/remove> @{user.name}#{user.discriminator} {permission.lower()}`")
 		if msg.fields == []:
-			msg.add_field(name="All permissions",value=f"`{change}` - `{prefix}permissions list {user.mention}` to check them")
+			msg.add_field(name="All permissions",value=f"`{change}` - `{prefix}permissions list {user.name}#{user.discriminator}` to check them")
 		await ctx.send(embed=msg)
 	else:
 		permission = permission.upper()
@@ -67,7 +67,7 @@ class Permissions(commands.Cog):
 	@commands.group(name="perms",aliases=["permissions"],description="Custom permission setting")
 	async def perms(self,ctx):
 		if ctx.invoked_subcommand is None:
-			(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))
+			(await ctx.invoke(self.bot.get_command("help"),"perms"))
 
 	@perms.command(name="list",description="<user> | List a users' permissions")
 	async def _list(self,ctx,user:discord.Member):

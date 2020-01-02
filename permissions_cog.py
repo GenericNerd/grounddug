@@ -96,15 +96,12 @@ class Permissions(commands.Cog):
 	@perms.command(name="setup",description="| Initial guild setup",hidden=True)
 	@commands.check(utils.checkDev)
 	async def _setup(self,ctx):
-		msg = (await utils.embedGen("Initial guild setup for permissions","Following items created:"))
 		for guild in self.bot.guilds:
 			for member in guild.members:
 				if member.id == guild.owner_id:
 					(await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}}))
 				else:
 					(await db.dbInsert("permissions",(await template_data(guild,member))))
-				msg.add_field(name=f"Inserted object",value=f"{guild.name} `{guild.id}` {member.name} `{member.id}`",inline=False)
-		(await ctx.send(embed=msg))
 
 	@commands.command(name="test",description="Testing",hidden=True)
 	@commands.check(utils.checkDev)

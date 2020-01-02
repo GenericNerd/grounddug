@@ -138,20 +138,21 @@ async def custom_help(ctx,module=""):
 			msg.description = f"We could not find module {module}"
 			return await ctx.send(embed=msg)
 	for cog,cog_obj in modules.items():
+		prefix = (await utils.getPrefix(bot,ctx))
 		if cog.lower() in ["misc"]:
 			for command in sorted(cog_obj, key=lambda o: f"{o.full_parent_name} {o.name}"):
 				split = command.description.split("|")
 				if len(split) >= 2 and not command.hidden:
-					msg.add_field(name=f"{(await utils.getPrefix(bot,ctx))}{command.full_parent_name} {command.name} {split[0]}",value=split[1],inline=False)
+					msg.add_field(name=f"{prefix}{command.full_parent_name} {command.name} {split[0]}",value=split[1],inline=False)
 				elif len(split) < 2 and not command.hidden:
-					msg.add_field(name=f"{(await utils.getPrefix(bot,ctx))}{command.full_parent_name} {command.name}",value=command.description)
+					msg.add_field(name=f"{prefix}{command.full_parent_name} {command.name}",value=command.description)
 		else:
 			for command in sorted(cog_obj.commands, key=lambda o: f"{o.full_parent_name} {o.name}"):
 				split = command.description.split("|")
 				if len(split) >= 2 and not command.hidden:
-					msg.add_field(name=f"{(await utils.getPrefix(bot,ctx))}{command.full_parent_name} {command.name} {split[0]}",value=split[1],inline=False)
+					msg.add_field(name=f"{prefix}{command.full_parent_name} {command.name} {split[0]}",value=split[1],inline=False)
 				elif len(split) < 2 and not command.hidden:
-					msg.add_field(name=f"{(await utils.getPrefix(bot,ctx))}{command.full_parent_name} {command.name}",value=command.description)
+					msg.add_field(name=f"{prefix}{command.full_parent_name} {command.name}",value=command.description)
 	await ctx.send(embed=msg)
 
 # # # ## # # #

@@ -41,10 +41,10 @@ class Admin(commands.Cog):
 	async def _banid(self,ctx,id:int,reason=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["BAN_MEMBERS"]:
 			if reason is None:
-				await ctx.send(embed=(await utils.embedGen(f"{id} has been banned by {ctx.author.name}#{ctx.author.discriminator}",0xff5555)))
+				await ctx.send(embed=(await utils.embedGen(f"{id} has been banned by {ctx.author.name}#{ctx.author.discriminator}",None,0xff5555)))
 				await ctx.guild.ban(discord.Object(id=id))
 			else:
-				await ctx.send(embed=(await utils.embedGen(f"{id} has been banned by {ctx.author.name}#{ctx.author.discriminator} for `{reason}`",0xff5555)))
+				await ctx.send(embed=(await utils.embedGen(f"{id} has been banned by {ctx.author.name}#{ctx.author.discriminator} for `{reason}`",None,0xff5555)))
 				await ctx.guild.ban(discord.Object(id=id))
 		else:
 			(await utils.error(ctx,"You are missing 'Ban Members' permission to run this command."))

@@ -15,7 +15,7 @@ from bson.objectid import ObjectId
 # VARIABLES #
 # # # # # # #
 
-client = pymongo.MongoClient("mongodb+srv://Fabio:^P*4k6A$c1I4@pxb-z0fef.mongodb.net/test?retryWrites=true&w=majority")
+client = pymongo.MongoClient("mongodb+srv://Fabio:^P*4k6A$c1I4@grounddug-z0fef.mongodb.net/test?retryWrites=true&w=majority")
 db = client.grounddug
 
 # # # # # # #

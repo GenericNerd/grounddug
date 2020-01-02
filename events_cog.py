@@ -18,7 +18,7 @@ import db_handle as db
 async def logs_template_data(gid):
 	return {
 		"id": gid,
-		"prefix": "p!",
+		"prefix": "g!",
 		"channel": 0,
 		"misc_log": False,
 		"logs_log": False,

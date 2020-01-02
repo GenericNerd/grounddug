@@ -26,7 +26,7 @@ async def embedGen(title,desc,cl=None):
 
 async def getPrefix(bot,message):
 	if not message.guild:
-		return "p!"
+		return "g!"
 	else:
 		guild = (await db.dbFind("guilds",{"id": message.guild.id}))
 		return guild["prefix"]

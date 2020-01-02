@@ -18,7 +18,7 @@ import permissions_cog as perms
 async def template_data(gid):
 	return {
 		"id": gid,
-		"prefix": "p!",
+		"prefix": "g!",
 		"channel": 0,
 		"misc_log": False,
 		"logs_log": False,

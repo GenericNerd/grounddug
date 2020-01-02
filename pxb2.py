@@ -40,10 +40,10 @@ async def reloadAllModules():
 	return embed
 	
 async def userCheck(user):
-	embed = (await utils.embedGen(f"{user.name}#{user.discriminator}",user.mention)).set_thumbnail(url=user.avatar_url)
+	embed = (await utils.embedGen(f"{user.name}#{user.discriminator}",f"{user.mention} - {user.id}")).set_thumbnail(url=user.avatar_url)
 	embed.add_field(name="Status",value=user.status,inline=True)
 	embed.add_field(name="Server join date",value=f"{str(user.joined_at).split('.')[0]} - `{str(datetime.utcnow()-user.joined_at).split('.')[0]} ago`",inline=True)
-	embed.add_field(name="Account age",value=f"{str(datetime.utcnow()-user.created_at).split('.')[0]} - `{str(user.created_at).split('.')[0]}`",inline=True)
+	embed.add_field(name="Account age",value=f"{str(user.created_at).split('.')[0]} - ``",inline=True)
 	roles = "@everyone"
 	for role in user.roles:
 		if role.name != "@everyone":
@@ -142,16 +142,16 @@ async def custom_help(ctx,module=""):
 			for command in sorted(cog_obj, key=lambda o: f"{o.full_parent_name} {o.name}"):
 				split = command.description.split("|")
 				if len(split) >= 2 and not command.hidden:
-					msg.add_field(name=f"{command.full_parent_name} {command.name} {split[0]}",value=split[1],inline=False)
+					msg.add_field(name=f"{(await utils.getPrefix(bot,ctx))}{command.full_parent_name} {command.name} {split[0]}",value=split[1],inline=False)
 				elif len(split) < 2 and not command.hidden:
-					msg.add_field(name=f"{command.full_parent_name} {command.name}",value=command.description)
+					msg.add_field(name=f"{(await utils.getPrefix(bot,ctx))}{command.full_parent_name} {command.name}",value=command.description)
 		else:
 			for command in sorted(cog_obj.commands, key=lambda o: f"{o.full_parent_name} {o.name}"):
 				split = command.description.split("|")
 				if len(split) >= 2 and not command.hidden:
-					msg.add_field(name=f"{command.full_parent_name} {command.name} {split[0]}",value=split[1],inline=False)
+					msg.add_field(name=f"{(await utils.getPrefix(bot,ctx))}{command.full_parent_name} {command.name} {split[0]}",value=split[1],inline=False)
 				elif len(split) < 2 and not command.hidden:
-					msg.add_field(name=f"{command.full_parent_name} {command.name}",value=command.description)
+					msg.add_field(name=f"{(await utils.getPrefix(bot,ctx))}{command.full_parent_name} {command.name}",value=command.description)
 	await ctx.send(embed=msg)
 
 # # # ## # # #

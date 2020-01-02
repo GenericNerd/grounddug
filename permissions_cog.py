@@ -44,8 +44,8 @@ async def changePermission(self,ctx,user,change,permission=None):
 		permission = permission.upper()
 		currentPermissions = (await getPermissions(ctx.guild.id,user.id))
 		if permission == "ADMINISTRATOR":
-			for perm in currentPermissions:
-				perm.key() = change
+			for perm in currentPermissions.copy():
+				currentPermissions[perm] = change
 			(await db.dbUpdate("permissions",{"guild": ctx.guild.id, "user": user.id},{"permissions": currentPermissions}))
 		else:
 			opchange = not change

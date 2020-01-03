@@ -62,7 +62,7 @@ async def userCheck(user):
 async def on_ready():
 	print(f"\n{bot.user.name}\nOnline\nFrom {str(datetime.utcnow()).split('.')[0]} UTC")
 	(await bot.get_channel(528300655610167326).send(embed=(await utils.embedGen("I'm online",f"As of {str(datetime.utcnow()).split('.')[0]} UTC"))))
-	await bot.change_presence(activity=discord.Game("with members"))
+	await bot.change_presence("g!help to get started")
 
 @bot.event
 async def on_command_error(ctx,error):
@@ -145,9 +145,9 @@ async def custom_help(ctx,module=""):
 			for command in sorted(cog_obj, key=lambda o: f"{o.full_parent_name} {o.name}"):
 				split = command.description.split("|")
 				if len(split) >= 2 and not command.hidden:
-					msg.add_field(name=f"{prefix}{command.full_parent_name} {command.name} {split[0]}",value=split[1],inline=False)
+					msg.add_field(name=f"{prefix}{command.name} {split[0]}",value=split[1],inline=False)
 				elif len(split) < 2 and not command.hidden:
-					msg.add_field(name=f"{prefix}{command.full_parent_name} {command.name}",value=command.description)
+					msg.add_field(name=f"{prefix}{command.name}",value=command.description)
 		else:
 			for command in sorted(cog_obj.commands, key=lambda o: f"{o.full_parent_name} {o.name}"):
 				split = command.description.split("|")

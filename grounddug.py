@@ -62,7 +62,7 @@ async def userCheck(user):
 async def on_ready():
 	print(f"\n{bot.user.name}\nOnline\nFrom {str(datetime.utcnow()).split('.')[0]} UTC")
 	(await bot.get_channel(528300655610167326).send(embed=(await utils.embedGen("I'm online",f"As of {str(datetime.utcnow()).split('.')[0]} UTC"))))
-	await bot.change_presence("g!help to get started")
+	await bot.change_presence(activity="g!help to get started")
 
 @bot.event
 async def on_command_error(ctx,error):

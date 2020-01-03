@@ -74,7 +74,7 @@ class Logs(commands.Cog):
 			data = (await template_data(guild.id))
 			if (await db.dbFind("guilds",{"id": guild.id})) == None:
 				result = (await db.dbInsert("guilds",data))
-				msg.add_field(name=f"Created {guild.name} ({guild.id})",value=f"Object ID {result.inserted_id}",inline=False)
+				msg.add_field(name=f"Created {guild.name}",value=f"`{guild.id}`",inline=False)
 		await ctx.send(embed=msg)
 
 	@logs.command(name="setchannel", description="<channel> | Set the channel for logs to be posted")

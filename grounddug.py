@@ -62,6 +62,7 @@ async def userCheck(user):
 async def on_ready():
 	print(f"\n{bot.user.name}\nOnline\nFrom {str(datetime.utcnow()).split('.')[0]} UTC")
 	(await bot.get_channel(528300655610167326).send(embed=(await utils.embedGen("I'm online",f"As of {str(datetime.utcnow()).split('.')[0]} UTC"))))
+	await bot.change_presence(activity=discord.Game("with members"))
 
 @bot.event
 async def on_command_error(ctx,error):
@@ -74,6 +75,10 @@ async def on_command_error(ctx,error):
 # # # # # # # # #
 # MISC COMMANDS #
 # # # # # # # # #
+
+@bot.command(name="invite",description="| Receive an invite to your server")
+async def invite(ctx):
+	await ctx.author.send(embed=(await utils.embedGen("Invite PXB to your server",f"[Click here](https://discordapp.com/oauth2/authorize?client_id=553602353962549249&scope=bot&permissions=8) to invite {bot.user.name} to your server")))
 
 @bot.command(name="userinfo",description="[user] | Returns information about a specific user")
 async def userinfo(ctx,user:discord.Member=None):
@@ -171,7 +176,12 @@ async def modules(ctx):
 # # # # ## # # # #
 # DEVELOPER CMDS #
 # # # # ## # # # #
-	
+
+@developer.command(name="restart",description="Restart the bot",hidden=True)
+async def _restart(ctx):
+	await ctx.send(embed=(await utils.embedGen("Bot is restarting",None)))
+	os._exit(100)
+
 @developer.command(name="eval",description="<command> | Seriously no touchy",hidden=True)
 async def _eval(ctx,cmd:str):
 	try:

@@ -1,1 +1,1 @@
-worker: python grounddug.py
+worker: python starter.py

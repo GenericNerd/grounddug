@@ -11,12 +11,18 @@ from bson.objectid import ObjectId
 import db_handle as db
 
 # # # # # # #
+# VARIABLES #
+# # # # # # #
+
+mainDbObject = ObjectId("5e0e79e9610b77df8202a1e7")
+
+# # # # # # #
 # FUNCTIONS #
 # # # # # # #
 
 def getToken():
     #Production Token
-    return db.dbNSyncFind("settings",{"_id": ObjectId("5e0e79e9610b77df8202a1e7")})["token"]
+    return db.dbNSyncFind("settings",{"_id": mainDbObject})["token"]
 
 async def embedGen(title,desc,cl=None):
     if cl is None:
@@ -32,13 +38,10 @@ async def getPrefix(bot,message):
 		return guild["prefix"]
 
 async def error(ctx,error):
-    msg = (await embedGen("Something went wrong!",f"`{error}`",0xff0000))
-    msg = await ctx.send(embed=msg)
-    await asyncio.sleep(5)
-    await msg.delete()
+    ctx.send(embed=(await embedGen("Something went wrong!",f"`{error}`",0xff0000)))
 
 async def checkDev(ctx):
-    if ctx.author.id in (await db.dbFind("settings",{"_id": ObjectId("5e0e79e9610b77df8202a1e7")}))["developers"]:
+    if ctx.author.id in (await db.dbFind("settings",{"_id": mainDbObject}))["developers"]:
         return True
     else:
         return False

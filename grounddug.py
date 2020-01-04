@@ -70,7 +70,7 @@ async def on_command_error(ctx,error):
 		prefix = (await utils.getPrefix(bot,ctx))
 		(await utils.error(ctx,f"{error} - Use {prefix}help {str(ctx.message.content).split(' ')[0].split(prefix)[1]}"))
 	else:
-		(await utils.error(ctx,f"error - Report to developers"))
+		(await utils.error(ctx,f"{error} - Report to developers"))
 
 # # # # # # # # #
 # MISC COMMANDS #

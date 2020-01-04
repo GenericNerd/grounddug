@@ -15,18 +15,6 @@ import permissions_cog as perms
 # FUNCTIONS #
 # # # # # # #
 
-async def template_data(gid):
-	return {
-		"id": gid,
-		"prefix": "g!",
-		"channel": 0,
-		"misc_log": False,
-		"logs_log": False,
-		"admin_log": False,
-		"advertising_log": False,
-		"delete_log": False
-	}
-
 async def moduleLogChange(self,ctx,boolean,status,module=None):
 	if module == None:
 		prefix = (await utils.getPrefix(self.bot,ctx))
@@ -51,9 +39,6 @@ async def moduleLogChange(self,ctx,boolean,status,module=None):
 			else:
 				await ctx.send(embed=(await utils.embedGen("Updated logging settings",f"`{module}` events will now not be logged")))
 
-async def logGen(ctx):
-	return (await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))
-
 # # # ## # # #
 # LOGS CLASS #
 # # # ## # # #
@@ -71,7 +56,14 @@ class Logs(commands.Cog):
 	async def _setup(self,ctx):
 		msg = (await utils.embedGen("The following guilds were added to the database",None))
 		for guild in self.bot.guilds:
-			data = (await template_data(guild.id))
+			data = {"id": guild.id,
+				"prefix": "g!",
+				"channel": 0,
+				"misc_log": False,
+				"logs_log": False,
+				"admin_log": False,
+				"advertising_log": False,
+				"delete_log": False}
 			if (await db.dbFind("guilds",{"id": guild.id})) == None:
 				result = (await db.dbInsert("guilds",data))
 				msg.add_field(name=f"Created {guild.name}",value=f"`{guild.id}`",inline=False)
@@ -92,21 +84,21 @@ class Logs(commands.Cog):
 				(await db.dbUpdate("guilds",{"id": ctx.guild.id},{"channel":channel.id}))
 				await ctx.send(embed=(await utils.embedGen("Logging channel changed",f"{channel.mention} will now have logs posted to it")))
 		else:
-			(await utils.error(ctx,"You are missing 'Administrator' permission to run this command."))
+			(await utils.error(ctx,"You are missing 'GD_ADMINISTRATOR' permission to run this command."))
 
 	@logs.command(name="enable",description="<module> | Enable logging for a module")
 	async def _enable(self,ctx,module=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 			await moduleLogChange(self,ctx,False,"enable",module)
 		else:
-			(await utils.error(ctx,"You are missing 'Administrator' permission to run this command."))
+			(await utils.error(ctx,"You are missing 'GD_ADMINISTRATOR' permission to run this command."))
 
 	@logs.command(name="disable",description="<module> | Disable logging for a module")
 	async def _disable(self,ctx,module=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 			await moduleLogChange(self,ctx,True,"disable",module)
 		else:
-			(await utils.error(ctx,"You are missing 'Administrator' permission to run this command."))
+			(await utils.error(ctx,"You are missing 'GD_ADMINISTRATOR' permission to run this command."))
 
 def setup(bot):
 	bot.add_cog(Logs(bot))

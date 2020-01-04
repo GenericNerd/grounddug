@@ -69,6 +69,16 @@ class Permissions(commands.Cog):
 		if ctx.invoked_subcommand is None:
 			(await ctx.invoke(self.bot.get_command("help"),"perms"))
 
+	@perms.command(name="setup",description="| Initial guild setup",hidden=True)
+	@commands.check(utils.checkDev)
+	async def _setup(self,ctx):
+		for guild in self.bot.guilds:
+			for member in guild.members:
+				if member.id == guild.owner_id:
+					(await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}}))
+				else:
+					(await db.dbInsert("permissions",(await template_data(guild,member))))
+
 	@perms.command(name="list",description="<user> | List a users' permissions")
 	async def _list(self,ctx,user:discord.Member):
 		msg = (await utils.embedGen("Permissions",f"{user.name}'s current permissions"))
@@ -86,43 +96,14 @@ class Permissions(commands.Cog):
 		if (await getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 			(await changePermission(self,ctx,user,True,permission))
 		else:
-			(await utils.error(ctx,"You are missing 'Administrator' permission to run this command."))
+			(await utils.error(ctx,"You are missing 'GD_ADMINISTRATOR' permission to run this command."))
 
 	@perms.command(name="remove",description="<user> <permission> | Remove a permission to a user")
 	async def _remove(self,ctx,user:discord.Member,permission=None):
 		if (await getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 			(await changePermission(self,ctx,user,False,permission))
 		else:
-			(await utils.error(ctx,"You are missing 'Administrator' permission to run this command."))
-
-	@perms.command(name="setup",description="| Initial guild setup",hidden=True)
-	@commands.check(utils.checkDev)
-	async def _setup(self,ctx):
-		for guild in self.bot.guilds:
-			for member in guild.members:
-				if member.id == guild.owner_id:
-					(await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}}))
-				else:
-					(await db.dbInsert("permissions",(await template_data(guild,member))))
-
-	@commands.command(name="test",description="Testing",hidden=True)
-	@commands.check(utils.checkDev)
-	async def test(self,ctx):
-		test = {
-			"guild": ctx.guild.id, "user": ctx.author.id, "permissions": {
-				"MANAGE_MESSAGES": False,
-				"MUTE_MEMBERS": False,
-				"KICK_MEMBERS": False,
-				"BAN_MEMBERS": False,
-				"ADMINISTRATOR": False
-			}
-		}
-		await db.dbInsert("permissions",test)
-
-	@commands.command(name="test2",description="Further testing tf do you think",hidden=True)
-	@commands.check(utils.checkDev)
-	async def test2(self,ctx):
-		await ctx.send(await db.dbFind("permissions",{"guild": ctx.guild.id, "user": ctx.author.id}))
+			(await utils.error(ctx,"You are missing 'GD_ADMINISTRATOR' permission to run this command."))
 
 def setup(bot):
 	bot.add_cog(Permissions(bot))

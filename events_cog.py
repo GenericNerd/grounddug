@@ -9,37 +9,7 @@ from discord.ext import commands
 import asyncio
 import utils
 import re
-import db_handle as db
-
-# # # # # # #
-# FUNCTIONS #
-# # # # # # #
-
-async def logs_template_data(gid):
-	return {
-		"id": gid,
-		"prefix": "g!",
-		"channel": 0,
-		"misc_log": False,
-		"logs_log": False,
-		"admin_log": False,
-		"advertising_log": False,
-		"delete_log": False
-	}
-
-async def perms_template_data(guild,member):
-	return {
-		"guild": guild.id, "user": member.id, "permissions": {
-			"MANAGE_MESSAGES": False,
-			"MUTE_MEMBERS": False,
-			"KICK_MEMBERS": False,
-			"BAN_MEMBERS": False,
-			"ADMINISTRATOR": False
-		}
-	}
-
-async def logGen(ctx):
-	return (await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))
+import db_handle as db 
 
 # # # # # # # #
 # EVENT CLASS #
@@ -51,13 +21,26 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_guild_join(self,guild):
-		data = (await logs_template_data(guild.id))
+		data = {
+			"id": gid,
+			"prefix": "g!",
+			"channel": 0,
+			"misc_log": False,
+			"logs_log": False,
+			"admin_log": False,
+			"advertising_log": False,
+			"delete_log": False}
 		(await db.dbInsert("guilds",data))
 		for member in guild.members:
 			if member.id == guild.owner_id:
 				(await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True, "MUTE_MEMBERS": True, "KICK_MEMBERS": True, "BAN_MEMBERS": True, "ADMINISTRATOR": True}}))
 			else:
-				(await db.dbInsert("permissions",(await perms_template_data(guild,member))))
+				(await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {
+					"MANAGE_MESSAGES": False,
+					"MUTE_MEMBERS": False,
+					"KICK_MEMBERS": False,
+					"BAN_MEMBERS": False,
+					"ADMINISTRATOR": False}}))
 	
 	@commands.Cog.listener()
 	async def on_guild_remove(self,guild):
@@ -66,7 +49,12 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_member_join(self,member):
-		(await db.dbInsert("permissions",(await perms_template_data(member.guild,member))))
+		(await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {
+			"MANAGE_MESSAGES": False,
+			"MUTE_MEMBERS": False,
+			"KICK_MEMBERS": False,
+			"BAN_MEMBERS": False,
+			"ADMINISTRATOR": False}}))
 
 	@commands.Cog.listener()
 	async def on_member_remove(self,member):
@@ -87,13 +75,13 @@ class Events(commands.Cog):
 			channel = self.bot.get_channel(guild["channel"])
 			command_base = (ctx.message.content).split((await utils.getPrefix(self.bot,ctx)))[1].split(" ")[0]
 			if command_base == "admin" and guild["admin_log"]:
-				(await channel.send(embed=(await logGen(ctx))))
+				(await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))))
 			elif command_base == "logs" and guild["logs_log"]:
-				(await channel.send(embed=(await logGen(ctx))))
+				(await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))))
 			elif command_base == "developer" or command_base == "modules":
 				pass
 			elif command_base != "admin" and command_base != "logs" and guild["misc_log"]:
-				(await channel.send(embed=(await logGen(ctx))))
+				(await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))))
 
 	@commands.Cog.listener()
 	async def on_message_delete(self,message):

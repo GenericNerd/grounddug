@@ -31,7 +31,7 @@ class Admin(commands.Cog):
 			try:
 				await member.send(embed=(await utils.embedGen(f"You have been banned from {ctx.guild.name}",f"You were banned by {ctx.author.name}#{ctx.author.discriminator} for `{reason}`")))
 			except Exception as e:
-				await ctx.send(embed=(await utils.error(ctx,f"{member.name} could not be notified - {e}")))
+				(await utils.error(ctx,f"{member.name} could not be notified - {e}"))
 			finally:
 				await member.ban(reason=reason)
 		else:
@@ -52,7 +52,7 @@ class Admin(commands.Cog):
 			try:
 				await member.send(embed=(await utils.embedGen(f"You have been soft-banned from {ctx.guild.name}",f"You were soft-banned by {ctx.author.name}#{ctx.author.discriminator}")))
 			except Exception as e:
-				await ctx.send(embed=(await utils.error(ctx,f"{member.name} could not be notified - {e}")))
+				(await utils.error(ctx,f"{member.name} could not be notified - {e}"))
 			finally:
 				await member.ban(reason=reason)
 				await member.unban()

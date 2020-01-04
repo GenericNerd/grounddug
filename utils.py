@@ -26,9 +26,9 @@ def getToken():
 
 async def embedGen(title,desc,cl=None):
     if cl is None:
-        return discord.Embed(title=title,description=desc,color=0x0088ff).set_footer(text="GroundDug | 2020")
+        return discord.Embed(title=title,description=desc,color=0x0088ff).set_footer(text="GroundDug | 2020",icon_url="https://cdn.discordapp.com/avatars/553602353962549249/641fcc61b43b5ce4b4cbe94c8c0270fa.webp?size=128")
     else:
-        return discord.Embed(title=title,description=desc,color=cl).set_footer(text="GroundDug | 2020")
+        return discord.Embed(title=title,description=desc,color=cl).set_footer(text="GroundDug | 2020",icon_url="https://cdn.discordapp.com/avatars/553602353962549249/641fcc61b43b5ce4b4cbe94c8c0270fa.webp?size=128")
 
 async def getPrefix(bot,message):
 	if not message.guild:

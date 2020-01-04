@@ -74,7 +74,7 @@ class Permissions(commands.Cog):
 	async def _setup(self,ctx):
 		for guild in self.bot.guilds:
 			for member in guild.members:
-				if db.dbFind("permissions",{"guild": guild.id,"user": member.id}) != None:
+				if (await db.dbFind("permissions",{"guild": guild.id,"user": member.id})) != None:
 					if member.id == guild.owner_id:
 						(await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}}))
 					else:

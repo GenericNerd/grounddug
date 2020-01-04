@@ -125,13 +125,13 @@ async def custom_help(ctx,module=""):
 		msg.description = "Please specify the modules you wish to look up"
 		for key in sorted(modules.keys()):
 			if key == "misc":
-				msg.add_field(name="💿 - Misc",value="List of all non-groupped commands",inline=False)
+				msg.add_field(name=f"💿 - Misc {await utils.getPrefix(bot,ctx)}help misc",value="List of all non-groupped commands",inline=False)
 			if key == "admin":
-				msg.add_field(name="🔨 - Admin",value="Administrative commands",inline=False)
+				msg.add_field(name=f"🔨 - Admin {await utils.getPrefix(bot,ctx)}help admin",value="Administrative commands",inline=False)
 			if key == "logs":
-				msg.add_field(name="🔍 - Logs",value="Logging of commands",inline=False)
+				msg.add_field(name=f"🔍 - Logs {await utils.getPrefix(bot,ctx)}help logs",value="Logging of commands",inline=False)
 			if key == "perms":
-				msg.add_field(name="🔧 - Perms",value="Assigning and removing permissions",inline=False)
+				msg.add_field(name=f"🔧 - Perms {await utils.getPrefix(bot,ctx)}help perms",value="Assigning and removing permissions",inline=False)
 		return await ctx.send(embed=msg)
 	elif module != "":
 		if module.lower() in modules.keys():

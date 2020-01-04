@@ -74,10 +74,11 @@ class Permissions(commands.Cog):
 	async def _setup(self,ctx):
 		for guild in self.bot.guilds:
 			for member in guild.members:
-				if member.id == guild.owner_id:
-					(await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}}))
-				else:
-					(await db.dbInsert("permissions",(await template_data(guild,member))))
+				if db.dbFind("permissions",{"guild": guild.id,"user": member.id}) != None:
+					if member.id == guild.owner_id:
+						(await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}}))
+					else:
+						(await db.dbInsert("permissions",(await template_data(guild,member))))
 
 	@perms.command(name="list",description="<user> | List a users' permissions")
 	async def _list(self,ctx,user:discord.Member):

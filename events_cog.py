@@ -49,7 +49,7 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_member_join(self,member):
-		(await db.dbInsert("permissions",{"guild": memeber.guild.id, "user": member.id, "permissions": {
+		(await db.dbInsert("permissions",{"guild": member.guild.id, "user": member.id, "permissions": {
 			"MANAGE_MESSAGES": False,
 			"MUTE_MEMBERS": False,
 			"KICK_MEMBERS": False,

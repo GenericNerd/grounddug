@@ -38,7 +38,7 @@ async def getPrefix(bot,message):
 		return guild["prefix"]
 
 async def error(ctx,error):
-    ctx.send(embed=(await embedGen("Something went wrong!",f"`{error}`",0xff0000)))
+    await ctx.send(embed=(await embedGen("Something went wrong!",f"`{error}`",0xff0000)))
 
 async def checkDev(ctx):
     if ctx.author.id in (await db.dbFind("settings",{"_id": mainDbObject}))["developers"]:

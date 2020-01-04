@@ -22,7 +22,7 @@ class Events(commands.Cog):
 	@commands.Cog.listener()
 	async def on_guild_join(self,guild):
 		data = {
-			"id": gid,
+			"id": guild.id,
 			"prefix": "g!",
 			"channel": 0,
 			"misc_log": False,

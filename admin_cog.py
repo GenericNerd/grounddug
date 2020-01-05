@@ -10,6 +10,7 @@ import asyncio
 from datetime import datetime
 import utils
 import permissions_cog as perms
+import db_handle as db
 	
 # # # # # # # #
 # ADMIN CLASS #
@@ -112,6 +113,23 @@ class Admin(commands.Cog):
 				await ctx.send(embed=(await utils.error(ctx,"A check must be specified (member/bot/all)")))
 		else:
 			(await utils.error(ctx,"You are missing 'GD_MANAGE_MESSAGES' permission to run this command."))
+
+	@admin.command(name="raid",description="<state> | Activates or deactivates raid mode, which kicks new members as soon as they join in case of a raid")
+	async def _raid(self,ctx,state=None):
+		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
+			guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
+			if state == None:
+				await ctx.send(embed=(await utils.embedGen(f"{ctx.guild.name} Raid Mode",f"Raid Mode is currently set to `{guild['raid_mode']}`")))
+			elif state.lower() == "true":
+				(await db.dbUpdate("guilds",{"id": ctx.guild.id},{"raid_mode": True}))
+				await ctx.send(embed=(await utils.embedGen(f"{ctx.guild.name} Raid Mode",f"Raid Mode has been `enabled` by {ctx.author.mention}")))
+			elif state.lower() == "false":
+				(await db.dbUpdate("guilds",{"id": ctx.guild.id},{"raid_mode": False}))
+				await ctx.send(embed=(await utils.embedGen(f"{ctx.guild.name} Raid Mode",f"Raid Mode has been `disabled` by {ctx.author.mention}")))
+			else:
+				(await utils.error(ctx,"Raid mode state needs to be either 'true' or 'false'"))
+		else:
+			(await utils.error(ctx,"You are missing 'GD_ADMINISTRATOR' permission to run this command."))
 
 def setup(bot):
 	bot.add_cog(Admin(bot))

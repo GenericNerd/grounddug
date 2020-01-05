@@ -29,7 +29,8 @@ class Events(commands.Cog):
 			"logs_log": False,
 			"admin_log": False,
 			"advertising_log": False,
-			"delete_log": False}
+			"delete_log": False,
+			"raid_mode": False}
 		(await db.dbInsert("guilds",data))
 		for member in guild.members:
 			if member.id == guild.owner_id:
@@ -49,12 +50,20 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_member_join(self,member):
-		(await db.dbInsert("permissions",{"guild": member.guild.id, "user": member.id, "permissions": {
-			"MANAGE_MESSAGES": False,
-			"MUTE_MEMBERS": False,
-			"KICK_MEMBERS": False,
-			"BAN_MEMBERS": False,
-			"ADMINISTRATOR": False}}))
+		if not (await db.dbFind("guilds",{"id": member.guild.id}))["raid_mode"]:
+			(await db.dbInsert("permissions",{"guild": member.guild.id, "user": member.id, "permissions": {
+				"MANAGE_MESSAGES": False,
+				"MUTE_MEMBERS": False,
+				"KICK_MEMBERS": False,
+				"BAN_MEMBERS": False,
+				"ADMINISTRATOR": False}}))
+		else:
+			try:
+				member.send(embed=(await utils.embedGen(f"{member.guild.name} is currently on lockdown","Please try to join again in a couple of hours")))
+			except Exception as e:
+				pass
+			finally:
+				member.kick(reason="Lockdown")
 
 	@commands.Cog.listener()
 	async def on_member_remove(self,member):

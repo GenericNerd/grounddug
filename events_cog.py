@@ -59,11 +59,11 @@ class Events(commands.Cog):
 				"ADMINISTRATOR": False}}))
 		else:
 			try:
-				member.send(embed=(await utils.embedGen(f"{member.guild.name} is currently on lockdown","Please try to join again in a couple of hours")))
+				(await member.send(embed=(await utils.embedGen(f"{member.guild.name} is currently on lockdown","Please try to join again in a couple of hours"))))
 			except Exception as e:
 				pass
 			finally:
-				member.kick(reason="Lockdown")
+				(await member.kick(reason="Lockdown"))
 
 	@commands.Cog.listener()
 	async def on_member_remove(self,member):

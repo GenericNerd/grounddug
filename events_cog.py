@@ -71,15 +71,16 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_message(self,ctx):
-		guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
-		if re.search("discord.gg/......",ctx.content) and guild["advertising_log"]:
-			await ctx.delete()
-			channel = self.bot.get_channel(guild["channel"])
-			await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator} tried to advertise in {channel.mention}",None)))
+		if ctx.guild not None:
+			guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
+			if re.search("discord.gg/......",ctx.content) and guild["advertising_log"]:
+				await ctx.delete()
+				channel = self.bot.get_channel(guild["channel"])
+				await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator} tried to advertise in {channel.mention}",None)))
 
 	@commands.Cog.listener()
 	async def on_command(self,ctx):
-		if ctx.guild != None:
+		if ctx.guild not None:
 			guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
 			channel = self.bot.get_channel(guild["channel"])
 			command_base = (ctx.message.content).split((await utils.getPrefix(self.bot,ctx)))[1].split(" ")[0]
@@ -94,7 +95,7 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_message_delete(self,message):
-		if message.guild != None and not "discord.gg/" in message.content:
+		if message.guild not None and not "discord.gg/" in message.content:
 			guild = (await db.dbFind("guilds",{"id": message.guild.id}))
 			if guild["delete_log"]:
 				msg = (await utils.embedGen("Message delete",None,0xff5555))

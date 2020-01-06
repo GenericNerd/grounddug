@@ -202,8 +202,8 @@ class dev(commands.Cog):
 
 for module in startUpExtensions:
 	try:
-		bot.add_cog(f"{module}_cog")
-	except:
-		bot.add_cog(module)
+		bot.load_extension(f"{module}_cog")
+	except Exception as e:
+		bot.load_extension(module)
 
 bot.run(utils.getToken())

@@ -106,7 +106,7 @@ class core(commands.Cog):
 			guildCount += 1
 			for user in guild.members:
 				userCount += 1
-		await ctx.send(embed=(await utils.embedGen("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{bot.user.name} version: {version}")))
+		await ctx.send(embed=(await utils.embedGen("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{self.bot.user.name} version: {version}")))
 
 	@commands.command(name="setprefix",description="<prefix> | Sets a local prefix for the bot")
 	async def setPrefix(self,ctx,prefix=None):

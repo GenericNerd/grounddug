@@ -149,7 +149,7 @@ class dev(commands.Cog):
 
 	@commands.group(name="developer",alias=["dev"],hidden=True)
 	@commands.check(utils.checkDev)
-	async def deveveloper(self,ctx):
+	async def developer(self,ctx):
 		if ctx.invoked_subcommand is None:
 			(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))
 

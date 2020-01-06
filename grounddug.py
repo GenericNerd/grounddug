@@ -202,7 +202,7 @@ class dev(commands.Cog):
 
 for module in startUpExtensions:
 	try:
-		bot.load_extension(f"{module}_cog")
+		bot.add_cog(f"{module}_cog")
 	except:
 		bot.add_cog(module)
 

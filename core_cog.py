@@ -45,7 +45,7 @@ class core(commands.Cog):
 		msg = (await utils.embedGen("Help",None))
 		modules = dict()
 		modules["misc"] = []
-		for command in bot.commands:
+		for command in self.bot.commands:
 			if type(command) is discord.ext.commands.core.Group:
 				modules[command.name.lower()] = command
 			else:
@@ -54,13 +54,13 @@ class core(commands.Cog):
 			msg.description = "Please specify the modules you wish to look up"
 			for key in sorted(modules.keys()):
 				if key == "misc":
-					msg.add_field(name=f"💿 - Misc ({await utils.getPrefix(bot,ctx)}help misc)",value="List of all non-groupped commands",inline=False)
+					msg.add_field(name=f"💿 - Misc ({await utils.getPrefix(self.bot,ctx)}help misc)",value="List of all non-groupped commands",inline=False)
 				if key == "admin":
-					msg.add_field(name=f"🔨 - Admin ({await utils.getPrefix(bot,ctx)}help admin)",value="Administrative commands",inline=False)
+					msg.add_field(name=f"🔨 - Admin ({await utils.getPrefix(self.bot,ctx)}help admin)",value="Administrative commands",inline=False)
 				if key == "logs":
-					msg.add_field(name=f"🔍 - Logs ({await utils.getPrefix(bot,ctx)}help logs)",value="Logging of commands",inline=False)
+					msg.add_field(name=f"🔍 - Logs ({await utils.getPrefix(self.bot,ctx)}help logs)",value="Logging of commands",inline=False)
 				if key == "perms":
-					msg.add_field(name=f"🔧 - Perms ({await utils.getPrefix(bot,ctx)}help perms)",value="Assigning and removing permissions",inline=False)
+					msg.add_field(name=f"🔧 - Perms ({await utils.getPrefix(self.bot,ctx)}help perms)",value="Assigning and removing permissions",inline=False)
 			return await ctx.send(embed=msg)
 		elif module != "":
 			if module.lower() in modules.keys():
@@ -69,7 +69,7 @@ class core(commands.Cog):
 				msg.description = f"We could not find module {module}"
 				return await ctx.send(embed=msg)
 		for cog,cog_obj in modules.items():
-			prefix = (await utils.getPrefix(bot,ctx))
+			prefix = (await utils.getPrefix(self.bot,ctx))
 			if cog.lower() in ["misc"]:
 				for command in sorted(cog_obj, key=lambda o: f"{o.full_parent_name} {o.name}"):
 					split = command.description.split("|")
@@ -102,7 +102,7 @@ class core(commands.Cog):
 		guildCount = 0
 		userCount = 0
 		version = open("version.txt").read()
-		for guild in bot.guilds:
+		for guild in self.bot.guilds:
 			guildCount += 1
 			for user in guild.members:
 				userCount += 1

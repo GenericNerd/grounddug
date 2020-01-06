@@ -21,9 +21,9 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_ready(self):
-	print(f"\n{self.bot.user.name}\nOnline\nFrom {str(datetime.utcnow()).split('.')[0]} UTC")
-	(await self.bot.get_channel(528300655610167326).send(embed=(await utils.embedGen("I'm online",f"As of {str(datetime.utcnow()).split('.')[0]} UTC"))))
-	await self.bot.change_presence(activity=discord.Game("g!help to get started"))
+		print(f"\n{self.bot.user.name}\nOnline\nFrom {str(datetime.utcnow()).split('.')[0]} UTC")
+		(await self.bot.get_channel(528300655610167326).send(embed=(await utils.embedGen("I'm online",f"As of {str(datetime.utcnow()).split('.')[0]} UTC"))))
+		await self.bot.change_presence(activity=discord.Game("g!help to get started"))
 
 	@commands.Cog.listener()
 	async def on_guild_join(self,guild):

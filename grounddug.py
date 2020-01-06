@@ -18,7 +18,7 @@ import permissions_cog as perms
 # VARIABLES #
 # # # # # # #
 
-startUpExtensions = ["admin","logs","permissions","events"]
+startUpExtensions = ["admin","logs","permissions","events","core","dev"]
 bot = commands.Bot(command_prefix=utils.getPrefix)
 cwd = os.getcwd()
 
@@ -53,178 +53,157 @@ async def userCheck(user):
 	else:
 		embed.add_field(name="Roles",value=roles,inline=False)
 	return embed
-	
-# # ## # #
-# EVENTS #
-# # ## # #
 
-@bot.event
-async def on_ready():
-	print(f"\n{bot.user.name}\nOnline\nFrom {str(datetime.utcnow()).split('.')[0]} UTC")
-	(await bot.get_channel(528300655610167326).send(embed=(await utils.embedGen("I'm online",f"As of {str(datetime.utcnow()).split('.')[0]} UTC"))))
-	await bot.change_presence(activity=discord.Game("g!help to get started"))
+# # # ## # # #
+# CORE CLASS #
+# # # ## # # #
 
-@bot.event
-async def on_command_error(ctx,error):
-	if isinstance(error,commands.MissingRequiredArgument):
-		prefix = (await utils.getPrefix(bot,ctx))
-		(await utils.error(ctx,f"{error} - Use {prefix}help {str(ctx.message.content).split(' ')[0].split(prefix)[1]}"))
-	else:
-		(await utils.error(ctx,f"{error} - Report to developers"))
+class core(commands.Cog):
+	def __init__(self,bot):
+		self.bot = bot
 
-# # # # # # # # #
-# MISC COMMANDS #
-# # # # # # # # #
-
-@bot.command(name="invite",description="| Receive an invite to your server")
-async def invite(ctx):
-	await ctx.author.send(embed=(await utils.embedGen("Invite PXB to your server",f"[Click here](https://discordapp.com/oauth2/authorize?client_id=553602353962549249&scope=bot&permissions=8) to invite {bot.user.name} to your server")))
-
-@bot.command(name="userinfo",description="[user] | Returns information about a specific user")
-async def userinfo(ctx,user:discord.Member=None):
-	if user is None:
-		await ctx.send(embed=(await userCheck(ctx.author)))
-	else:
-		await ctx.send(embed=(await userCheck(user)))
-
-@bot.command(name="botinfo",description="| Returns information about the bot")
-async def botinfo(ctx):
-	guildCount = 0
-	userCount = 0
-	version = open("version.txt").read()
-	for guild in bot.guilds:
-		guildCount += 1
-		for user in guild.members:
-			userCount += 1
-	await ctx.send(embed=(await utils.embedGen("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{bot.user.name} version: {version}")))
-
-@bot.command(name="setprefix",description="<prefix> | Sets a local prefix for the bot")
-async def setPrefix(ctx,prefix):
-	if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
-		(await db.dbUpdate("guilds",{"id": ctx.guild.id},{"prefix": prefix}))
-		await ctx.send(embed=(await utils.embedGen("Prefix changed!",f"`{prefix}` is now the prefix for this guild")))
-	else:
-		(await utils.error(ctx,"You are missing 'Administrator' permission to run this command."))
-
-# # # #### # # #
-# HELP COMMAND #
-# # # #### # # #
-
-bot.remove_command("help")
-@bot.command(name="help",description="[module] | Returns a list of all commands with their usage")
-async def custom_help(ctx,module=""):
-	msg = (await utils.embedGen("Help",None))
-	modules = dict()
-	modules["misc"] = []
-	for command in bot.commands:
-		if type(command) is discord.ext.commands.core.Group:
-			modules[command.name.lower()] = command
-		else:
-			modules["misc"].append(command)
-	if module == "":
-		msg.description = "Please specify the modules you wish to look up"
-		for key in sorted(modules.keys()):
-			if key == "misc":
-				msg.add_field(name=f"💿 - Misc ({await utils.getPrefix(bot,ctx)}help misc)",value="List of all non-groupped commands",inline=False)
-			if key == "admin":
-				msg.add_field(name=f"🔨 - Admin ({await utils.getPrefix(bot,ctx)}help admin)",value="Administrative commands",inline=False)
-			if key == "logs":
-				msg.add_field(name=f"🔍 - Logs ({await utils.getPrefix(bot,ctx)}help logs)",value="Logging of commands",inline=False)
-			if key == "perms":
-				msg.add_field(name=f"🔧 - Perms ({await utils.getPrefix(bot,ctx)}help perms)",value="Assigning and removing permissions",inline=False)
-		return await ctx.send(embed=msg)
-	elif module != "":
-		if module.lower() in modules.keys():
-			modules = {module.lower(): modules[module.lower()]}
-		else:
-			msg.description = f"We could not find module {module}"
+	bot.remove_command("help")
+	@commands.command(name="help",description="[module] | Returns a list of all commands with their usage")
+	async def custom_help(self,ctx,module=""):
+		msg = (await utils.embedGen("Help",None))
+		modules = dict()
+		modules["misc"] = []
+		for command in bot.commands:
+			if type(command) is discord.ext.commands.core.Group:
+				modules[command.name.lower()] = command
+			else:
+				modules["misc"].append(command)
+		if module == "":
+			msg.description = "Please specify the modules you wish to look up"
+			for key in sorted(modules.keys()):
+				if key == "misc":
+					msg.add_field(name=f"💿 - Misc ({await utils.getPrefix(bot,ctx)}help misc)",value="List of all non-groupped commands",inline=False)
+				if key == "admin":
+					msg.add_field(name=f"🔨 - Admin ({await utils.getPrefix(bot,ctx)}help admin)",value="Administrative commands",inline=False)
+				if key == "logs":
+					msg.add_field(name=f"🔍 - Logs ({await utils.getPrefix(bot,ctx)}help logs)",value="Logging of commands",inline=False)
+				if key == "perms":
+					msg.add_field(name=f"🔧 - Perms ({await utils.getPrefix(bot,ctx)}help perms)",value="Assigning and removing permissions",inline=False)
 			return await ctx.send(embed=msg)
-	for cog,cog_obj in modules.items():
-		prefix = (await utils.getPrefix(bot,ctx))
-		if cog.lower() in ["misc"]:
-			for command in sorted(cog_obj, key=lambda o: f"{o.full_parent_name} {o.name}"):
-				split = command.description.split("|")
-				if len(split) >= 2 and not command.hidden:
-					msg.add_field(name=f"{prefix}{command.name} {split[0]}",value=split[1],inline=False)
-				elif len(split) < 2 and not command.hidden:
-					msg.add_field(name=f"{prefix}{command.name}",value=command.description)
+		elif module != "":
+			if module.lower() in modules.keys():
+				modules = {module.lower(): modules[module.lower()]}
+			else:
+				msg.description = f"We could not find module {module}"
+				return await ctx.send(embed=msg)
+		for cog,cog_obj in modules.items():
+			prefix = (await utils.getPrefix(bot,ctx))
+			if cog.lower() in ["misc"]:
+				for command in sorted(cog_obj, key=lambda o: f"{o.full_parent_name} {o.name}"):
+					split = command.description.split("|")
+					if len(split) >= 2 and not command.hidden:
+						msg.add_field(name=f"{prefix}{command.name} {split[0]}",value=split[1],inline=False)
+					elif len(split) < 2 and not command.hidden:
+						msg.add_field(name=f"{prefix}{command.name}",value=command.description)
+			else:
+				for command in sorted(cog_obj.commands, key=lambda o: f"{o.full_parent_name} {o.name}"):
+					split = command.description.split("|")
+					if len(split) >= 2 and not command.hidden:
+						msg.add_field(name=f"{prefix}{command.full_parent_name} {command.name} {split[0]}",value=split[1],inline=False)
+					elif len(split) < 2 and not command.hidden:
+						msg.add_field(name=f"{prefix}{command.full_parent_name} {command.name}",value=command.description)
+		await ctx.send(embed=msg)
+
+	@commands.command(name="invite",description="| Receive an invite to your server")
+	async def invite(self,ctx):
+		await ctx.author.send(embed=(await utils.embedGen("Invite PXB to your server",f"[Click here](https://discordapp.com/oauth2/authorize?client_id=553602353962549249&scope=bot&permissions=8) to invite {bot.user.name} to your server")))
+
+	@commands.command(name="userinfo",description="[user] | Returns information about a specific user")
+	async def userinfo(self,ctx,user:discord.Member=None):
+		if user is None:
+			await ctx.send(embed=(await userCheck(ctx.author)))
 		else:
-			for command in sorted(cog_obj.commands, key=lambda o: f"{o.full_parent_name} {o.name}"):
-				split = command.description.split("|")
-				if len(split) >= 2 and not command.hidden:
-					msg.add_field(name=f"{prefix}{command.full_parent_name} {command.name} {split[0]}",value=split[1],inline=False)
-				elif len(split) < 2 and not command.hidden:
-					msg.add_field(name=f"{prefix}{command.full_parent_name} {command.name}",value=command.description)
-	await ctx.send(embed=msg)
+			await ctx.send(embed=(await userCheck(user)))
 
-# # # ## # # #
-# CMD GROUPS #
-# # # ## # # #
+	@commands.command(name="botinfo",description="| Returns information about the bot")
+	async def botinfo(self,ctx):
+		guildCount = 0
+		userCount = 0
+		version = open("version.txt").read()
+		for guild in bot.guilds:
+			guildCount += 1
+			for user in guild.members:
+				userCount += 1
+		await ctx.send(embed=(await utils.embedGen("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{bot.user.name} version: {version}")))
 
-@bot.group(name="developer",description="Developer only commands",hidden=True)
-@commands.check(utils.checkDev)
-async def developer(ctx):
-	if ctx.invoked_subcommand is None:
-		(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))
-		
-@bot.group(name="modules",description="Module management",hidden=True)
-@commands.check(utils.checkDev)
-async def modules(ctx):
-	if ctx.invoked_subcommand is None:
-		(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))
+	@commands.command(name="setprefix",description="<prefix> | Sets a local prefix for the bot")
+	async def setPrefix(self,ctx,prefix=None):
+		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
+			(await db.dbUpdate("guilds",{"id": ctx.guild.id},{"prefix": prefix}))
+			await ctx.send(embed=(await utils.embedGen("Prefix changed!",f"`{prefix}` is now the prefix for this guild")))
+		else:
+			(await utils.error(ctx,"You are missing 'GD_ADMINISTRATOR' permission to run this command."))
 
-# # # # ## # # # #
-# DEVELOPER CMDS #
-# # # # ## # # # #
+# # # # # # # # # #
+# DEVELOPER CLASS #
+# # # # # # # # # #
 
-@developer.command(name="restart",description="Restart the bot",hidden=True)
-async def _restart(ctx):
-	await ctx.send(embed=(await utils.embedGen("Bot is restarting",None)))
-	os._exit(100)
+class dev(commands.Cog):
+	def __init__(self,bot):
+		self.bot = bot
 
-@developer.command(name="eval",description="<command> | Seriously no touchy",hidden=True)
-async def _eval(ctx,cmd:str):
-	try:
-		result = (await eval(cmd))
-	except:
-		result = (eval(cmd))
-	await ctx.send(result)
+	@commands.group(name="developer",alias=["dev"],hidden=True)
+	@commands.check(utils.checkDev)
+	async def dev(self,ctx):
+		if ctx.invoked_subcommand is None:
+			(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))
+
+	@developer.command(name="restart",hidden=True)
+	async def _restart(self,ctx):
+		await ctx.send(embed=(await utils.embedGen("Bot is restarting",None)))
+		os._exit(100)
+
+	@developer.command(name="eval",hidden=True)
+	async def _eval(self,ctx,cmd:str):
+		try:
+			result = (await eval(cmd))
+		except:
+			result = (eval(cmd))
+		await ctx.send(result)
 	
-# # # # # # # #
-# MODULE CMDS #
-# # # # # # # #
+	@developer.command(name="modulereload",alias=["mreload"],hidden=True)
+	async def _reload(self,ctx,module):
+		try:
+			self.bot.unload_extension(f"{module}_cog")
+			self.bot.load_extension(f"{module}_cog")
+		except:
+			self.bot.unload_extension(module)
+			self.bot.load_extension(module)
+		finally:
+			await ctx.send(embed=(await utils.embedGen("Module reloaded",module)))
 
-@modules.command(name="reload",description="<module> | Reload one module",hidden=True)
-async def _reload(ctx,module=None):
-	if module is None:
-		(await utils.error(ctx,"NO MODULE CALLED"))
-	else:
-		bot.unload_extension(f"{module}_cog")
-		bot.load_extension(f"{module}_cog")
-		await ctx.send(embed=(await utils.embedGen("Module reloaded",module)))
+	@developer.command(name="modulereloadall",alias=["mreloadall","mre"],hidden=True)
+	async def _reloadall(self,ctx):
+		embed = await reloadAllModules()
+		await ctx.send(embed=embed)
 
-@modules.command(name="reloadall",aliases=["re"],description="Reloads all modules",hidden=True)
-async def _reloadall(ctx):
-	embed = await reloadAllModules()
-	await ctx.send(embed=embed)
+	@developer.command(name="moduleload",alias=["mload"],hidden=True)
+	async def _load(self,ctx,module):
+		try:
+			self.bot.load_extension(f"{module}_cog")
+		except:
+			self.bot.load_extension(module)
+		finally:
+			await ctx.send(embed=(await utils.embedGen("Module loaded",module)))
 
-@modules.command(name="unload",description="<module> | Unload a specific module",hidden=True)
-async def _unload(ctx,module=None):
-	if module is None:
-		(await utils.error(ctx,"NO MODULE CALLED"))
-	else:
-		bot.unload_extension(f"{module}_cog")
-		await ctx.send(embed=(await utils.embedGen("Module unloaded",module)))
-
-@modules.command(name="load",description="<module> | Load a specific module",hidden=True)
-async def _load(ctx,module=None):
-	if module is None:
-		(await utils.error(ctx,"NO MODULE CALLED"))
-	else:
-		bot.load_extension(f"{module}_cog")
-		await ctx.send(embed=(await utils.embedGen("Module loaded",module)))
+	@developer.command(name="moduleunload",alias=["munload"],hidden=True)
+	async def _unload(self,ctx,module):
+		try:
+			self.bot.unload_extension(f"{module}_cog")
+		except:
+			self.bot.unload_extension(module)
+		finally:
+			await ctx.send(embed=(await utils.embedGen("Module unloaded",module)))
 
 for module in startUpExtensions:
-	bot.load_extension(f"{module}_cog")
+	try:
+		bot.load_extension(f"{module}_cog")
+	except:
+		bot.add_cog(module)
 
 bot.run(utils.getToken())

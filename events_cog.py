@@ -20,6 +20,12 @@ class Events(commands.Cog):
 		self.bot = bot
 
 	@commands.Cog.listener()
+	async def on_ready(self):
+	print(f"\n{self.bot.user.name}\nOnline\nFrom {str(datetime.utcnow()).split('.')[0]} UTC")
+	(await self.bot.get_channel(528300655610167326).send(embed=(await utils.embedGen("I'm online",f"As of {str(datetime.utcnow()).split('.')[0]} UTC"))))
+	await self.bot.change_presence(activity=discord.Game("g!help to get started"))
+
+	@commands.Cog.listener()
 	async def on_guild_join(self,guild):
 		data = {
 			"id": guild.id,
@@ -92,6 +98,17 @@ class Events(commands.Cog):
 				pass
 			elif command_base != "admin" and command_base != "logs" and guild["misc_log"]:
 				(await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))))
+
+	@commands.Cog.listener()
+	async def on_command_error(self,ctx,error):
+		if isinstance(error,commands.MissingRequiredArgument):
+			prefix = (await utils.getPrefix(self.bot,ctx))
+			(await utils.error(ctx,f"{error} - Use {prefix}help to find the required arguments"))
+		elif isinstance(error,commands.CommandNotFound):
+			prefix = (await utils.getPrefix(self.bot,ctx))
+			(await utils.error(ctx,f"{ctx.message.content} is not a valid command - Use {prefix}help to get a list of all modules and their commands"))
+		else:
+			(await utils.error(ctx,f"{error} - Report to developers"))
 
 	@commands.Cog.listener()
 	async def on_message_delete(self,message):

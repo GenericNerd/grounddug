@@ -18,7 +18,8 @@ import permissions_cog as perms
 # VARIABLES #
 # # # # # # #
 
-startUpExtensions = ["admin","logs","permissions","events","core","dev"]
+startExternalExtensions = ["admin","logs","permissions","events"]
+startInternalExtensions = ["core","dev"]
 bot = commands.Bot(command_prefix=utils.getPrefix)
 cwd = os.getcwd()
 
@@ -200,10 +201,9 @@ class dev(commands.Cog):
 		finally:
 			await ctx.send(embed=(await utils.embedGen("Module unloaded",module)))
 
-for module in startUpExtensions:
-	try:
-		bot.load_extension(f"{module}_cog")
-	except Exception as e:
-		bot.load_extension(module)
+for module in startExternalExtensions:
+	bot.load_extension(f"{module}_cog")
+for module in startInternalExtensions:
+	bot.add_cog(module)
 
 bot.run(utils.getToken())

@@ -19,8 +19,7 @@ import permissions_cog as perms
 # # # # # # #
 
 startExternalExtensions = ["admin","logs","permissions","events","core"]
-startInternalExtensions = ["dev"]
-bot = commands.Bot(command_prefix=utils.getPrefix)
+bot = commands.AutoShardedBot(command_prefix=utils.getPrefix)
 cwd = os.getcwd()
 
 # # # # # # #

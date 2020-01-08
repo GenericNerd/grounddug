@@ -107,7 +107,13 @@ class core(commands.Cog):
 			guildCount += 1
 			for user in guild.members:
 				userCount += 1
-		await ctx.send(embed=(await utils.embedGen("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{self.bot.user.name} version: {version}")))
+		msg = (await utils.embedGen("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{self.bot.user.name} version: {version}"))
+		latency = round(self.bot.latency*100)
+		if latency < 100:
+			msg.add_field(name="Status",value=f"<:status_online:664530427012317194> Latency: **{latency}**ms")
+		else:
+			msg.add_field(name="Status",value=f"<:status_dnd:664530426949271556> Latency: **{latency}**ms")
+		await ctx.send(embed=msg)
 
 	@commands.command(name="setprefix",description="<prefix> | Sets a local prefix for the bot")
 	async def setPrefix(self,ctx,prefix=None):

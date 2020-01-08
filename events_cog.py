@@ -102,11 +102,10 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_command_error(self,ctx,error):
+		prefix = (await utils.getPrefix(self.bot,ctx))
 		if isinstance(error,commands.MissingRequiredArgument):
-			prefix = (await utils.getPrefix(self.bot,ctx))
 			(await utils.error(ctx,f"{error} - Use {prefix}help to find the required arguments"))
 		elif isinstance(error,commands.CommandNotFound):
-			prefix = (await utils.getPrefix(self.bot,ctx))
 			(await utils.error(ctx,f"{ctx.message.content} is not a valid command - Use {prefix}help to get a list of all modules and their commands"))
 		else:
 			(await utils.error(ctx,f"{error} - Report to developers"))

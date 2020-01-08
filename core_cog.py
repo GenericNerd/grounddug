@@ -109,11 +109,12 @@ class core(commands.Cog):
 				userCount += 1
 		msg = (await utils.embedGen("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{self.bot.user.name} version: {version}"))
 		latency = round(self.bot.latency*100)
-		if latency < 100:
-			msg.add_field(name="Status",value=f"<:status_online:664530427012317194> Latency: **{latency}**ms")
-		else:
-			msg.add_field(name="Status",value=f"<:status_dnd:664530426949271556> Latency: **{latency}**ms")
-		await ctx.send(embed=msg)
+		for shard in self.bot.latencies:
+			if round(shard[1]*100) < 100:
+				msg.add_field(name=f"Shard {shard[0]}",value=f"<:status_online:664530427012317194> Latency: **{round(shard[1]*100)}**ms")
+			else:
+				msg.add_field(name=f"Shard {shard[0]}",value=f"<:status_dnd:664530426949271556> Latency: **{round(shard[1]*100)}**ms")
+		await(ctx.send(embed=msg))
 
 	@commands.command(name="setprefix",description="<prefix> | Sets a local prefix for the bot")
 	async def setPrefix(self,ctx,prefix=None):

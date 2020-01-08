@@ -111,9 +111,9 @@ class core(commands.Cog):
 		latency = round(self.bot.latency*100)
 		for shard in self.bot.latencies:
 			if round(shard[1]*100) < 100:
-				msg.add_field(name=f"Shard {shard[0]}",value=f"<:status_online:664530427012317194> Latency: **{round(shard[1]*100)}**ms")
+				msg.add_field(name=f"Shard {shard[0]}",value=f"<:status_online:437236812382208000> Latency: **{round(shard[1]*100)}**ms")
 			else:
-				msg.add_field(name=f"Shard {shard[0]}",value=f"<:status_dnd:664530426949271556> Latency: **{round(shard[1]*100)}**ms")
+				msg.add_field(name=f"Shard {shard[0]}",value=f"<:status_dnd:437236811664982016> Latency: **{round(shard[1]*100)}**ms")
 		await(ctx.send(embed=msg))
 
 	@commands.command(name="setprefix",description="<prefix> | Sets a local prefix for the bot")

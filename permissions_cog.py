@@ -89,7 +89,7 @@ class Permissions(commands.Cog):
 			else:
 				perm = permission.lower()
 			if (await getPermissions(ctx.guild.id,user.id))[permission]:
-				msg.add_field(name=f"{perm}",value=f"✅")
+				msg.add_field(name=f"{perm}",value=f"<:check:437236812189270018>")
 		await ctx.send(embed=msg)
 
 	@perms.command(name="add",description="<user> <permission> | Add a permission to a user")

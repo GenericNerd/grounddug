@@ -62,6 +62,7 @@ class Logs(commands.Cog):
 				"misc_log": False,
 				"logs_log": False,
 				"admin_log": False,
+				"permissions_log": False,
 				"advertising_log": False,
 				"delete_log": False,
 				"raid_mode": False}

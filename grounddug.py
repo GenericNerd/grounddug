@@ -35,8 +35,12 @@ async def reloadAllModules():
 	embed = (await utils.embedGen("All modules reloaded","The following modules have been reloaded"))
 	for module in modules:
 		bot.unload_extension(f"{module}_cog")
-		bot.load_extension(f"{module}_cog")
-		embed.add_field(name=module,value="Successfully reloaded",inline=True)
+		try:
+			bot.load_extension(f"{module}_cog")
+		except Exception as e:
+			embed.add_field(name="module",value=f"<:cross:437236812109316109> - `{e}`",inline=True)
+		else:
+			embed.add_field(name=module,value="<:check:437236812189270018>",inline=True)
 	return embed
 
 # # # # # # # # # #

@@ -43,7 +43,7 @@ class core(commands.Cog):
 	@commands.command(name="help",description="[module] | Returns a list of all commands with their usage")
 	async def custom_help(self,ctx,module=""):
 		prefix = await utils.getPrefix(self.bot,ctx)
-		msg = (await utils.embedGen("Help","Arguments in [] are requireed, arguments in <> are optional"))
+		msg = (await utils.embedGen("Help","Arguments in <> are requireed, arguments in [] are optional"))
 		modules = dict()
 		modules["misc"] = []
 		for command in self.bot.commands:

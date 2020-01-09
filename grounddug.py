@@ -49,7 +49,7 @@ class dev(commands.Cog):
 	def __init__(self,bot):
 		self.bot = bot
 
-	@commands.group(name="developer",alias=["dev"],hidden=True)
+	@commands.group(name="developer",aliases=["dev"],hidden=True)
 	@commands.check(utils.checkDev)
 	async def developer(self,ctx):
 		if ctx.invoked_subcommand is None:
@@ -68,7 +68,7 @@ class dev(commands.Cog):
 			result = (eval(cmd))
 		await ctx.send(result)
 	
-	@developer.command(name="modulereload",alias=["mreload"],hidden=True)
+	@developer.command(name="modulereload",aliases=["mreload"],hidden=True)
 	async def _reload(self,ctx,module):
 		try:
 			self.bot.unload_extension(f"{module}_cog")
@@ -79,12 +79,12 @@ class dev(commands.Cog):
 		finally:
 			await ctx.send(embed=(await utils.embedGen("Module reloaded",module)))
 
-	@developer.command(name="modulereloadall",alias=["mreloadall","mre"],hidden=True)
+	@developer.command(name="modulereloadall",aliases=["mreloadall","mre"],hidden=True)
 	async def _reloadall(self,ctx):
 		embed = await reloadAllModules()
 		await ctx.send(embed=embed)
 
-	@developer.command(name="moduleload",alias=["mload"],hidden=True)
+	@developer.command(name="moduleload",aliases=["mload"],hidden=True)
 	async def _load(self,ctx,module):
 		try:
 			self.bot.load_extension(f"{module}_cog")
@@ -93,7 +93,7 @@ class dev(commands.Cog):
 		finally:
 			await ctx.send(embed=(await utils.embedGen("Module loaded",module)))
 
-	@developer.command(name="moduleunload",alias=["munload"],hidden=True)
+	@developer.command(name="moduleunload",aliases=["munload"],hidden=True)
 	async def _unload(self,ctx,module):
 		try:
 			self.bot.unload_extension(f"{module}_cog")

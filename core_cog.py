@@ -13,25 +13,6 @@ from bson.objectid import ObjectId
 import db_handle as db
 import permissions_cog as perms
 
-# # # # # # #
-# FUNCTIONS #
-# # # # # # #
-
-async def userCheck(user):
-	embed = (await utils.embedGen(f"{user.name}#{user.discriminator}",f"{user.mention} - {user.id}")).set_thumbnail(url=user.avatar_url)
-	embed.add_field(name="Status",value=user.status,inline=True)
-	embed.add_field(name="Server join date",value=f"{str(user.joined_at).split('.')[0]} - `{str(datetime.utcnow()-user.joined_at).split('.')[0]} ago`",inline=True)
-	embed.add_field(name="Account age",value=f"{str(user.created_at).split('.')[0]} - `{str(datetime.utcnow()-user.created_at).split('.')[0]} ago`",inline=True)
-	roles = "@everyone"
-	for role in user.roles:
-		if role.name != "@everyone":
-			roles = roles + f", {role.name}"
-	if roles == "@everyone":
-		embed.add_field(name="Roles",value="No significant roles",inline=False)
-	else:
-		embed.add_field(name="Roles",value=roles,inline=False)
-	return embed
-
 # # # ## # # #
 # CORE CLASS #
 # # # ## # # #
@@ -94,9 +75,31 @@ class core(commands.Cog):
 	@commands.command(name="userinfo",description="[user] | Returns information about a specific user")
 	async def userinfo(self,ctx,user:discord.Member=None):
 		if user is None:
-			await ctx.send(embed=(await userCheck(ctx.author)))
+			embed = (await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"{ctx.author.mention} - {ctx.author.id}")).set_thumbnail(url=ctx.author.avatar_url)
+			embed.add_field(name="Status",value=ctx.author.status,inline=True)
+			embed.add_field(name="Server join date",value=f"{str(ctx.author.joined_at).split('.')[0]} - `{str(datetime.utcnow()-ctx.author.joined_at).split('.')[0]} ago`",inline=True)
+			embed.add_field(name="Account age",value=f"{str(ctx.author.created_at).split('.')[0]} - `{str(datetime.utcnow()-ctx.author.created_at).split('.')[0]} ago`",inline=True)
+			roles = "@everyone"
+			for role in ctx.author.roles:
+				if role.name != "@everyone":
+					roles = roles + f", {role.name}"
+			if roles == "@everyone":
+				embed.add_field(name="Roles",value="No significant roles",inline=False)
+			else:
+				embed.add_field(name="Roles",value=roles,inline=False)
 		else:
-			await ctx.send(embed=(await userCheck(user)))
+			embed = (await utils.embedGen(f"{user.name}#{user.discriminator}",f"{user.mention} - {user.id}")).set_thumbnail(url=user.avatar_url)
+			embed.add_field(name="Status",value=user.status,inline=True)
+			embed.add_field(name="Server join date",value=f"{str(user.joined_at).split('.')[0]} - `{str(datetime.utcnow()-user.joined_at).split('.')[0]} ago`",inline=True)
+			embed.add_field(name="Account age",value=f"{str(user.created_at).split('.')[0]} - `{str(datetime.utcnow()-user.created_at).split('.')[0]} ago`",inline=True)
+			roles = "@everyone"
+			for role in user.roles:
+				if role.name != "@everyone":
+					roles = roles + f", {role.name}"
+			if roles == "@everyone":
+				embed.add_field(name="Roles",value="No significant roles",inline=False)
+			else:
+				embed.add_field(name="Roles",value=roles,inline=False)
 
 	@commands.command(name="botinfo",description="| Returns information about the bot")
 	async def botinfo(self,ctx):

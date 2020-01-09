@@ -1,0 +1,6 @@
+ssh_priv.ppk
+ssh_pub
+__pycache__/
+bin/
+emojis/
+images/

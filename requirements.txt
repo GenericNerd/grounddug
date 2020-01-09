@@ -1,5 +1,0 @@
-asyncio
-discord.py
-datetime
-dnspython
-pymongo

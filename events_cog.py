@@ -35,7 +35,7 @@ class Events(commands.Cog):
 			"misc_log": False,
 			"logs_log": False,
 			"admin_log": False,
-			"permissions_log": False,
+			"perms_log": False,
 			"advertising_log": False,
 			"delete_log": False,
 			"raid_mode": False}
@@ -87,16 +87,12 @@ class Events(commands.Cog):
 			guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
 			channel = self.bot.get_channel(guild["channel"])
 			command_base = (ctx.message.content).split((await utils.getPrefix(self.bot,ctx)))[1].split(" ")[0]
-			print(command_base in ["admin","perms","logs"])
-			if command_base == "admin" and guild["admin_log"]:
-				(await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))))
-			elif command_base == "logs" and guild["logs_log"]:
-				(await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))))
-			elif command_base == "perms" and guild["permissions_log"]:
+			command_list = ["admin","logs","perms"]
+			if command_base in command_list and guild[f"{command_base}_log"]:
 				(await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))))
 			elif command_base == "developer" or command_base == "modules":
 				pass
-			elif command_base != "admin" and command_base != "logs" and command_base != "perms" and guild["misc_log"]:
+			elif not command_base in command_list and guild["misc_log"]:
 				(await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))))
 
 	@commands.Cog.listener()

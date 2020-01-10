@@ -8,14 +8,14 @@ import discord
 from discord.ext import commands
 import asyncio
 import pymongo
-from pymongo import MongoClient
+from motor import motor_asyncio
 from bson.objectid import ObjectId
 
 # # # # # # #
 # VARIABLES #
 # # # # # # #
 
-client = pymongo.MongoClient("mongodb+srv://Fabio:^P*4k6A$c1I4@grounddug-z0fef.mongodb.net/test?retryWrites=true&w=majority")
+client = motor_asyncio.AsyncIOMotorClient("mongodb+srv://Fabio:^P*4k6A$c1I4@grounddug-z0fef.mongodb.net/test?retryWrites=true&w=majority")
 db = client.grounddug
 
 # # # # # # #

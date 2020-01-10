@@ -68,9 +68,14 @@ class Permissions(commands.Cog):
 	async def perms(self,ctx):
 		if ctx.invoked_subcommand is None:
 			(await ctx.invoke(self.bot.get_command("help"),"perms"))
+		else:
+			guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
+			if guild["admin_log"]:
+				channel = self.bot.get_channel(guild["channel"])
+				await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
 
 	@perms.command(name="setup",description="| Initial guild setup",hidden=True)
-	@commands.check(utils.checkDev)
+	@utils.has_level(5)
 	async def _setup(self,ctx):
 		for guild in self.bot.guilds:
 			for member in guild.members:
@@ -81,6 +86,7 @@ class Permissions(commands.Cog):
 						(await db.dbInsert("permissions",(await template_data(guild,member))))
 
 	@perms.command(name="list",description="<user> | List a users' permissions")
+	@commands.guild_only
 	async def _list(self,ctx,user:discord.Member):
 		msg = (await utils.embedGen("Permissions",f"{user.name}'s current permissions"))
 		for permission in (await getPermissions(ctx.guild.id,user.id)):
@@ -93,6 +99,7 @@ class Permissions(commands.Cog):
 		await ctx.send(embed=msg)
 
 	@perms.command(name="add",description="<user> <permission> | Add a permission to a user")
+	@commands.guild_only
 	async def _add(self,ctx,user:discord.Member,permission=None):
 		if (await getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 			(await changePermission(self,ctx,user,True,permission))
@@ -100,6 +107,7 @@ class Permissions(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_ADMINISTRATOR' permission to run this command."))
 
 	@perms.command(name="remove",description="<user> <permission> | Remove a permission to a user")
+	@commands.guild_only
 	async def _remove(self,ctx,user:discord.Member,permission=None):
 		if (await getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 			(await changePermission(self,ctx,user,False,permission))

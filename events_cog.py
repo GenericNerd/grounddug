@@ -87,11 +87,7 @@ class Events(commands.Cog):
 			guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
 			channel = self.bot.get_channel(guild["channel"])
 			command_base = (ctx.message.content).split((await utils.getPrefix(self.bot,ctx)))[1].split(" ")[0]
-			command_list = ["admin","logs","perms"]
-			if command_base in command_list and guild[f"{command_base}_log"]:
-				(await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))))
-			elif command_base == "developer" or command_base == "modules":
-				pass
+			command_list = ["admin","logs","perms","developer","dev"]
 			elif not command_base in command_list and guild["misc_log"]:
 				(await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))))
 
@@ -104,6 +100,8 @@ class Events(commands.Cog):
 			(await utils.error(ctx,f"{ctx.message.content} is not a valid command - Use {prefix}help to get a list of all modules and their commands"))
 		elif isinstance(error,discord.NotFound):
 			(await utils.error(ctx,f"{ctx.message.content} - {error}"))
+		elif isinstance(error,commands.CheckFailure):
+			(await utils.error(ctx,f"{error} - You do not have the valid permissions to run this command"))
 		else:
 			(await utils.error(ctx,f"{error} - Report to developers"))
 

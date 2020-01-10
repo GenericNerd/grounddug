@@ -50,9 +50,14 @@ class Logs(commands.Cog):
 	async def logs(self,ctx):
 		if ctx.invoked_subcommand is None:
 			(await ctx.invoke(self.bot.get_command("help"),"logs"))
+		else:
+			guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))
+			if guild["admin_log"]:
+				channel = self.bot.get_channel(guild["channel"])
+				await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
 
 	@logs.command(name="setup",description="| Initial guild setup (developer only)",hidden=True)
-	@commands.check(utils.checkDev)
+	@utils.has_level(5)
 	async def _setup(self,ctx):
 		msg = (await utils.embedGen("The following guilds were added to the database",None))
 		for guild in self.bot.guilds:
@@ -72,6 +77,7 @@ class Logs(commands.Cog):
 		await ctx.send(embed=msg)
 
 	@logs.command(name="setchannel", description="<channel> | Set the channel for logs to be posted")
+	@commands.guild_only
 	async def _setchannel(self,ctx,channel:discord.TextChannel=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 			if channel == None:
@@ -89,6 +95,7 @@ class Logs(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_ADMINISTRATOR' permission to run this command."))
 
 	@logs.command(name="enable",description="<module> | Enable logging for a module")
+	@commands.guild_only
 	async def _enable(self,ctx,module=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 			await moduleLogChange(self,ctx,False,"enable",module)
@@ -96,6 +103,7 @@ class Logs(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_ADMINISTRATOR' permission to run this command."))
 
 	@logs.command(name="disable",description="<module> | Disable logging for a module")
+	@commands.guild_only
 	async def _disable(self,ctx,module=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 			await moduleLogChange(self,ctx,True,"disable",module)

@@ -14,7 +14,16 @@ import db_handle as db
 # VARIABLES #
 # # # # # # #
 
-mainDbObject = ObjectId("5e0e79e9610b77df8202a1e7")
+mainDbObject = ObjectId("5e18fd4d123a50ef10d8332e")
+
+# # # # # #
+# CLASSES #
+# # # # # #
+
+class PermissionsError(commands.CheckFailure):
+    def __init__(self,required,current):
+        self.required = required
+        self.current = current
 
 # # # # # # #
 # FUNCTIONS #
@@ -23,6 +32,27 @@ mainDbObject = ObjectId("5e0e79e9610b77df8202a1e7")
 def getToken():
     #Production Token
     return db.dbNSyncFind("settings",{"_id": mainDbObject})["token"]
+
+async def getLevel(ctx,user:discord.Member):
+    if user.id in (await db.dbFind("settings",{"5": user.id})):
+        return 5
+    elif user.id in (await db.dbFind("settings",{"4": user.id})):
+        return 4
+    elif user.id in (await db.dbFind("settings",{"3": user.id})):
+        return 3
+    elif user.id in (await db.dbFind("settings",{"2": user.id})):
+        return 2
+    elif user.id in (await db.dbFind("settings",{"1": user.id})):
+        return 1
+
+def has_level(required: int = 0):
+    async def calculate(ctx) -> bool:
+        level = await getLevel(ctx,ctx.message.author)
+        if level >= required:
+            return True
+        else:
+            raise PermissionsError(required=required,current=level)
+    return commands.check(calculate)
 
 async def embedGen(title,desc,cl=None):
     if cl is None:
@@ -39,9 +69,3 @@ async def getPrefix(bot,message):
 
 async def error(ctx,error):
     await ctx.send(embed=(await embedGen("Something went wrong!",f"`{error}`",0xff0000)))
-
-async def checkDev(ctx):
-    if ctx.author.id in (await db.dbFind("settings",{"_id": mainDbObject}))["developers"]:
-        return True
-    else:
-        return False

@@ -54,7 +54,7 @@ class dev(commands.Cog):
 		self.bot = bot
 
 	@commands.group(name="developer",aliases=["dev"],hidden=True)
-	@commands.check(utils.checkDev)
+	@utils.has_level(5)
 	async def developer(self,ctx):
 		if ctx.invoked_subcommand is None:
 			(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))

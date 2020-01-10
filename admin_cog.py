@@ -34,7 +34,7 @@ class Admin(commands.Cog):
 			except Exception as e:
 				(await utils.error(ctx,f"{member.name} could not be notified - {e}"))
 			finally:
-				await member.ban(reason=f"Banned by @{ctx.user.name}#{ctx.user.discriminator} for: {reason}")
+				await member.ban(reason=f"Banned by @{ctx.author.name}#{ctx.author.discriminator} for: {reason}")
 		else:
 			(await utils.error(ctx,"You are missing 'GD_BAN_MEMBERS' permission to run this command."))
 
@@ -42,7 +42,7 @@ class Admin(commands.Cog):
 	async def _banid(self,ctx,id:int,reason=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["BAN_MEMBERS"]:
 			await ctx.send(embed=(await utils.embedGen(f"{id} has been banned by {ctx.author.name}#{ctx.author.discriminator} for `{reason}`",None,0xff5555)))
-			await ctx.guild.ban(discord.Object(id=id),reason=f"Banned by @{ctx.user.name}#{ctx.user.discriminator} for: {reason}")
+			await ctx.guild.ban(discord.Object(id=id),reason=f"Banned by @{ctx.author.name}#{ctx.author.discriminator} for: {reason}")
 		else:
 			(await utils.error(ctx,"You are missing 'GD_BAN_MEMBERS' permission to run this command."))
 
@@ -55,7 +55,7 @@ class Admin(commands.Cog):
 			except Exception as e:
 				(await utils.error(ctx,f"{member.name} could not be notified - {e}"))
 			finally:
-				await member.ban(reason=f"Softbanned by @{ctx.user.name}#{ctx.user.discriminator} for: {reason}")
+				await member.ban(reason=f"Softbanned by @{ctx.author.name}#{ctx.author.discriminator} for: {reason}")
 				await member.unban()
 		else:
 			(await utils.error(ctx,"You are missing 'GD_BAN_MEMBERS' permission to run this command."))

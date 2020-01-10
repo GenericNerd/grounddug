@@ -102,6 +102,8 @@ class Events(commands.Cog):
 			(await utils.error(ctx,f"{error} - Use {prefix}help to find the required arguments"))
 		elif isinstance(error,commands.CommandNotFound):
 			(await utils.error(ctx,f"{ctx.message.content} is not a valid command - Use {prefix}help to get a list of all modules and their commands"))
+		elif isinstance(error,discord.NotFound):
+			(await utils.error(ctx,f"{ctx.message.content} - {error}"))
 		else:
 			(await utils.error(ctx,f"{error} - Report to developers"))
 

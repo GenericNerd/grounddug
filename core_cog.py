@@ -70,7 +70,7 @@ class core(commands.Cog):
 
 	@commands.command(name="invite",description="| Receive an invite to your server")
 	async def invite(self,ctx):
-		await ctx.author.send(embed=(await utils.embedGen("Invite PXB to your server",f"[Click here](https://discordapp.com/oauth2/authorize?client_id=553602353962549249&scope=bot&permissions=8) to invite {bot.user.name} to your server")))
+		await ctx.author.send(embed=(await utils.embedGen(f"Invite {self.bot.user.name} to your server",f"[Click here](https://discordapp.com/oauth2/authorize?client_id=553602353962549249&scope=bot&permissions=8) to invite {self.bot.user.name} to your server")))
 
 	@commands.command(name="userinfo",description="[user] | Returns information about a specific user")
 	async def userinfo(self,ctx,user:discord.Member=None):
@@ -100,6 +100,7 @@ class core(commands.Cog):
 				embed.add_field(name="Roles",value="No significant roles",inline=False)
 			else:
 				embed.add_field(name="Roles",value=roles,inline=False)
+		await ctx.send(embed=embed)
 
 	@commands.command(name="botinfo",description="| Returns information about the bot")
 	async def botinfo(self,ctx):

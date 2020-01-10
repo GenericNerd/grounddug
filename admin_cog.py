@@ -97,7 +97,7 @@ class Admin(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_MUTE_MEMBERS' permission to run this command."))
 
 	@admin.command(name="purge",description="[amount (100 by default)] [member/bot/all] | Delete multiple messages at once")
-	async def _purge(self,ctx,amount=100,check=None):
+	async def _purge(self,ctx,amount=100,check=""):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["MANAGE_MESSAGES"]:
 			def member_check(ctx):
 				return not ctx.author.bot
@@ -107,7 +107,7 @@ class Admin(commands.Cog):
 				await ctx.channel.purge(limit=amount,check=member_check)
 			elif check.lower() == "bot":
 				await ctx.channel.purge(limit=amount,check=bot_check)
-			elif check.lower() == "all" or check == None:
+			elif check.lower() == "all" or check == "":
 				await ctx.channel.purge(limit=amount)
 		else:
 			(await utils.error(ctx,"You are missing 'GD_MANAGE_MESSAGES' permission to run this command."))

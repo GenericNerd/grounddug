@@ -59,11 +59,6 @@ class dev(commands.Cog):
 		if ctx.invoked_subcommand is None:
 			(await utils.error(ctx,"NO INVOKED SUBCOMMAND"))
 
-	@developer.command(name="restart",hidden=True)
-	async def _restart(self,ctx):
-		await ctx.send(embed=(await utils.embedGen("Bot is restarting",None)))
-		os._exit(100)
-
 	@developer.command(name="eval",hidden=True)
 	async def _eval(self,ctx,cmd:str):
 		try:

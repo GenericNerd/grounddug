@@ -31,7 +31,7 @@ class Admin(commands.Cog):
 				await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
 
 	@admin.command(name="ban",description="<member> [reason] | Ban a member from your server")
-	@commands.guild_only
+	@commands.guild_only()
 	async def _ban(self,ctx,member:discord.Member,reason=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["BAN_MEMBERS"]:
 			await ctx.send(embed=(await utils.embedGen(f"{member.name} has been banned",f"{member.name}#{member.discriminator} has been banned by {ctx.author} for `{reason}`",0xff5555)))
@@ -45,7 +45,7 @@ class Admin(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_BAN_MEMBERS' permission to run this command."))
 
 	@admin.command(name="hackban",description="<ID> [reason] | Ban a member from your server using their ID")
-	@commands.guild_only
+	@commands.guild_only()
 	async def _banid(self,ctx,id:int,reason=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["BAN_MEMBERS"]:
 			await ctx.send(embed=(await utils.embedGen(f"{id} has been banned by {ctx.author.name}#{ctx.author.discriminator} for `{reason}`",None,0xff5555)))
@@ -54,7 +54,7 @@ class Admin(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_BAN_MEMBERS' permission to run this command."))
 
 	@admin.command(name="softban",description="<member> [reason] | Ban and immediately unban a member, deleting their messages")
-	@commands.guild_only
+	@commands.guild_only()
 	async def _softban(self,ctx,member:discord.Member,reason=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["BAN_MEMBERS"]:
 			await ctx.send(embed=(await utils.embedGen(f"{member.name} has been soft-banned",f"{member.name}#{member.discriminator} has been soft-banned by {ctx.author}",0xff5555)))
@@ -69,7 +69,7 @@ class Admin(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_BAN_MEMBERS' permission to run this command."))
 
 	@admin.command(name="kick",description="<member> [reason] | Kick a user from the guild")
-	@commands.guild_only
+	@commands.guild_only()
 	async def _kick(self,ctx,member:discord.Member,reason=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["KICK_MEMBERS"]:
 			await ctx.send(embed=(await utils.embedGen(f"{member.name} has been kicked",f"{member.name}#{member.discriminator} has been kicked by {ctx.author}",0xff5555)))
@@ -83,7 +83,7 @@ class Admin(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_BAN_MEMBERS' permission to run this command."))
 
 	@admin.command(name="gag",description="<member> | Stop a user from being able to speak in a voice channel")
-	@commands.guild_only
+	@commands.guild_only()
 	async def _gag(self,ctx,member:discord.Member):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["MUTE_MEMBERS"]:
 			for channel in ctx.guild.voice_channels:
@@ -93,7 +93,7 @@ class Admin(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_MUTE_MEMBERS' permission to run this command."))
 
 	@admin.command(name="ungag",description="<member> | Allows a user to talk in voice channels again")
-	@commands.guild_only
+	@commands.guild_only()
 	async def _ungag(self,ctx,member:discord.Member):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["MUTE_MEMBERS"]:
 			for channel in ctx.guild.voice_channels:
@@ -103,7 +103,7 @@ class Admin(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_MUTE_MEMBERS' permission to run this command."))
 
 	@admin.command(name="mute",description="<member> | Stops a user from being able to type in a text channel")
-	@commands.guild_only
+	@commands.guild_only()
 	async def _mute(self,ctx,member:discord.Member):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["MUTE_MEMBERS"]:
 			for channel in ctx.guild.text_channels:
@@ -113,7 +113,7 @@ class Admin(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_MUTE_MEMBERS' permission to run this command."))
 
 	@admin.command(name="unmute",description="<member> | Allows a user to type in a text channel again")
-	@commands.guild_only
+	@commands.guild_only()
 	async def _unmute(self,ctx,member:discord.Member):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["MUTE_MEMBERS"]:
 			for channel in ctx.guild.text_channels:
@@ -123,7 +123,7 @@ class Admin(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_MUTE_MEMBERS' permission to run this command."))
 
 	@admin.command(name="purge",description="[amount (100 by default)] [member/bot/all] | Delete multiple messages at once")
-	@commands.guild_only
+	@commands.guild_only()
 	async def _purge(self,ctx,amount=100,check=""):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["MANAGE_MESSAGES"]:
 			def member_check(ctx):
@@ -140,7 +140,7 @@ class Admin(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_MANAGE_MESSAGES' permission to run this command."))
 
 	@admin.command(name="raid",description="<state> | Activates or deactivates raid mode, which kicks new members as soon as they join in case of a raid")
-	@commands.guild_only
+	@commands.guild_only()
 	async def _raid(self,ctx,state=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 			guild = (await db.dbFind("guilds",{"id": ctx.guild.id}))

@@ -88,7 +88,7 @@ class Events(commands.Cog):
 			channel = self.bot.get_channel(guild["channel"])
 			command_base = (ctx.message.content).split((await utils.getPrefix(self.bot,ctx)))[1].split(" ")[0]
 			command_list = ["admin","logs","perms","developer","dev"]
-			elif not command_base in command_list and guild["misc_log"]:
+			if not command_base in command_list and guild["misc_log"]:
 				(await channel.send(embed=(await utils.embedGen(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>"))))
 
 	@commands.Cog.listener()

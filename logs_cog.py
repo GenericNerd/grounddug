@@ -77,7 +77,7 @@ class Logs(commands.Cog):
 		await ctx.send(embed=msg)
 
 	@logs.command(name="setchannel", description="<channel> | Set the channel for logs to be posted")
-	@commands.guild_only
+	@commands.guild_only()
 	async def _setchannel(self,ctx,channel:discord.TextChannel=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 			if channel == None:
@@ -95,7 +95,7 @@ class Logs(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_ADMINISTRATOR' permission to run this command."))
 
 	@logs.command(name="enable",description="<module> | Enable logging for a module")
-	@commands.guild_only
+	@commands.guild_only()
 	async def _enable(self,ctx,module=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 			await moduleLogChange(self,ctx,False,"enable",module)
@@ -103,7 +103,7 @@ class Logs(commands.Cog):
 			(await utils.error(ctx,"You are missing 'GD_ADMINISTRATOR' permission to run this command."))
 
 	@logs.command(name="disable",description="<module> | Disable logging for a module")
-	@commands.guild_only
+	@commands.guild_only()
 	async def _disable(self,ctx,module=None):
 		if (await perms.getPermissions(ctx.guild.id,ctx.author.id))["ADMINISTRATOR"]:
 			await moduleLogChange(self,ctx,True,"disable",module)

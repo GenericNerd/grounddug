@@ -17,7 +17,7 @@ class MissingGDPermission(commands.CheckFailure):
 
 def has_required_level(required: int = 0):
     async def levelCalculate(ctx):
-        level = await get_level(ctx,ctx.message.author)
+        level = await get_level(ctx.message.author)
         if level >= required:
             return True
         else:
@@ -30,5 +30,5 @@ def has_GD_permission(permission):
         if dbObject["permissions"][permission]:
             return True
         else:
-            raise MissingGDPermission(required=required)
+            raise MissingGDPermission(required=permission)
     return commands.check(permissionCalculate)

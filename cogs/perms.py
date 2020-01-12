@@ -13,31 +13,31 @@ from cogs.utils.dbhandle import dbInsert
 from cogs.utils.levels import get_level
 
 async def changePermission(self,ctx,user,change,permission=None):
+    permissions = await getPermissions(ctx.guild,user)
     if permission == None:
         prefix = await getPrefix(self.bot,ctx)
-        msg = await embeds.generate("Permissions",f"{user.name}'s current permissions")
-        for permission in (await getPermissions(ctx.guild,user)):
+        msg = await embeds.generate("Permissions",f"{user.name}'s permissions to change")
+        for permission in permissions:
             if len(permission.split("_")) >= 2:
                 perm = f"{permission.split('_')[0].lower()} {permission.split('_')[1].lower()}"
             else:
                 perm = permission.lower()
-            if not (await getPermissions(ctx.guild,user))[permission]:
-                msg = embeds.add_field(msg,perm,f"Change by using `{prefix}permissions <add/remove> @{user.name}#{user.discriminator} {permission.lower()}`")
+            if permissions[permission] != change:
+                msg = await embeds.add_field(msg,perm,f"Change by using `{prefix}perms <add/remove> @{user.name}#{user.discriminator} {permission.lower()}`")
         if msg.fields == []:
-            msg = embeds.add_field(msg,"All permissions",f"`{change}` - `{prefix}permissions list {user.name}#{user.discriminator}` to check them")
+            msg = await embeds.add_field(msg,"All permissions",f"`{change}` - `{prefix}perms list {user.name}#{user.discriminator}` to check them")
         await ctx.send(embed=msg)
     else:
         permission = permission.upper()
-        currentPermissions = await getPermissions(ctx.guild,user)
         if permission == "ADMINISTRATOR":
-            for perm in currentPermissions.copy():
-                currentPermissions[perm] = change
-            await dbUpdate("permissions",{"guild": ctx.guild.id, "user": user.id},{"permissions": currentPermissions})
+            for perm in permissions.copy():
+                permissions[perm] = change
+            await dbUpdate("permissions",{"guild": ctx.guild.id, "user": user.id},{"permissions": permissions})
         else:
             notChange = not change
-            if (await getPermissions(ctx.guild,user))[permission] == notChange:
-                currentPermissions[permission] = change
-                dbUpdate("permissions",{"guild": ctx.guild.id, "user": user.id},{"permissions": currentPermissions})
+            if permissions[permission] == notChange:
+                permissions[permission] = change
+                dbUpdate("permissions",{"guild": ctx.guild.id, "user": user.id},{"permissions": permissions})
         await ctx.send(embed=(await embeds.generate("Permission changed",f"Permission `{permission}` to {user.name}#{user.discriminator} was changed to `{change}`")))
 
 class perms(commands.Cog):
@@ -83,13 +83,14 @@ class perms(commands.Cog):
         if user == None:
             user = ctx.author
         msg = await embeds.generate("Permissions",f"{user.name}'s current permissions")
-        for permission in (await getPermissions(ctx.guild,user)):
+        permissions = await getPermissions(ctx.guild,user)
+        for permission in permissions:
             if len(permission.split("_")) >= 2:
                 perm = f"{permission.split('_')[0].lower()} {permission.split('_')[1].lower()}"
             else:
                 perm = permission.lower()
-            if (await getPermissions(ctx.guild,user))[permission]:
-                msg = embeds.add_field(msg,perm,"<:check:437236812189270018>")
+            if permissions[permission]:
+                msg = await embeds.add_field(msg,perm,"<:check:437236812189270018>",True)
         await ctx.send(embed=msg)
 
 def setup(bot):

@@ -20,7 +20,7 @@ async def dbFind(db,finder):
     return await asyncdb[db].find_one(finder)
 
 async def dbInsert(db,data):
-    await asyncdb[db].find_one(data)
+    await asyncdb[db].insert_one(data)
 
 async def dbRemove(db,finder):
     await asyncdb[db].delete_one(finder)

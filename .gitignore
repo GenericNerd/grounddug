@@ -4,4 +4,5 @@ __pycache__/
 bin/
 emojis/
 images/
+Website/
 test.py

@@ -17,4 +17,5 @@ def getToken():
     return db.dbNSyncFind("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})["token"]
 
 async def getPermissions(guild,member):
-    return db.dbFind("permissions",{"guild": guild.id,"user": member.id})["permissions"]
+    perms = await db.dbFind("permissions",{"guild": guild.id,"user": member.id})
+    return perms["permissions"]

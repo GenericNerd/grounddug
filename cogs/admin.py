@@ -28,7 +28,7 @@ class admin(commands.Cog):
     async def ban(self,ctx,member:discord.Member,reason=None):
         await ctx.send(embed=(await embeds.generate(f"{member.name} has been banned",f"{member.name}#{member.discriminator} has been banned by {ctx.author} for `{reason}`",0xff5555)))
         try:
-            await member.send(embed=(await embeds.generate(f"You have been banned from {ctx.guild.name}",f"You were banned by {ctx.author.name}#{ctx.author.discriminator} for `{reason}`")))
+            await member.send(embed=(await embeds.generate(f"You have been banned from {ctx.guild.name}",f"You were banned by {ctx.author.name}#{ctx.author.discriminator} for `{reason}`",0xff5555)))
         except Exception:
             await embeds.error(ctx,f"{member.name} could not be notified")
         finally:
@@ -38,7 +38,7 @@ class admin(commands.Cog):
     @commands.guild_only()
     @checks.has_GD_permission("BAN_MEMBERS")
     async def hackban(self,ctx,id:int,reason=None):
-        await ctx.send(embed=(await embeds.generate(f"{id} has been banned by {ctx.author.name}#{ctx.user.discriminator} for `{reason}`",None,0xff5555)))
+        await ctx.send(embed=(await embeds.generate(f"{id} has been banned by {ctx.author.name}#{ctx.author.discriminator} for `{reason}`",None,0xff5555)))
         await ctx.guild.ban(discord.Object(id=id),reason=f"Banned by {ctx.author.name}#{ctx.author.discriminator} for: {reason}")
 
     @admin.command(name="softban",description="<member> [reason] | Bans a member and immediately unbans them from the guild, removing their messages")
@@ -47,7 +47,7 @@ class admin(commands.Cog):
     async def softban(self,ctx,member:discord.Member,reason=None):
         await ctx.send(embed=(await embeds.generate(f"{member.name} has been soft-banned",f"{member.name}#{member.discriminator} has been soft-banned by {ctx.author}",0xff5555)))
         try:
-            await member.send(embed=(await embeds.generate(f"You have been soft-banned from {ctx.guild.name}",f"You were soft-banned by {ctx.author.name}#{ctx.author.discriminator}")))
+            await member.send(embed=(await embeds.generate(f"You have been soft-banned from {ctx.guild.name}",f"You were soft-banned by {ctx.author.name}#{ctx.author.discriminator}",0xff5555)))
         except Exception:
             await embeds.error(ctx,f"{member.name} could not be notified")
         finally:
@@ -60,7 +60,7 @@ class admin(commands.Cog):
     async def kick(self,ctx,member:discord.Member,reason=None):
         await ctx.send(embed=(await embeds.generate(f"{member.name} has been kicked",f"{member.name}#{member.discriminator} has been kicked by {ctx.author}",0xff5555)))
         try:
-            await member.send(embed=(await embeds.generate(f"You have been kicked from {ctx.guild.name}",f"You were kicked by {ctx.author.name}#{ctx.author.discriminator}")))
+            await member.send(embed=(await embeds.generate(f"You have been kicked from {ctx.guild.name}",f"You were kicked by {ctx.author.name}#{ctx.author.discriminator}",0xff5555)))
         except Exception as e:
             await embeds.error(ctx,f"{member.name} could not be notified")
         finally:
@@ -79,7 +79,7 @@ class admin(commands.Cog):
     @checks.has_GD_permission("MUTE_MEMBERS")
     async def ungag(self,ctx,member:discord.Member):
         for channel in ctx.guild.voice_channels:
-            await channel.set_permissions(member,speak=False)
+            await channel.set_permissions(member,speak=True)
         await ctx.send(embed=(await embeds.generate(f"{member.name} has been ungagged by {ctx.author.name}#{ctx.author.discriminator}",None)))
 
     @admin.command(name="mute",description="<member> | Stops a user from typing in all text channels")

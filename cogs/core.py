@@ -8,6 +8,7 @@ from cogs.utils.useful import getPrefix
 import cogs.utils.embeds as embeds
 from cogs.utils.dbhandle import dbUpdate
 from cogs.utils.dbhandle import dbFind
+from cogs.utils.levels import get_level
 from datetime import datetime
 from bson.objectid import ObjectId
 
@@ -110,6 +111,26 @@ class core(commands.Cog):
     async def setprefix(self,ctx,prefix):
         await dbUpdate("guilds",{"id": ctx.guild.id},{"prefix": prefix})
         await ctx.send(embed=(await embeds.generate("Prefix changed!",f"`{prefix}` is now the prefix for this guild")))
+
+    @commands.command(name="badges",description="<user> | Returns a list of the badges a user has in connection to the bot")
+    async def badges(self,ctx,user:discord.Member=None):
+        if user == None:
+            user = ctx.author
+        level = await get_level(user)
+        msg = await embeds.generate(f"@{user.name}#{user.discriminator} - {self.bot.user.name} Badges",None)
+        if level == 5:
+            msg = await embeds.add_field(msg,"⚙️ - Level 5","`These users are the creators and developers of the bot`")
+        elif level == 4:
+            pass
+        elif level == 3:
+            msg = await embeds.add_field(msg,"🔨 - Level 3","`These users are moderators to the bot. They are trusted to handle bot issues`")
+        elif level == 2:
+            pass
+        elif level == 1:
+            pass
+        else:
+            msg = await embeds.add_field(msg,"No badges")
+        await ctx.send(embed=msg)
 
 def setup(bot):
     bot.add_cog(core(bot))

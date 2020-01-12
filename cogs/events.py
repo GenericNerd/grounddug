@@ -77,7 +77,7 @@ class events(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self,message):
         if message.guild != None and not "discord.gg/" in message.content:
-            guild = await db.dbFind("guilds",{"id": ctx.guild.id})
+            guild = await db.dbFind("guilds",{"id": message.guild.id})
             if guild["delete_log"]:
                 msg = await embeds.generate("Message deleted",None,0xff5555)
                 msg.set_author(name=message.author.name,icon_url=message.author.avatar_url)
@@ -102,7 +102,7 @@ class events(commands.Cog):
         elif isinstance(error,commands.CommandNotFound):
             pass
         elif isinstance(error,commands.CheckFailure):
-            await embeds.error(ctx,f"{error} - You do not have the valid permissions to run this command")
+            await embeds.error(ctx,f"You do not have the valid permissions to run this command")
         else:
             await embeds.error(ctx,f"{error} - Report to developers")
 

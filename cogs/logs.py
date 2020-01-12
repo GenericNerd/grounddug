@@ -17,7 +17,7 @@ async def moduleLogChange(self,ctx,boolean,status,module=None):
 		for item,result in (await dbFind("guilds", {"id": ctx.guild.id})).items():
 			if result == boolean and len(item.split("_log")) > 1:
 				item = item.split("_log")[0]
-				msg = embeds.add_field(msg,item,f"Run `{prefix}logs {status} {item}` to log")
+				msg = await embeds.add_field(msg,item,f"Run `{prefix}logs {status} {item}` to log")
 		await ctx.send(embed=msg)
 	else:
 		for item,result in (await db.dbFind("guilds", {"id": ctx.guild.id})).items():
@@ -68,7 +68,7 @@ class logs(commands.Cog):
                 msg = embeds.add_field(msg,f"Created {guild.name}",f"`{guild.id}`")
         await ctx.send(embed=msg)
     
-    @logs.command(name="setchannel",description="<channel> | Set the channel to which all command logs will be sent to on the guild")
+    @logs.command(name="setchannel",description="[channel] | Set the channel to which all command logs will be sent to on the guild")
     @commands.guild_only()
     @checks.has_GD_permission("ADMINISTRATOR")
     async def setchannel(self,ctx,channel:discord.TextChannel=None):
@@ -78,7 +78,7 @@ class logs(commands.Cog):
             if guild["channel"] == 0:
                 await ctx.send(embed=(await embeds.generate("Logging channel",f"No current logging channel, set one by using `{prefix}logs setchannel <channel>`")))
             else:
-                await ctx.send(embed=(await embeds.generate("Logging channel",f"<#{channel}> is the current logging channel")))
+                await ctx.send(embed=(await embeds.generate("Logging channel",f"<#{guild['channel']}> is the current logging channel")))
         else:
             await dbUpdate("guilds",{"id": ctx.guild.id},{"channel": channel.id})
             await ctx.send(embed=(await embeds.generate("Logging channel changed",f"{channel.mention} will now have logs posted to it")))
@@ -86,13 +86,13 @@ class logs(commands.Cog):
     @logs.command(name="enable",description="[module] | Enables logging of a specific module within the guild")
     @commands.guild_only()
     @checks.has_GD_permission("ADMINISTRATOR")
-    async def enable(self,ctx,module):
+    async def enable(self,ctx,module=None):
         await moduleLogChange(self,ctx,False,"enable",module)
 
     @logs.command(name="disable",description="[module] | Disables logging of a specific module within the guild")
     @commands.guild_only()
     @checks.has_GD_permission("ADMINISTRATOR")
-    async def disable(self,ctx,module):
+    async def disable(self,ctx,module=None):
         await moduleLogChange(self,ctx,True,"disable",module)
 
 def setup(bot):

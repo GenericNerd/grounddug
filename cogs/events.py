@@ -34,7 +34,7 @@ class events(commands.Cog):
             "raid_mode": False}
         await db.dbInsert("guilds",data)
         for member in guild.members:
-            if member.id == guild.owner_id:
+            if ctx.member.guild_permissions.administrator:
                 await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True, "MUTE_MEMBERS": True, "KICK_MEMBERS": True, "BAN_MEMBERS": True, "ADMINISTRATOR": True}})
             else:
                 await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}})

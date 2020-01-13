@@ -98,6 +98,9 @@ class core(commands.Cog):
             guildCount += 1
             for user in guild.members:
                 userCount += 1
+        with open("/var/www/grounddug.xyz/guilds.txt","w") as f:
+            f.write(str(userCount))
+            f.close()
         msg = await embeds.generate("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{self.bot.user.name} version: {version}")
         for shard in self.bot.latencies:
             if round(shard[1]*100) < 100:

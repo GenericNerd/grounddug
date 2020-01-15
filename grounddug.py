@@ -7,7 +7,7 @@ import cogs.utils.useful as useful
 import cogs.utils.dbhandle as db
 from bson.objectid import ObjectId
 
-startupExtensions = ["core","admin","logs","perms","developer","events"]
+startupExtensions = ["core","mod","logs","perms","developer","events"]
 bot = commands.AutoShardedBot(command_prefix=useful.getPrefix)
 
 bot.remove_command("help")

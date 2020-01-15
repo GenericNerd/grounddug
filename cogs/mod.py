@@ -8,21 +8,24 @@ import cogs.utils.embeds as embeds
 from cogs.utils.dbhandle import dbFind
 from cogs.utils.dbhandle import dbUpdate
 
-class admin(commands.Cog):
+class mod(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
 
-    @commands.group(name="admin",description="Administrative commands")
-    async def admin(self,ctx):
+    @commands.group(name="mod",description="Guild administrative commands")
+    async def mod(self,ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.invoke(self.bot.get_command("help"),"admin")
+            await ctx.invoke(self.bot.get_command("help"),"mod")
         else:
             guild = await dbFind("guilds",{"id": ctx.guild.id})
-            if guild["admin_log"]:
+            if guild["mod_log"]:
                 channel = self.bot.get_channel(guild["channel"])
-                await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
+                try:
+                    await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
+                except:
+                    pass
 
-    @admin.command(name="ban",description="<member> [reason] | Bans a member from the guild")
+    @mod.command(name="ban",description="<member> [reason] | Bans a member from the guild")
     @commands.guild_only()
     @checks.has_GD_permission("BAN_MEMBERS")
     async def ban(self,ctx,member:discord.Member,reason=None):
@@ -34,14 +37,14 @@ class admin(commands.Cog):
         finally:
             await member.ban(reason=f"Banned by {ctx.author.name}#{ctx.author.discriminator} for: {reason}")
     
-    @admin.command(name="hackban",description="<ID> [reason] | Bans a user by their ID from the guild without them needing to be in the guild")
+    @mod.command(name="hackban",description="<ID> [reason] | Bans a user by their ID from the guild without them needing to be in the guild")
     @commands.guild_only()
     @checks.has_GD_permission("BAN_MEMBERS")
     async def hackban(self,ctx,id:int,reason=None):
         await ctx.send(embed=(await embeds.generate(f"{id} has been banned by {ctx.author.name}#{ctx.author.discriminator} for `{reason}`",None,0xff5555)))
         await ctx.guild.ban(discord.Object(id=id),reason=f"Banned by {ctx.author.name}#{ctx.author.discriminator} for: {reason}")
 
-    @admin.command(name="softban",description="<member> [reason] | Bans a member and immediately unbans them from the guild, removing their messages")
+    @mod.command(name="softban",description="<member> [reason] | Bans a member and immediately unbans them from the guild, removing their messages")
     @commands.guild_only()
     @checks.has_GD_permission("BAN_MEMBERS")
     async def softban(self,ctx,member:discord.Member,reason=None):
@@ -54,7 +57,7 @@ class admin(commands.Cog):
             await member.ban(reason=f"Softbanned by {ctx.author.name}#{ctx.author.discriminator} for: {reason}")
             await member.unban()
     
-    @admin.command(name="kick",description="<member> [reason] | Kicks a member from the guild")
+    @mod.command(name="kick",description="<member> [reason] | Kicks a member from the guild")
     @commands.guild_only()
     @checks.has_GD_permission("KICK_MEMBERS")
     async def kick(self,ctx,member:discord.Member,reason=None):
@@ -66,7 +69,7 @@ class admin(commands.Cog):
         finally:
             await member.kick(reason=f"Kicked by {ctx.author.name}#{ctx.author.discriminator} for: {reason}")
 
-    @admin.command(name="gag",description="<member> | Stops a user from talking in all voice channels")
+    @mod.command(name="gag",description="<member> | Stops a user from talking in all voice channels")
     @commands.guild_only()
     @checks.has_GD_permission("MUTE_MEMBERS")
     async def gag(self,ctx,member:discord.Member):
@@ -74,7 +77,7 @@ class admin(commands.Cog):
             await channel.set_permissions(member,speak=False)
         await ctx.send(embed=(await embeds.generate(f"{member.name} has been gagged by {ctx.author.name}#{ctx.author.discriminator}",None)))
 
-    @admin.command(name="ungag",description="<member> | Allows a user from talking again in all voice channels")
+    @mod.command(name="ungag",description="<member> | Allows a user from talking again in all voice channels")
     @commands.guild_only()
     @checks.has_GD_permission("MUTE_MEMBERS")
     async def ungag(self,ctx,member:discord.Member):
@@ -82,7 +85,7 @@ class admin(commands.Cog):
             await channel.set_permissions(member,speak=True)
         await ctx.send(embed=(await embeds.generate(f"{member.name} has been ungagged by {ctx.author.name}#{ctx.author.discriminator}",None)))
 
-    @admin.command(name="mute",description="<member> | Stops a user from typing in all text channels")
+    @mod.command(name="mute",description="<member> | Stops a user from typing in all text channels")
     @commands.guild_only()
     @checks.has_GD_permission("MUTE_MEMBERS")
     async def mute(self,ctx,member:discord.Member):
@@ -90,7 +93,7 @@ class admin(commands.Cog):
             await channel.set_permissions(member,send_messages=False)
         await ctx.send(embed=(await embeds.generate(f"{member.name} has been muted by {ctx.author.name}#{ctx.author.discriminator}",None)))
 
-    @admin.command(name="unmute",description="<member> | Allows a user to typing in all text channels again")
+    @mod.command(name="unmute",description="<member> | Allows a user to typing in all text channels again")
     @commands.guild_only()
     @checks.has_GD_permission("MUTE_MEMBERS")
     async def unmute(self,ctx,member:discord.Member):
@@ -98,7 +101,7 @@ class admin(commands.Cog):
             await channel.set_permissions(member,send_messages=True)
         await ctx.send(embed=(await embeds.generate(f"{member.name} has been unmuted by {ctx.author.name}#{ctx.author.discriminator}",None)))
 
-    @admin.command(name="purge",description="[amount (100 by default)] [member/bot/all] | Deletes multiple messages at once from the text channel the command was ran in")
+    @mod.command(name="purge",description="[amount (100 by default)] [member/bot/all] | Deletes multiple messages at once from the text channel the command was ran in")
     @commands.guild_only()
     @checks.has_GD_permission("MANAGE_MESSAGES")
     async def purge(self,ctx,amount=100,check=""):
@@ -117,7 +120,7 @@ class admin(commands.Cog):
         else:
             await embeds.error(ctx,"INVALID CHECK (Must be member, bot, all or empty)")
 
-    @admin.command(name="raid",description="<state> | Enables or disables raid mode")
+    @mod.command(name="raid",description="<state> | Enables or disables raid mode")
     @commands.guild_only()
     @checks.has_GD_permission("ADMINISTRATOR")
     async def raid(self,ctx,state=None):
@@ -133,5 +136,29 @@ class admin(commands.Cog):
         else:
             await embeds.error(ctx,"Raid Mode state needs to be either `True` or `False`")
 
+    @mod.command(name="strike",description="<user> [reason] | Warn a user for their behaviour")
+    @commands.guild_only()
+    @checks.has_required_level(3)
+    @checks.has_GD_permission("ADMINISTRATOR")
+    async def strike(self,ctx,user:discord.Member,reason=None):
+        guildDB = await dbFind("guilds",{"id": ctx.guild.id})
+        case = guildDB["cases"] + 1
+        await dbUpdate("guilds",{"_id": guildDB["_id"]},{"cases": cases})
+        userDB = await dbFind("users",{"guild": ctx.guild.id, "user": user.id})
+        userDB["strikes"][case] = {"moderator": f"@{ctx.user.name}#{ctx.user.discriminator}", "reason": reason}
+
+    @mod.command(name="history",description="[user] | Returns strike history for a user")
+    @commands.guild_only()
+    @checks.has_required_level(3)
+    @checks.has_GD_permission("ADMINISTRATOR")
+    async def history(self,ctx,user:discord.Member=None):
+        if user == None:
+            user = ctx.author
+        msg = await embeds.generate("Strike history",user.mention,0xff5555)
+        history = await dbFind("users",{"guild": ctx.guild.id, "user": user.id})
+        for field in history["strikes"]:
+            msg = await embeds.add_field(msg,f"Warning from {history['strikes']['moderator']}",f"Warned for {history['strikes']['reason']}")
+        await ctx.send(embed=msg)
+
 def setup(bot):
-    bot.add_cog(admin(bot))
+    bot.add_cog(mod(bot))

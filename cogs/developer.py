@@ -43,5 +43,17 @@ class dev(commands.Cog):
         self.bot.unload_extension(f"cogs.{module}")
         await ctx.send(embed=(await embeds.generate(f"Module {module} loaded",None)))
 
+    @developer.command(name="invite",hidden=True)
+    @checks.has_required_level(3)
+    async def guild_invite(self,ctx,gid: int):
+        guild = discord.utils.get(self.bot.guilds, id=gid)
+        for channel in guild.text_channels:
+            try:
+                invite = await channel.create_invite(reason="Developer request")
+            except:
+                continue
+            finally:
+                return await ctx.send(embed=(await embeds.generate(f"{guild.name} invite",invite.url)))
+
 def setup(bot):
     bot.add_cog(dev(bot))

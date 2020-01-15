@@ -32,12 +32,12 @@ async def changePermission(self,ctx,user,change,permission=None):
         if permission == "ADMINISTRATOR":
             for perm in permissions.copy():
                 permissions[perm] = change
-            await dbUpdate("permissions",{"guild": ctx.guild.id, "user": user.id},{"permissions": permissions})
+            await dbUpdate("users",{"guild": ctx.guild.id, "user": user.id},{"permissions": permissions})
         else:
             notChange = not change
             if permissions[permission] == notChange:
                 permissions[permission] = change
-                dbUpdate("permissions",{"guild": ctx.guild.id, "user": user.id},{"permissions": permissions})
+                dbUpdate("users",{"guild": ctx.guild.id, "user": user.id},{"permissions": permissions})
         await ctx.send(embed=(await embeds.generate("Permission changed",f"Permission `{permission}` to {user.name}#{user.discriminator} was changed to `{change}`")))
 
 class perms(commands.Cog):
@@ -52,18 +52,21 @@ class perms(commands.Cog):
             guild = await dbFind("guilds",{"id": ctx.guild.id})
             if guild["perms_log"]:
                 channel = self.bot.get_channel(guild["channel"])
-                await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
-    
+                try:
+                    await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
+                except:
+                    pass
+
     @perms.command(name="setup",hidden=True)
     @checks.has_required_level(5)
     async def setup(self,ctx):
         for guild in self.bot.guilds:
             for member in guild.members:
-                if (await dbFind("permissions", {"guild": guild.id, "user": member.id})) == None:
+                if (await dbFind("users", {"guild": guild.id, "user": member.id})) == None:
                     if member.id == guild.owner_id:
-                        await dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}})
+                        await dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}, "strikes": {}})
                     else:
-                        await dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False,"MUTE_MEMBERS": False,"KICK_MEMBERS": False,"BAN_MEMBERS": False,"ADMINISTRATOR": False}})
+                        await dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False,"MUTE_MEMBERS": False,"KICK_MEMBERS": False,"BAN_MEMBERS": False,"ADMINISTRATOR": False}, "strikes": {}})
 
     @perms.command(name="add",description="<user> [permission] | Assigns a users' GroundDug (`GD`) permission")
     @commands.guild_only()

@@ -13,5 +13,5 @@ async def getPrefix(bot,message):
         return guild["prefix"]
 
 async def getPermissions(guild,member):
-    perms = await db.dbFind("permissions",{"guild": guild.id,"user": member.id})
+    perms = await db.dbFind("users",{"guild": guild.id,"user": member.id})
     return perms["permissions"]

@@ -20,7 +20,7 @@ async def moduleLogChange(self,ctx,boolean,status,module=None):
 				msg = await embeds.add_field(msg,item,f"Run `{prefix}logs {status} {item}` to log")
 		await ctx.send(embed=msg)
 	else:
-		for item,result in (await db.dbFind("guilds", {"id": ctx.guild.id})).items():
+		for item,result in (await dbFind("guilds", {"id": ctx.guild.id})).items():
 			valid = False
 			if result == boolean and module==item.split("_log")[0]:
 				valid = True
@@ -42,11 +42,14 @@ class logs(commands.Cog):
     async def logs(self,ctx):
         if ctx.invoked_subcommand is None:
             await ctx.invoke(self.bot.get_command("help"),"logs")
-        else:
+        elif ctx.guild != None:
             guild = await dbFind("guilds",{"id": ctx.guild.id})
             if guild["logs_log"]:
                 channel = self.bot.get_channel(guild["channel"])
-                await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
+                try:
+                    await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
+                except:
+                    pass
 
     @logs.command(name="setup",hidden=True)
     @checks.has_required_level(5)
@@ -58,14 +61,15 @@ class logs(commands.Cog):
                 "channel": 0,
                 "misc_log": False,
                 "logs_log": False,
-                "admin_log": False,
+                "mod_log": False,
                 "perms_log": False,
                 "advertising_log": False,
                 "delete_log": False,
-                "raid_mode": False}
+                "raid_mode": False,
+                "cases": 0}
             if (await dbFind("guilds",{"id": guild.id})) == None:
                 result = await dbInsert("guilds",data)
-                msg = embeds.add_field(msg,f"Created {guild.name}",f"`{guild.id}`")
+                msg = await embeds.add_field(msg,f"Created {guild.name}",f"`{guild.id}`")
         await ctx.send(embed=msg)
     
     @logs.command(name="setchannel",description="[channel] | Set the channel to which all command logs will be sent to on the guild")

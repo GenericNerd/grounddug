@@ -26,7 +26,7 @@ def has_required_level(required: int = 0):
 
 def has_GD_permission(permission):
     async def permissionCalculate(ctx):
-        dbObject = await dbhandle.dbFind("permissions",{"guild": ctx.guild.id, "user": ctx.author.id})
+        dbObject = await dbhandle.dbFind("users",{"guild": ctx.guild.id, "user": ctx.author.id})
         if dbObject["permissions"][permission]:
             return True
         else:

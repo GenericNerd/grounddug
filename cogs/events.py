@@ -27,7 +27,7 @@ class events(commands.Cog):
             "channel": 0,
             "misc_log": False,
             "logs_log": False,
-            "admin_log": False,
+            "mod_log": False,
             "perms_log": False,
             "advertising_log": False,
             "delete_log": False,
@@ -35,24 +35,25 @@ class events(commands.Cog):
         await db.dbInsert("guilds",data)
         for member in guild.members:
             if ctx.member.guild_permissions.administrator:
-                await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True, "MUTE_MEMBERS": True, "KICK_MEMBERS": True, "BAN_MEMBERS": True, "ADMINISTRATOR": True}})
+                await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True, "WARN_MEMBERS": False, "MUTE_MEMBERS": True, "KICK_MEMBERS": True, "BAN_MEMBERS": True, "ADMINISTRATOR": True}, "strikes": {}})
             else:
-                await db.dbInsert("permissions",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}})
+                await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}})
     
     @commands.Cog.listener()
     async def on_guild_remove(self,guild):
-        await db.dbRemoveMany("permissions",{"guild": guild.id})
+        await db.dbRemoveMany("users",{"guild": guild.id})
         await db.dbRemove("guilds",{"id": guild.id})
 
     @commands.Cog.listener()
     async def on_member_join(self,member):
         if not (await db.dbFind("guilds",{"id": member.guild.id}))["raid_mode"]:
-            await db.dbInsert("permissions",{"guild": member.guild.id, "user": member.id, "permissions": {
+            await db.dbInsert("users",{"guild": member.guild.id, "user": member.id, "permissions": {
                 "MANAGE_MESSAGES": False,
+                "WARN_MEMBERS": False,
 				"MUTE_MEMBERS": False,
 				"KICK_MEMBERS": False,
 				"BAN_MEMBERS": False,
-				"ADMINISTRATOR": False}})
+				"ADMINISTRATOR": False}, "strikes": {}})
         else:
             try:
                 await member.send(embed=(await embeds.generate(f"{member.guild.name} is currently on lockdown","Please try to join again in a couple of hours")))
@@ -63,7 +64,7 @@ class events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self,member):
-        await db.dbRemove("permissions",{"guild": member.guild.id, "user": member.id})
+        await db.dbRemove("users",{"guild": member.guild.id, "user": member.id})
 
     @commands.Cog.listener()
     async def on_message(self,ctx):
@@ -92,7 +93,10 @@ class events(commands.Cog):
             command_base = (ctx.message.content).split((await getPrefix(self.bot,ctx)))[1].split(" ")[0]
             command_list = ["admin","logs","perms","developer","dev"]
             if not command_base in command_list and guild["misc_log"]:
-                await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
+                try:
+                    await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
+                except:
+                    pass
 
     @commands.Cog.listener()
     async def on_command_error(self,ctx,error):

@@ -29,15 +29,7 @@ class core(commands.Cog):
                 modules["misc"].append(command)
         if module == "":
             msg.description = "Please specify the modules you wish to look up"
-            for key in sorted(modules.keys()):
-                if key == "misc":
-                    msg = await embeds.add_field(msg,f"💿 - Misc ({prefix}help misc)")
-                elif key == "admin":
-                    msg = await embeds.add_field(msg,f"🔨 - Admin ({prefix}help admin)")
-                elif key == "logs":
-                    msg = await embeds.add_field(msg,f"🔍 - Logs ({prefix}help logs)")
-                elif key == "perms":
-                    msg = await embeds.add_field(msg,f"🔧 - Perms ({prefix}help perms)")
+            msg = await embeds.add_field(msg,f"💿 - Misc ({prefix}help misc)\n🔨 - Mod ({prefix}help mod)\n🔍 - Logs ({prefix}help logs)\n🔧 - Perms ({prefix}help perms)")
             return await ctx.send(embed=msg)
         elif module != "":
             if module.lower() in modules.keys():
@@ -56,10 +48,16 @@ class core(commands.Cog):
             else:
                 for command in sorted(cog_obj.commands, key=lambda o: f"{o.full_parent_name} {o.name}"):
                     split = command.description.split("|")
-                    if len(split) >= 2 and not command.hidden:
-                        msg = await embeds.add_field(msg,f"{prefix}{command.full_parent_name} {command.name} {split[0]}",split[1])
-                    elif len(split) < 2 and not command.hidden:
-                        msg = await embeds.add_field(msg,f"{prefix}{command.full_parent_name} {command.name}",command.description)
+                    if command.full_parent_name == "mod":
+                        if len(split) >= 2 and not command.hidden:
+                            msg = await embeds.add_field(msg,f"{prefix}{command.name} {split[0]}",split[1])
+                        elif len(split) < 2 and not command.hidden:
+                            msg = await embeds.add_field(msg,f"{prefix}{command.name}",command.description)
+                    else:
+                        if len(split) >= 2 and not command.hidden:
+                            msg = await embeds.add_field(msg,f"{prefix}{command.full_parent_name} {command.name} {split[0]}",split[1])
+                        elif len(split) < 2 and not command.hidden:
+                            msg = await embeds.add_field(msg,f"{prefix}{command.full_parent_name} {command.name}",command.description)
         await ctx.send(embed=msg)
 
     @commands.command(name="invite",description="| Receive a private message with a link to invite GroundDug")
@@ -134,6 +132,68 @@ class core(commands.Cog):
         else:
             msg = await embeds.add_field(msg,"No badges")
         await ctx.send(embed=msg)
+
+    # Mod misc invoke commands
+
+    @commands.command(name="ban",hidden=True)
+    @commands.guild_only()
+    @checks.has_GD_permission("BAN_MEMBERS")
+    async def _ban(self,ctx,member:discord.Member,reason=None):
+        await ctx.invoke(self.bot.get_command("mod ban"),member,reason)
+
+    @commands.command(name="hackban",hidden=True)
+    @commands.guild_only()
+    @checks.has_GD_permission("BAN_MEMBERS")
+    async def _hackban(self,ctx,id:int,reason=None):
+        await ctx.invoke(self.bot.get_command("mod hackban"),id,reason)
+
+    @commands.command(name="softban",hidden=True)
+    @commands.guild_only()
+    @checks.has_GD_permission("BAN_MEMBERS")
+    async def _softban(self,ctx,member:discord.Member,reason=None):
+        await ctx.invoke(self.bot.get_command("mod softban"),member,reason)
+
+    @commands.command(name="kick",hidden=True)
+    @commands.guild_only()
+    @checks.has_GD_permission("KICK_MEMBERS")
+    async def _kick(self,ctx,member:discord.Member,reason=None):
+        await ctx.invoke(self.bot.get_command("mod kick"),member,reason)
+
+    @commands.command(name="gag",hidden=True)
+    @commands.guild_only()
+    @checks.has_GD_permission("MUTE_MEMBERS")
+    async def _gag(self,ctx,member:discord.Member):
+        await ctx.invoke(self.bot.get_command("mod gag"),member)
+
+    @commands.command(name="ungag",hidden=True)
+    @commands.guild_only()
+    @checks.has_GD_permission("MUTE_MEMBERS")
+    async def _ungag(self,ctx,member:discord.Member):
+        await ctx.invoke(self.bot.get_command("mod ungag"),member)
+
+    @commands.command(name="mute",hidden=True)
+    @commands.guild_only()
+    @checks.has_GD_permission("MUTE_MEMBERS")
+    async def _mute(self,ctx,member:discord.Member):
+        await ctx.invoke(self.bot.get_command("mod mute"),member)
+
+    @commands.command(name="unmute",hidden=True)
+    @commands.guild_only()
+    @checks.has_GD_permission("MUTE_MEMBERS")
+    async def _unmute(self,ctx,member:discord.Member):
+        await ctx.invoke(self.bot.get_command("mod unmute"),member)
+
+    @commands.command(name="purge",hidden=True)
+    @commands.guild_only()
+    @checks.has_GD_permission("MANAGE_MESSAGES")
+    async def _purge(self,ctx,amount=100,check=""):
+        await ctx.invoke(self.bot.get_command("mod purge"),amount,check)
+
+    @commands.command(name="raid",hidden=True)
+    @commands.guild_only()
+    @checks.has_GD_permission("ADMINISTRATOR")
+    async def _raid(self,ctx,state=None):
+        await ctx.invoke(self.bot.get_command("mod raid"),state)
 
 def setup(bot):
     bot.add_cog(core(bot))

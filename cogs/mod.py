@@ -135,7 +135,7 @@ class mod(commands.Cog):
         else:
             await embeds.error(ctx,"Raid Mode state needs to be either `True` or `False`")
 
-    @mod.command(name="strike",description="<user> [reason] | Warn a user for their behaviour",hidden=True)
+    @mod.command(name="strike",description="<user> [reason] | Warn a user for their behaviour")
     @commands.guild_only()
     @checks.has_GD_permission("WARN_MEMBERS")
     async def strike(self,ctx,user:discord.Member,*,reason=None):
@@ -158,7 +158,7 @@ class mod(commands.Cog):
         await ctx.send(embed=(await embeds.generate(f"Case number #{strike} has been forgiven",None)))
         await dbUpdate("users",{"_id": userDB["_id"]},{"strikes": userDB["strikes"]})
 
-    @mod.command(name="history",description="[user] | Returns strike history for a user",hidden=True)
+    @mod.command(name="history",description="[user] | Returns strike history for a user")
     @commands.guild_only()
     async def history(self,ctx,user:discord.Member=None):
         if user == None:
@@ -169,7 +169,7 @@ class mod(commands.Cog):
             msg = await embeds.add_field(msg,f"Case #{key}: Warning from {self.bot.get_user(history['strikes'][key]['moderator']).name}",f"Warned for {history['strikes'][key]['reason']}")
         await ctx.send(embed=msg)
 
-    @mod.command(name="case",description="<case number> | Returns the information for a specific case on the server",hidden=True)
+    @mod.command(name="case",description="<case number> | Returns the information for a specific case on the server")
     @commands.guild_only()
     async def case(self,ctx,case:int):
         msg = await embeds.generate("Case history",None)

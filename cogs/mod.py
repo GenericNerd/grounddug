@@ -137,7 +137,6 @@ class mod(commands.Cog):
 
     @mod.command(name="strike",description="<user> [reason] | Warn a user for their behaviour",hidden=True)
     @commands.guild_only()
-    @checks.has_required_level(1)
     @checks.has_GD_permission("WARN_MEMBERS")
     async def strike(self,ctx,user:discord.Member,*,reason=None):
         guildDB = await dbFind("guilds",{"id": ctx.guild.id})
@@ -149,8 +148,7 @@ class mod(commands.Cog):
 
     @mod.command(name="forgive",description="<user> <case #> | Removes a users specific strike from their history")
     @commands.guild_only()
-    @checks.has_required_level(1)
-    # @checks.has_GD_permission("WARN_MEMBERS")
+    @checks.has_GD_permission("WARN_MEMBERS")
     async def forgive(self,ctx,user:discord.Member,strike:int):
         userDB = await dbFind("users",{"guild": ctx.guild.id, "user": user.id})
         try:
@@ -162,7 +160,6 @@ class mod(commands.Cog):
 
     @mod.command(name="history",description="[user] | Returns strike history for a user",hidden=True)
     @commands.guild_only()
-    @checks.has_required_level(1)
     async def history(self,ctx,user:discord.Member=None):
         if user == None:
             user = ctx.author
@@ -174,7 +171,6 @@ class mod(commands.Cog):
 
     @mod.command(name="case",description="<case number> | Returns the information for a specific case on the server",hidden=True)
     @commands.guild_only()
-    @checks.has_required_level(1)
     async def case(self,ctx,case:int):
         msg = await embeds.generate("Case history",None)
         guildDB = await dbFindAll("users",{"guild": ctx.guild.id})

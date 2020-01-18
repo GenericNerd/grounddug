@@ -31,11 +31,12 @@ class events(commands.Cog):
             "perms_log": False,
             "advertising_log": False,
             "delete_log": False,
-            "raid_mode": False}
+            "raid_mode": False,
+            "cases": 0}
         await db.dbInsert("guilds",data)
         for member in guild.members:
-            if ctx.member.guild_permissions.administrator:
-                await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True, "WARN_MEMBERS": False, "MUTE_MEMBERS": True, "KICK_MEMBERS": True, "BAN_MEMBERS": True, "ADMINISTRATOR": True}, "strikes": {}})
+            if member.guild_permissions.administrator:
+                await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True, "WARN_MEMBERS": True, "MUTE_MEMBERS": True, "KICK_MEMBERS": True, "BAN_MEMBERS": True, "ADMINISTRATOR": True}, "strikes": {}})
             else:
                 await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}})
     
@@ -80,10 +81,11 @@ class events(commands.Cog):
         if message.guild != None and not "discord.gg/" in message.content:
             guild = await db.dbFind("guilds",{"id": message.guild.id})
             if guild["delete_log"]:
+                channel = self.bot.get_channel(guild["channel"])
                 msg = await embeds.generate("Message deleted",None,0xff5555)
                 msg.set_author(name=message.author.name,icon_url=message.author.avatar_url)
                 msg = await embeds.add_field(msg,message.content)
-                await message.channel.send(embed=msg)
+                await channel.send(embed=msg)
 
     @commands.Cog.listener()
     async def on_command(self,ctx):

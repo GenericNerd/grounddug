@@ -19,6 +19,9 @@ def dbNSyncFind(db,finder):
 async def dbFind(db,finder):
     return await asyncdb[db].find_one(finder)
 
+async def dbFindAll(db,finder):
+    return asyncdb[db].find(finder)
+
 async def dbInsert(db,data):
     await asyncdb[db].insert_one(data)
 

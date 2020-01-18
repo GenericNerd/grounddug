@@ -6,6 +6,7 @@ import cogs.utils.dbhandle as db
 from bson.objectid import ObjectId
 
 async def getPrefix(bot,message):
+    return "gb!"
     if not message.guild:
         return "g!"
     else:

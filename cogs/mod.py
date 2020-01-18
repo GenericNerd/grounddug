@@ -7,6 +7,7 @@ import cogs.utils.checks as checks
 import cogs.utils.embeds as embeds
 from cogs.utils.dbhandle import dbFind
 from cogs.utils.dbhandle import dbUpdate
+from cogs.utils.dbhandle import dbFindAll
 
 class mod(commands.Cog):
     def __init__(self,bot):
@@ -107,10 +108,8 @@ class mod(commands.Cog):
     async def purge(self,ctx,amount=100,check=""):
         def member_check(ctx):
             return not ctx.author.bot
-
         def bot_check(ctx):
             return ctx.author.bot
-        
         if check.lower() == "member":
             await ctx.channel.purge(limit=amount,check=member_check)
         elif check.lower() == "bot":
@@ -136,28 +135,57 @@ class mod(commands.Cog):
         else:
             await embeds.error(ctx,"Raid Mode state needs to be either `True` or `False`")
 
-    @mod.command(name="strike",description="<user> [reason] | Warn a user for their behaviour")
+    @mod.command(name="strike",description="<user> [reason] | Warn a user for their behaviour",hidden=True)
     @commands.guild_only()
-    @checks.has_required_level(3)
-    @checks.has_GD_permission("ADMINISTRATOR")
-    async def strike(self,ctx,user:discord.Member,reason=None):
+    @checks.has_required_level(1)
+    @checks.has_GD_permission("WARN_MEMBERS")
+    async def strike(self,ctx,user:discord.Member,*,reason=None):
         guildDB = await dbFind("guilds",{"id": ctx.guild.id})
-        case = guildDB["cases"] + 1
-        await dbUpdate("guilds",{"_id": guildDB["_id"]},{"cases": cases})
         userDB = await dbFind("users",{"guild": ctx.guild.id, "user": user.id})
-        userDB["strikes"][case] = {"moderator": f"@{ctx.user.name}#{ctx.user.discriminator}", "reason": reason}
+        userDB["strikes"][str(guildDB["cases"])] = {"moderator": ctx.author.id, "reason": reason}
+        await dbUpdate("users",{"_id": userDB["_id"]},{"strikes": userDB["strikes"]})
+        await dbUpdate("guilds",{"_id": guildDB["_id"]},{"cases": guildDB["cases"] + 1})
+        await ctx.send(embed=(await embeds.generate(f"{user.name}#{user.discriminator} has been striked!",f"{ctx.author.mention} striked {user.mention} for `{reason}`",0xff5555)).set_footer(text=f"Case number #{guildDB['cases']}"))
 
-    @mod.command(name="history",description="[user] | Returns strike history for a user")
+    @mod.command(name="forgive",description="<user> <case #> | Removes a users specific strike from their history")
     @commands.guild_only()
-    @checks.has_required_level(3)
-    @checks.has_GD_permission("ADMINISTRATOR")
+    @checks.has_required_level(1)
+    # @checks.has_GD_permission("WARN_MEMBERS")
+    async def forgive(self,ctx,user:discord.Member,strike:int):
+        userDB = await dbFind("users",{"guild": ctx.guild.id, "user": user.id})
+        try:
+            del userDB["strikes"][str(strike)]
+        except:
+            return await ctx.send(embed=(await embeds.generate(f"Could not find case number #{strike} for {user.name}",None)))
+        await ctx.send(embed=(await embeds.generate(f"Case number #{strike} has been forgiven",None)))
+        await dbUpdate("users",{"_id": userDB["_id"]},{"strikes": userDB["strikes"]})
+
+    @mod.command(name="history",description="[user] | Returns strike history for a user",hidden=True)
+    @commands.guild_only()
+    @checks.has_required_level(1)
     async def history(self,ctx,user:discord.Member=None):
         if user == None:
             user = ctx.author
         msg = await embeds.generate("Strike history",user.mention,0xff5555)
         history = await dbFind("users",{"guild": ctx.guild.id, "user": user.id})
-        for field in history["strikes"]:
-            msg = await embeds.add_field(msg,f"Warning from {history['strikes']['moderator']}",f"Warned for {history['strikes']['reason']}")
+        for key in history["strikes"]:
+            msg = await embeds.add_field(msg,f"Case #{key}: Warning from {self.bot.get_user(history['strikes'][key]['moderator']).name}",f"Warned for {history['strikes'][key]['reason']}")
+        await ctx.send(embed=msg)
+
+    @mod.command(name="case",description="<case number> | Returns the information for a specific case on the server",hidden=True)
+    @commands.guild_only()
+    @checks.has_required_level(1)
+    async def case(self,ctx,case:int):
+        msg = await embeds.generate("Case history",None)
+        guildDB = await dbFindAll("users",{"guild": ctx.guild.id})
+        async for field in guildDB:
+            if field["strikes"]:
+                try:
+                    msg = await embeds.add_field(msg,f"Here are the details for case number #{case}",f"<@{field['strikes'][str(case)]['moderator']}> warned <@{field['user']}> for: `{field['strikes'][str(case)]['reason']}`")
+                except:
+                    pass
+        if msg.fields == []:
+            msg.description = f"There is no case information for case number #{case}"
         await ctx.send(embed=msg)
 
 def setup(bot):

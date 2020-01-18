@@ -5,6 +5,8 @@ from discord.ext import commands
 import asyncio
 import cogs.utils.checks as checks
 import cogs.utils.embeds as embeds
+import cogs.utils.dbhandle as dbhandle
+import cogs.utils.levels as levels
 
 class dev(commands.Cog):
     def __init__(self,bot):

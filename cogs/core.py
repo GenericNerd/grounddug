@@ -128,7 +128,7 @@ class core(commands.Cog):
         elif level == 2:
             pass
         elif level == 1:
-            pass
+            msg = await embeds.add_field(msg,"🔖 - Level 1","`These users help find and report bugs to the developers in unstable releases`")
         else:
             msg = await embeds.add_field(msg,"No badges")
         await ctx.send(embed=msg)
@@ -194,6 +194,28 @@ class core(commands.Cog):
     @checks.has_GD_permission("ADMINISTRATOR")
     async def _raid(self,ctx,state=None):
         await ctx.invoke(self.bot.get_command("mod raid"),state)
+
+    @commands.command(name="strike",hidden=True)
+    @commands.guild_only()
+    @checks.has_GD_permission("WARN_MEMBERS")
+    async def _strike(self,ctx,user:discord.Member,*,reason=None):
+        await ctx.invoke(self.bot.get_command("mod strike"),user,reason)
+    
+    @commands.command(name="forgive",hidden=True)
+    @commands.guild_only()
+    @checks.has_GD_permission("WARN_MEMBERS")
+    async def _forgive(self,ctx,user:discord.Member,strike:int):
+        await ctx.invoke(self.bot.get_command("mod forgive"),user,strike)
+
+    @commands.command(name="history",hidden=True)
+    @commands.guild_only()
+    async def _history(self,ctx,user:discord.Member=None):
+        await ctx.invoke(self.bot.get_command("mod history"),user)
+
+    @commands.command(name="case",hidden=True)
+    @commands.guild_only()
+    async def _case(self,ctx,case:int):
+        await ctx.invoke(self.bot.get_command("mod case"),case)
 
 def setup(bot):
     bot.add_cog(core(bot))

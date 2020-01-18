@@ -18,4 +18,5 @@ for module in startupExtensions:
     except Exception as e:
         print(f"Failed to load module {module}\n{e}")
 
+# bot.run("NjY3MDgzMTM3OTMwNjI1MDI0.Xh9jpw.KygIs_cyCxF6n--bKkvOSATlsB4")
 bot.run(db.dbNSyncFind("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})["token"])

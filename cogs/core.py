@@ -198,8 +198,8 @@ class core(commands.Cog):
     @commands.command(name="strike",hidden=True)
     @commands.guild_only()
     @checks.has_GD_permission("WARN_MEMBERS")
-    async def _strike(self,ctx,user:discord.Member,*,reason=None):
-        await ctx.invoke(self.bot.get_command("mod strike"),user,reason)
+    async def _strike(self,ctx,user:discord.Member,*,r=None):
+        await ctx.invoke(self.bot.get_command("mod strike"),user,reason=r)
     
     @commands.command(name="forgive",hidden=True)
     @commands.guild_only()

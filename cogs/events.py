@@ -39,11 +39,13 @@ class events(commands.Cog):
                 await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True, "WARN_MEMBERS": True, "MUTE_MEMBERS": True, "KICK_MEMBERS": True, "BAN_MEMBERS": True, "ADMINISTRATOR": True}, "strikes": {}})
             else:
                 await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}})
-    
+        await self.bot.get_channel(664541295448031295).send(embed=(await embeds.generate(f"I have joined {guild.name}",f"{guild.name} has {guild.member_count} members")))
+
     @commands.Cog.listener()
     async def on_guild_remove(self,guild):
         await db.dbRemoveMany("users",{"guild": guild.id})
         await db.dbRemove("guilds",{"id": guild.id})
+        await self.bot.get_channel(664541295448031295).send(embed=(await embeds.generate(f"I have left {guild.name}",f"{guild.name} had {guild.member_count} members :(")))
 
     @commands.Cog.listener()
     async def on_member_join(self,member):

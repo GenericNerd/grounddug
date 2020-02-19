@@ -64,9 +64,9 @@ class perms(commands.Cog):
             for member in guild.members:
                 if (await dbFind("users", {"guild": guild.id, "user": member.id})) == None:
                     if member.id == guild.owner_id:
-                        await dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}, "strikes": {}})
+                        await dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"WARN_MEMBERS": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}, "strikes": {}})
                     else:
-                        await dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False,"MUTE_MEMBERS": False,"KICK_MEMBERS": False,"BAN_MEMBERS": False,"ADMINISTRATOR": False}, "strikes": {}})
+                        await dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False,"WARN_MEMBERS": False,"MUTE_MEMBERS": False,"KICK_MEMBERS": False,"BAN_MEMBERS": False,"ADMINISTRATOR": False}, "strikes": {}})
 
     @perms.command(name="add",description="<user> [permission] | Assigns a users' GroundDug (`GD`) permission")
     @commands.guild_only()
@@ -93,7 +93,7 @@ class perms(commands.Cog):
             else:
                 perm = permission.lower()
             if permissions[permission]:
-                msg = await embeds.add_field(msg,perm,"<:check:437236812189270018>",True)
+                msg = await embeds.add_field(msg,perm,"<:check:679095420202516480>",True)
         await ctx.send(embed=msg)
 
 def setup(bot):

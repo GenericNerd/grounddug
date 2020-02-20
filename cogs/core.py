@@ -102,9 +102,9 @@ class core(commands.Cog):
         msg = await embeds.generate("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{self.bot.user.name} version: {version}")
         for shard in self.bot.latencies:
             if round(shard[1]*100) < 100:
-                msg = await embeds.add_field(msg,f"Shard {shard[0]}",f"<:status_online:437236812382208000> Latency: **{round(shard[1]*100)}**ms")
+                msg = await embeds.add_field(msg,f"Shard {shard[0]}",f"<:status_online:679095420605038617> Latency: **{round(shard[1]*100)}**ms")
             else:
-                msg = await embeds.add_field(msg,f"Shard {shard[0]}",f"<:status_dnd:437236811664982016> Latency: **{round(shard[1]*100)}**ms")
+                msg = await embeds.add_field(msg,f"Shard {shard[0]}",f"<:status_dnd:679095420626141214> Latency: **{round(shard[1]*100)}**ms")
         await ctx.send(embed=msg)
 
     @commands.command(name="setprefix",description="<prefix> | Set a custom prefix for your guild locally. The bot default is `g!`")
@@ -132,90 +132,6 @@ class core(commands.Cog):
         else:
             msg = await embeds.add_field(msg,"No badges")
         await ctx.send(embed=msg)
-
-    # Mod misc invoke commands
-
-    @commands.command(name="ban",hidden=True)
-    @commands.guild_only()
-    @checks.has_GD_permission("BAN_MEMBERS")
-    async def _ban(self,ctx,member:discord.Member,reason=None):
-        await ctx.invoke(self.bot.get_command("mod ban"),member,reason)
-
-    @commands.command(name="hackban",hidden=True)
-    @commands.guild_only()
-    @checks.has_GD_permission("BAN_MEMBERS")
-    async def _hackban(self,ctx,id:int,reason=None):
-        await ctx.invoke(self.bot.get_command("mod hackban"),id,reason)
-
-    @commands.command(name="softban",hidden=True)
-    @commands.guild_only()
-    @checks.has_GD_permission("BAN_MEMBERS")
-    async def _softban(self,ctx,member:discord.Member,reason=None):
-        await ctx.invoke(self.bot.get_command("mod softban"),member,reason)
-
-    @commands.command(name="kick",hidden=True)
-    @commands.guild_only()
-    @checks.has_GD_permission("KICK_MEMBERS")
-    async def _kick(self,ctx,member:discord.Member,reason=None):
-        await ctx.invoke(self.bot.get_command("mod kick"),member,reason)
-
-    @commands.command(name="gag",hidden=True)
-    @commands.guild_only()
-    @checks.has_GD_permission("MUTE_MEMBERS")
-    async def _gag(self,ctx,member:discord.Member):
-        await ctx.invoke(self.bot.get_command("mod gag"),member)
-
-    @commands.command(name="ungag",hidden=True)
-    @commands.guild_only()
-    @checks.has_GD_permission("MUTE_MEMBERS")
-    async def _ungag(self,ctx,member:discord.Member):
-        await ctx.invoke(self.bot.get_command("mod ungag"),member)
-
-    @commands.command(name="mute",hidden=True)
-    @commands.guild_only()
-    @checks.has_GD_permission("MUTE_MEMBERS")
-    async def _mute(self,ctx,member:discord.Member):
-        await ctx.invoke(self.bot.get_command("mod mute"),member)
-
-    @commands.command(name="unmute",hidden=True)
-    @commands.guild_only()
-    @checks.has_GD_permission("MUTE_MEMBERS")
-    async def _unmute(self,ctx,member:discord.Member):
-        await ctx.invoke(self.bot.get_command("mod unmute"),member)
-
-    @commands.command(name="purge",hidden=True)
-    @commands.guild_only()
-    @checks.has_GD_permission("MANAGE_MESSAGES")
-    async def _purge(self,ctx,amount=100,check=""):
-        await ctx.invoke(self.bot.get_command("mod purge"),amount,check)
-
-    @commands.command(name="raid",hidden=True)
-    @commands.guild_only()
-    @checks.has_GD_permission("ADMINISTRATOR")
-    async def _raid(self,ctx,state=None):
-        await ctx.invoke(self.bot.get_command("mod raid"),state)
-
-    @commands.command(name="strike",hidden=True)
-    @commands.guild_only()
-    @checks.has_GD_permission("WARN_MEMBERS")
-    async def _strike(self,ctx,user:discord.Member,*,r=None):
-        await ctx.invoke(self.bot.get_command("mod strike"),user,reason=r)
-    
-    @commands.command(name="forgive",hidden=True)
-    @commands.guild_only()
-    @checks.has_GD_permission("WARN_MEMBERS")
-    async def _forgive(self,ctx,user:discord.Member,strike:int):
-        await ctx.invoke(self.bot.get_command("mod forgive"),user,strike)
-
-    @commands.command(name="history",hidden=True)
-    @commands.guild_only()
-    async def _history(self,ctx,user:discord.Member=None):
-        await ctx.invoke(self.bot.get_command("mod history"),user)
-
-    @commands.command(name="case",hidden=True)
-    @commands.guild_only()
-    async def _case(self,ctx,case:int):
-        await ctx.invoke(self.bot.get_command("mod case"),case)
 
 def setup(bot):
     bot.add_cog(core(bot))

@@ -11,24 +11,25 @@ from cogs.utils.dbhandle import dbUpdate
 import cogs.utils.useful as useful
 
 async def moduleLogChange(self,ctx,boolean,status,module=None):
+	guildSettings = await dbFind("guilds", {"id": ctx.guild.id})
 	if module == None:
 		prefix = await useful.getPrefix(self.bot,ctx)
 		msg = await embeds.generate("Modules",None)
-		for item,result in (await dbFind("guilds", {"id": ctx.guild.id})).items():
-			if result == boolean and len(item.split("_log")) > 1:
-				item = item.split("_log")[0]
+		for item,result in guildSettings["logs"].items():
+			if result == boolean:
 				msg = await embeds.add_field(msg,item,f"Run `{prefix}logs {status} {item}` to log")
 		await ctx.send(embed=msg)
 	else:
-		for item,result in (await dbFind("guilds", {"id": ctx.guild.id})).items():
+		for item,result in guildSettings["logs"].items():
 			valid = False
-			if result == boolean and module==item.split("_log")[0]:
+			if result == boolean and module == item:
 				valid = True
 				break
 		if valid == False:
 			await embeds.error(ctx,"INVALID MODULE")
 		else:
-			await dbUpdate("guilds",{"id": ctx.guild.id},{f"{module}_log": not boolean})
+			guildSettings["logs"][module] = not boolean
+			await dbUpdate("guilds",{"id": ctx.guild.id},guildSettings)
 			if boolean == False:
 				await ctx.send(embed=(await embeds.generate("Updated logging settings",f"`{module}` events will now be logged")))
 			else:
@@ -44,7 +45,7 @@ class logs(commands.Cog):
             await ctx.invoke(self.bot.get_command("help"),"logs")
         elif ctx.guild != None:
             guild = await dbFind("guilds",{"id": ctx.guild.id})
-            if guild["logs_log"]:
+            if guild["logs"]["logs"]:
                 channel = self.bot.get_channel(guild["channel"])
                 try:
                     await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
@@ -56,17 +57,26 @@ class logs(commands.Cog):
     async def setup(self,ctx):
         msg = await embeds.generate("The following guilds were added to the database",None)
         for guild in self.bot.guilds:
-            data = {"id": guild.id,
+            data = {
+                "id": guild.id,
                 "prefix": "g!",
                 "channel": 0,
-                "misc_log": False,
-                "logs_log": False,
-                "mod_log": False,
-                "perms_log": False,
-                "advertising_log": False,
-                "delete_log": False,
+                "logs": {
+                    "misc": False,
+                    "logs": False,
+                    "mod": False,
+                    "perms": False,
+                    "automod": False,
+                },
                 "raid_mode": False,
-                "cases": 0}
+                "cases": 0,
+                "automod": {
+                    "caps": 0,
+                    "antiInvite": False,
+                    "antiURL": False,
+                    "profanity": False,
+                    "massMentions": 0
+                }}
             if (await dbFind("guilds",{"id": guild.id})) == None:
                 result = await dbInsert("guilds",data)
                 msg = await embeds.add_field(msg,f"Created {guild.name}",f"`{guild.id}`")

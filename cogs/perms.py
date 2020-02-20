@@ -50,23 +50,12 @@ class perms(commands.Cog):
             await ctx.invoke(self.bot.get_command("help"),"perms")
         else:
             guild = await dbFind("guilds",{"id": ctx.guild.id})
-            if guild["perms_log"]:
+            if guild["logs"]["perms"]:
                 channel = self.bot.get_channel(guild["channel"])
                 try:
                     await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
                 except:
                     pass
-
-    @perms.command(name="setup",hidden=True)
-    @checks.has_required_level(5)
-    async def setup(self,ctx):
-        for guild in self.bot.guilds:
-            for member in guild.members:
-                if (await dbFind("users", {"guild": guild.id, "user": member.id})) == None:
-                    if member.id == guild.owner_id:
-                        await dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"WARN_MEMBERS": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}, "strikes": {}})
-                    else:
-                        await dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False,"WARN_MEMBERS": False,"MUTE_MEMBERS": False,"KICK_MEMBERS": False,"BAN_MEMBERS": False,"ADMINISTRATOR": False}, "strikes": {}})
 
     @perms.command(name="add",description="<user> [permission] | Assigns a users' GroundDug (`GD`) permission")
     @commands.guild_only()

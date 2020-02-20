@@ -1,4 +1,4 @@
-#GroundDug Core Bot File
+#GroundDug Core File
 
 import discord
 from discord.ext import commands

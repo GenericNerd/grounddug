@@ -12,7 +12,7 @@ async def get_level(user:discord.Member):
     #Level 4 - Reserved for further use
     #Level 3 - Bot Moderators
     #Level 2 - Reserved for further use
-    #Level 1 - Reserved for further use
+    #Level 1 - Bot Tester
 
     levelObject = await dbFind("settings",{"_id": dbOject})
     levelObject = levelObject["levels"]

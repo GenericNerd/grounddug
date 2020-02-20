@@ -1,4 +1,4 @@
-#GroundDug Custom Checks
+#GroundDug Custom Check Handler
 
 import discord
 from discord.ext import commands

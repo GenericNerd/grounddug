@@ -1,4 +1,4 @@
-#GroundDug Useful Utility
+#GroundDug Useful Utility Functions
 
 import discord
 import asyncio

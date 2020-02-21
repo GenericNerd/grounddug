@@ -27,10 +27,9 @@ class automod(commands.Cog):
                 except:
                     pass
 
-    @automod.command(name="setup",description="Set up your automod for the server",hidden=True)
+    @automod.command(name="setup",description="| Set up your automod for the server",hidden=True)
     @commands.guild_only()
     @checks.has_GD_permission("ADMINISTRATOR")
-    @checks.has_required_level(3)
     async def setup(self,ctx):
         msg = await embeds.generate("GroundDug Auto-Moderation","Thank you for using GroundDug, this will guide you through the setup of the auto-moderation module of the bot. Please read this carefully.")
         msg = await embeds.add_field(msg,"Set up Auto-Moderation","React with :zero: to start setting up Auto-Moderation")
@@ -462,10 +461,6 @@ class automod(commands.Cog):
             await dbUpdate("guilds",{"id": ctx.guild.id},{"automod": guildSettings["automod"]})
             msg = await embeds.generate("Auto-Moderation Changed Successfully",None)
             await ctx.send(embed=msg)
-
-#IMPORTANT REGEX FOR INVITES,
-# (?:https?://)?discord(?:app\.com/invite|\.gg)/?[a-zA-Z0-9]+/?
-# (https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/.+[a-z] # THIS IS BETTER
 
 def setup(bot):
     bot.add_cog(automod(bot))

@@ -27,7 +27,7 @@ class automod(commands.Cog):
                 except:
                     pass
 
-    @automod.command(name="setup",description="| Set up your automod for the server",hidden=True)
+    @automod.command(name="setup",description="| Set up your automod for the server")
     @commands.guild_only()
     @checks.has_GD_permission("ADMINISTRATOR")
     async def setup(self,ctx):

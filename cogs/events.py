@@ -29,7 +29,7 @@ class events(commands.Cog):
                     else:
                         await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False,"WARN_MEMBERS": False,"MUTE_MEMBERS": False,"KICK_MEMBERS": False,"BAN_MEMBERS": False,"ADMINISTRATOR": False}, "strikes": {}})
         await self.bot.get_channel(664541295448031295).send(embed=(await embeds.generate("Checks completed!",f"I am now fully online as of {str(datetime.utcnow()).split('.')[0]} UTC")))
-        await self.bot.change_presence(status=discord.Status.online,activity=discord.Game(f"{await useful.getPrefix(self.bot,self.bot.get_guild(526427196072525836))}help to get started"))
+        await self.bot.change_presence(status=discord.Status.online,activity=discord.Game("g!help to get started"))
 
     @commands.Cog.listener()
     async def on_guild_join(self,guild):

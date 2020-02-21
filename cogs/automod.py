@@ -1,4 +1,4 @@
-#GroundDug AutoMod Module
+#GroundDug AutoMod Module .
 
 import discord
 from discord.ext import commands

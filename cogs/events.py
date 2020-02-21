@@ -96,14 +96,13 @@ class events(commands.Cog):
             channel = self.bot.get_channel(guild["channel"])
             removed = False
             async def RuleViolator(msg,text,channel):
-                global removed
+                global removed,guild
                 await msg.delete()
                 await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator} {text} in #{ctx.channel.name}",f"`{ctx.content}`")))
-                guildDB = await db.dbFind("guilds",{"id": ctx.guild.id})
-                userDB = await db.dbFind("users",{"guild": ctx.guild.id, "user": user.id})
-                userDB["strikes"][str(guildDB["cases"])] = {"moderator": ctx.author.id, "reason": text.capitalize()}
-                await db.dbUpdate("users",{"_id": userDB["_id"]},{"strikes": userDB["strikes"]})
-                await db.dbUpdate("guilds",{"_id": guildDB["_id"]},{"cases": guildDB["cases"] + 1})
+                # userDB = await db.dbFind("users",{"guild": ctx.guild.id, "user": user.id})
+                # userDB["strikes"][str(guildDB["cases"])] = {"moderator": ctx.author.id, "reason": text.capitalize()}
+                # await db.dbUpdate("users",{"_id": userDB["_id"]},{"strikes": userDB["strikes"]})
+                # await db.dbUpdate("guilds",{"_id": guildDB["_id"]},{"cases": guildDB["cases"] + 1})
                 removed = True
             if not removed and guild["automod"]["antiInvite"] and re.search("(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/.+[a-z]",ctx.content):
                 await RuleViolator(ctx,"tried to advertise",channel)

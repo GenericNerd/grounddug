@@ -8,11 +8,13 @@ from cogs.utils.dbhandle import dbFind
 dbOject = ObjectId("5e18fd4d123a50ef10d8332e")
 
 async def get_level(user:discord.Member):
-    #Level 5 - Bot Owner
-    #Level 4 - Reserved for further use
-    #Level 3 - Bot Moderators
-    #Level 2 - Reserved for further use
-    #Level 1 - Bot Tester
+    """
+    Level 5 - Bot Owner
+    Level 4 - Reserved for further use
+    Level 3 - Bot Moderators
+    Level 2 - Reserved for further use
+    Level 1 - Bot Tester
+    """
 
     levelObject = await dbFind("settings",{"_id": dbOject})
     levelObject = levelObject["levels"]

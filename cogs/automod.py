@@ -27,7 +27,7 @@ class automod(commands.Cog):
                 except:
                     pass
 
-    @automod.command(name="setup",description="Set up your automod for the server",hidden=True)
+    @automod.command(name="setup",description="| Set up your automod for the server")
     @commands.guild_only()
     @checks.has_GD_permission("ADMINISTRATOR")
     async def setup(self,ctx):
@@ -461,10 +461,6 @@ class automod(commands.Cog):
             await dbUpdate("guilds",{"id": ctx.guild.id},{"automod": guildSettings["automod"]})
             msg = await embeds.generate("Auto-Moderation Changed Successfully",None)
             await ctx.send(embed=msg)
-
-#IMPORTANT REGEX FOR INVITES,
-# (?:https?://)?discord(?:app\.com/invite|\.gg)/?[a-zA-Z0-9]+/?
-# (https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/.+[a-z] # THIS IS BETTER
 
 def setup(bot):
     bot.add_cog(automod(bot))

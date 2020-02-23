@@ -48,7 +48,7 @@ class admin(commands.Cog):
     async def blacklistAdd(self,ctx,channel:discord.TextChannel):
         dbObject = await dbFind("guilds",{"id": ctx.guild.id})
         dbObject["blacklistChannels"].append(channel.id)
-        await ctx.send(embed=(await embeds.generate("Channel added",f"#{channel.name} will now ignore commands sent to it")))
+        await ctx.send(embed=(await embeds.generate("Channel added",f"#{channel.mention} will now ignore commands sent to it")))
         await dbUpdate("guilds",{"id": ctx.guild.id},dbObject)
 
     @admin.command(name="blacklistremove",description="<channel> | Remove a channel where commands cannot be ran")
@@ -57,7 +57,7 @@ class admin(commands.Cog):
     async def blacklistRemove(self,ctx,channel:discord.TextChannel):
         dbObject = await dbFind("guilds",{"id": ctx.guild.id})
         dbObject["blacklistChannels"].remove(channel.id)
-        await ctx.send(embed=(await embeds.generate("Channel added",f"#{channel.name} will no longer ignore commands sent to it")))
+        await ctx.send(embed=(await embeds.generate("Channel added",f"{channel.mention} will no longer ignore commands sent to it")))
         await dbUpdate("guilds",{"id": ctx.guild.id},dbObject)
 
     @admin.command(name="setprefix",description="<prefix> | Set a custom prefix for your guild locally. The bot default is `g!`")

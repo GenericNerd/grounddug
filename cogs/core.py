@@ -29,7 +29,7 @@ class core(commands.Cog):
                 modules["misc"].append(command)
         if module == "":
             msg.description = "Please specify the modules you wish to look up"
-            msg = await embeds.add_field(msg,f"💿 - Misc ({prefix}help misc)\n🔨 - Mod ({prefix}help mod)\n🔍 - Logs ({prefix}help logs)\n🔧 - Perms ({prefix}help perms)\n🤖 - Auto-Mod - ({prefix}help automod)")
+            msg = await embeds.add_field(msg,f"💿 - Misc ({prefix}help misc)\n🔨 - Mod ({prefix}help mod)\n⚙ - Admin ({prefix}help admin)\n🔍 - Logs ({prefix}help logs)\n🔧 - Perms ({prefix}help perms)\n🤖 - Auto-Mod - ({prefix}help automod)")
             return await ctx.send(embed=msg)
         elif module != "":
             if module.lower() in modules.keys():

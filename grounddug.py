@@ -18,5 +18,11 @@ for module in startupExtensions:
     except Exception as e:
         print(f"Failed to load module {module}\n{e}")
 
+@bot.check
+async def blacklistCalculate(ctx):
+    dbObject = await db.dbFind("guilds",{"id": ctx.guild.id})
+    if ctx.channel.id not in dbObject["blacklistChannels"]:
+        return True
+
 bot.run("NjY3MDgzMTM3OTMwNjI1MDI0.Xh9jpw.KygIs_cyCxF6n--bKkvOSATlsB4")
 # bot.run(db.dbNSyncFind("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})["token"])

@@ -4,12 +4,9 @@ import discord
 from discord.ext import commands
 import asyncio
 import cogs.utils.checks as checks
-from cogs.utils.useful import getPrefix
 import cogs.utils.embeds as embeds
 from cogs.utils.dbhandle import dbUpdate
 from cogs.utils.dbhandle import dbFind
-from cogs.utils.levels import get_level
-from datetime import datetime
 from bson.objectid import ObjectId
 
 class admin(commands.Cog):
@@ -45,18 +42,30 @@ class admin(commands.Cog):
         else:
             await embeds.error(ctx,"Raid Mode state needs to be either `True` or `False`")
 
+    @admin.command(name="blacklistadd",description="<channel> | Add a channel where commands cannot be ran")
+    @commands.guild_only()
+    @checks.has_GD_permission("ADMINISTRATOR")
+    async def blacklistAdd(self,ctx,channel:discord.TextChannel):
+        dbObject = await dbFind("guilds",{"id": ctx.guild.id})
+        dbObject["blacklistChannels"].append(channel.id)
+        await ctx.send(embed=(await embeds.generate("Channel added",f"#{channel.name} will now ignore commands sent to it")))
+        await dbUpdate("guilds",{"id": ctx.guild.id},dbObject)
+
+    @admin.command(name="blacklistremove",description="<channel> | Remove a channel where commands cannot be ran")
+    @commands.guild_only()
+    @checks.has_GD_permission("ADMINISTRATOR")
+    async def blacklistRemove(self,ctx,channel:discord.TextChannel):
+        dbObject = await dbFind("guilds",{"id": ctx.guild.id})
+        dbObject["blacklistChannels"].pop(channel.id)
+        await ctx.send(embed=(await embeds.generate("Channel added",f"#{channel.name} will no longer ignore commands sent to it")))
+        await dbUpdate("guilds",{"id": ctx.guild.id},dbObject)
+
     @admin.command(name="setprefix",description="<prefix> | Set a custom prefix for your guild locally. The bot default is `g!`")
+    @commands.guild_only()
     @checks.has_GD_permission("ADMINISTRATOR")
     async def setprefix(self,ctx,prefix):
         await dbUpdate("guilds",{"id": ctx.guild.id},{"prefix": prefix})
         await ctx.send(embed=(await embeds.generate("Prefix changed!",f"`{prefix}` is now the prefix for this guild")))
-
-    @commands.check
-    async def blacklistCalculate(ctx):
-        dbObject = await dbhandle.dbFind("guilds",{"id": ctx.guild.id})
-        print(dbObject["blacklistChannels"],ctx.channel.id)
-        if ctx.channel.id not in dbObject["blacklistChannels"]:
-            return True
 
 def setup(bot):
     bot.add_cog(admin(bot))

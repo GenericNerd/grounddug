@@ -22,7 +22,7 @@ class mod(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
 
-    @commands.group(name="mod",description="Guild administrative commands")
+    @commands.group(name="mod",description="Guild moderation commands")
     async def mod(self,ctx):
         if ctx.invoked_subcommand is None:
             await ctx.invoke(self.bot.get_command("help"),"mod")
@@ -127,22 +127,6 @@ class mod(commands.Cog):
             await ctx.channel.purge(limit=amount)
         else:
             await embeds.error(ctx,"INVALID CHECK (Must be member, bot, all or empty)")
-
-    @mod.command(name="raid",description="<state> | Enables or disables raid mode")
-    @commands.guild_only()
-    @checks.has_GD_permission("ADMINISTRATOR")
-    async def raid(self,ctx,state=None):
-        guild = await dbFind("guilds",{"id": ctx.guild.id})
-        if state == None:
-            await ctx.send(embed=(await embeds.generate(f"{ctx.guild.name} Raid Mode",f"Raid Mode is currently set to `{guild['raid_mode']}`")))
-        elif state.lower() == "true":
-            await dbUpdate("guilds",{"id": ctx.guild.id},{"raid_mode": True})
-            await ctx.send(embed=(await embeds.generate(f"{ctx.guild.name} Raid Mode",f"Raid Mode has been `enabled` by {ctx.author.mention}")))
-        elif state.lower() == "false":
-            await dbUpdate("guilds",{"id": ctx.guild.id},{"raid_mode": False})
-            await ctx.send(embed=(await embeds.generate(f"{ctx.guild.name} Raid Mode",f"Raid Mode has been `disabled` by {ctx.author.mention}")))
-        else:
-            await embeds.error(ctx,"Raid Mode state needs to be either `True` or `False`")
 
     @mod.command(name="strike",description="<user> [reason] | Warn a user for their behaviour")
     @commands.guild_only()
@@ -257,13 +241,6 @@ class mod(commands.Cog):
     async def _purge(self,ctx,amount=100,check=""):
         await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod purge"),amount,check)
-
-    @commands.command(name="raid",hidden=True)
-    @commands.guild_only()
-    @checks.has_GD_permission("ADMINISTRATOR")
-    async def _raid(self,ctx,state=None):
-        await log(ctx,self.bot)
-        await ctx.invoke(self.bot.get_command("mod raid"),state)
 
     @commands.command(name="strike",hidden=True)
     @commands.guild_only()

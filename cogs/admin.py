@@ -56,7 +56,7 @@ class admin(commands.Cog):
     @checks.has_GD_permission("ADMINISTRATOR")
     async def blacklistRemove(self,ctx,channel:discord.TextChannel):
         dbObject = await dbFind("guilds",{"id": ctx.guild.id})
-        dbObject["blacklistChannels"].pop(channel.id)
+        dbObject["blacklistChannels"].remove(channel.id)
         await ctx.send(embed=(await embeds.generate("Channel added",f"#{channel.name} will no longer ignore commands sent to it")))
         await dbUpdate("guilds",{"id": ctx.guild.id},dbObject)
 

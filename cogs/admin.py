@@ -54,6 +54,7 @@ class admin(commands.Cog):
     @commands.check
     async def blacklistCalculate(ctx):
         dbObject = await dbhandle.dbFind("guilds",{"id": ctx.guild.id})
+        print(dbObject["blacklistChannels"],ctx.channel.id)
         if ctx.channel.id not in dbObject["blacklistChannels"]:
             return True
 

@@ -82,6 +82,15 @@ class logs(commands.Cog):
                 msg = await embeds.add_field(msg,f"Created {guild.name}",f"`{guild.id}`")
         await ctx.send(embed=msg)
     
+    @logs.command(name="update",hidden=True)
+    @checks.has_required_level(5)
+    async def update(self,ctx):
+        for guild in self.bot.guilds:
+            dbObject = await dbFind("guilds",{"id": guild.id})
+            dbObject["logs"]["admin"] = False
+            dbObject["blacklistChannels"] = []
+            await dbUpdate("guilds",{"id": guild.id},dbObject)
+
     @logs.command(name="setchannel",description="[channel] | Set the channel to which all command logs will be sent to on the guild")
     @commands.guild_only()
     @checks.has_GD_permission("ADMINISTRATOR")

@@ -124,7 +124,7 @@ class events(commands.Cog):
             guild = await db.dbFind("guilds",{"id": ctx.guild.id})
             channel = self.bot.get_channel(guild["channel"])
             command_base = (ctx.message.content).split((await getPrefix(self.bot,ctx)))[1].split(" ")[0]
-            command_list = ["admin","logs","perms","developer","dev","automod"]
+            command_list = ["admin","logs","perms","developer","dev","automod","admin"]
             if not command_base in command_list and guild["logs"]["misc"]:
                 try:
                     await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))

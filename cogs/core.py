@@ -107,12 +107,6 @@ class core(commands.Cog):
                 msg = await embeds.add_field(msg,f"Shard {shard[0]}",f"<:status_dnd:679095420626141214> Latency: **{round(shard[1]*100)}**ms")
         await ctx.send(embed=msg)
 
-    @commands.command(name="setprefix",description="<prefix> | Set a custom prefix for your guild locally. The bot default is `g!`")
-    @checks.has_GD_permission("ADMINISTRATOR")
-    async def setprefix(self,ctx,prefix):
-        await dbUpdate("guilds",{"id": ctx.guild.id},{"prefix": prefix})
-        await ctx.send(embed=(await embeds.generate("Prefix changed!",f"`{prefix}` is now the prefix for this guild")))
-
     @commands.command(name="badges",description="<user> | Returns a list of the badges a user has in connection to the bot")
     async def badges(self,ctx,user:discord.Member=None):
         if user == None:

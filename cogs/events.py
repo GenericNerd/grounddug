@@ -110,7 +110,7 @@ class events(commands.Cog):
                 await RuleViolator(ctx,"tried to advertise",channel)
             if not removed and guild["automod"]["antiURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
                 await RuleViolator(ctx,"tried to post a link",channel)
-            if not removed and guild["automod"]["profanity"] and pf.is_profane(ctx.message.content):
+            if not removed and guild["automod"]["profanity"] and pf.is_profane(ctx.content):
                 await RuleViolator(ctx,"tried to swear",channel)
             if not removed and guild["automod"]["caps"] > 0 and len(ctx.content) > 0 and guild["automod"]["caps"] < (sum(1 for x in ctx.content if str.isupper(x))/len(ctx.content))*100:
                 await RuleViolator(ctx,"used too many CAPS",channel)

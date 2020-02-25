@@ -20,7 +20,7 @@ for module in startupExtensions:
 
 @bot.check
 async def blacklistCalculate(ctx):
-    if ctx.guild not None:
+    if ctx.guild is not None:
         dbObject = await db.dbFind("guilds",{"id": ctx.guild.id})
         if ctx.channel.id not in dbObject["blacklistChannels"]:
             return True

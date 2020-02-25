@@ -47,18 +47,25 @@ class admin(commands.Cog):
     @checks.has_GD_permission("ADMINISTRATOR")
     async def blacklistAdd(self,ctx,channel:discord.TextChannel):
         dbObject = await dbFind("guilds",{"id": ctx.guild.id})
-        dbObject["blacklistChannels"].append(channel.id)
-        await ctx.send(embed=(await embeds.generate("Channel added",f"#{channel.mention} will now ignore commands sent to it")))
-        await dbUpdate("guilds",{"id": ctx.guild.id},dbObject)
+        if channel.id not in dbObject["blacklistChannels"]:
+            dbObject["blacklistChannels"].append(channel.id)
+            await ctx.send(embed=(await embeds.generate("Channel added",f"#{channel.mention} will now ignore commands sent to it")))
+            await dbUpdate("guilds",{"id": ctx.guild.id},dbObject)
+        else:
+            await ctx.send(embed=(await embeds.generate("Channel already in blacklist",None)))
 
     @admin.command(name="blacklistremove",description="<channel> | Remove a channel where commands cannot be ran")
     @commands.guild_only()
     @checks.has_GD_permission("ADMINISTRATOR")
     async def blacklistRemove(self,ctx,channel:discord.TextChannel):
         dbObject = await dbFind("guilds",{"id": ctx.guild.id})
-        dbObject["blacklistChannels"].remove(channel.id)
-        await ctx.send(embed=(await embeds.generate("Channel added",f"{channel.mention} will no longer ignore commands sent to it")))
-        await dbUpdate("guilds",{"id": ctx.guild.id},dbObject)
+        try:
+            dbObject["blacklistChannels"].remove(channel.id)
+        except:
+            await ctx.send(embed=(await embeds.generate("Channel not in blacklist",None)))
+        else:
+            await dbUpdate("guilds",{"id": ctx.guild.id},dbObject)
+            await ctx.send(embed=(await embeds.generate("Channel added",f"{channel.mention} will no longer ignore commands sent to it")))
 
     @admin.command(name="setprefix",description="<prefix> | Set a custom prefix for your guild locally. The bot default is `g!`")
     @commands.guild_only()

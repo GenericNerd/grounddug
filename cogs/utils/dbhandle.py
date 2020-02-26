@@ -30,3 +30,9 @@ async def dbRemove(db,finder):
 
 async def dbRemoveMany(db,finder):
     await asyncdb[db].delete_many(finder)
+
+async def itemExist(db,finder):
+    if dbFind(db,finder) is None:
+        return True
+    else:
+        return False

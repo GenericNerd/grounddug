@@ -57,18 +57,32 @@ class perms(commands.Cog):
                 except:
                     pass
 
-    @perms.command(name="add",description="<user> [permission] | Assigns a users' GroundDug (`GD`) permission")
+    @perms.command(name="add",description="<user> [permission] | Assigns a users GroundDug (`GD`) permission")
     @commands.guild_only()
     @checks.has_GD_permission("ADMINISTRATOR")
     async def add(self,ctx,user:discord.Member,permission=None):
         await changePermission(self,ctx,user,True,permission)
 
-    @perms.command(name="remove",description="<user> [permission] | Removes a users' GroundDug (`GD`) permission")
+    @perms.command(name="remove",description="<user> [permission] | Removes a users GroundDug (`GD`) permission")
     @commands.guild_only()
     @checks.has_GD_permission("ADMINISTRATOR")
     async def remove(self,ctx,user:discord.Member,permission=None):
         await changePermission(self,ctx,user,False,permission)
     
+    @perms.command(name="massadd",description="<role> <permission> | Assigns users within the pinged role a GroundDug (`GD`) permission")
+    @commands.guild_only()
+    @checks.has_GD_permission("ADMINISTRATOR")
+    async def massAdd(self,ctx,role:discord.Role,permission):
+        for user in role.members:
+            await changePermission(self,ctx,user,True,permission)
+
+    @perms.command(name="massremove",description="<role> <permission> | Removes users within the pinged role a GroundDug (`GD`) permission")
+    @commands.guild_only()
+    @checks.has_GD_permission("ADMINISTRATOR")
+    async def massRemove(self,ctx,role:discord.Role,permission):
+        for user in role.members:
+            await changePermission(self,ctx,user,False,permission)
+
     @perms.command(name="list",description="[user] | Shows the current GroundDug (`GD`) permissions currently assigned to a user")
     @commands.guild_only()
     async def permsList(self,ctx,user:discord.Member=None):

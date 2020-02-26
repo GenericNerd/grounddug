@@ -24,11 +24,8 @@ class events(commands.Cog):
         await self.bot.get_channel(664541295448031295).send(embed=(await embeds.generate("I'm online",f"As of {str(datetime.utcnow()).split('.')[0]} UTC, I am performing my member checks now!")))
         for guild in self.bot.guilds:
             for member in guild.members:
-                if (await db.dbFind("users", {"guild": guild.id, "user": member.id})) == None:
-                    if member.id == guild.owner_id:
-                        await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"WARN_MEMBERS": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}, "strikes": {}})
-                    else:
-                        await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False,"WARN_MEMBERS": False,"MUTE_MEMBERS": False,"KICK_MEMBERS": False,"BAN_MEMBERS": False,"ADMINISTRATOR": False}, "strikes": {}})
+                if (await db.itemExist("users", {"guild": guild.id, "user": member.id})):
+                    await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False,"WARN_MEMBERS": False,"MUTE_MEMBERS": False,"KICK_MEMBERS": False,"BAN_MEMBERS": False,"ADMINISTRATOR": False}, "strikes": {}})
         await self.bot.get_channel(664541295448031295).send(embed=(await embeds.generate("Checks completed!",f"I am now fully online as of {str(datetime.utcnow()).split('.')[0]} UTC")))
         await self.bot.change_presence(status=discord.Status.online,activity=discord.Game("g!help to get started"))
 

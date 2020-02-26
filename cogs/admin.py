@@ -49,7 +49,7 @@ class admin(commands.Cog):
         dbObject = await dbFind("guilds",{"id": ctx.guild.id})
         if channel.id not in dbObject["blacklistChannels"]:
             dbObject["blacklistChannels"].append(channel.id)
-            await ctx.send(embed=(await embeds.generate("Channel added",f"#{channel.mention} will now ignore commands sent to it")))
+            await ctx.send(embed=(await embeds.generate("Channel added",f"{channel.mention} will now ignore commands sent to it")))
             await dbUpdate("guilds",{"id": ctx.guild.id},dbObject)
         else:
             await ctx.send(embed=(await embeds.generate("Channel already in blacklist",None)))

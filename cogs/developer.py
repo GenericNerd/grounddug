@@ -7,6 +7,7 @@ import cogs.utils.checks as checks
 import cogs.utils.embeds as embeds
 import cogs.utils.dbhandle as dbhandle
 import cogs.utils.levels as levels
+import cogs.utils.dbhandle as db
 
 class dev(commands.Cog):
     def __init__(self,bot):
@@ -61,11 +62,11 @@ class dev(commands.Cog):
     @checks.has_required_level(5)
     async def dbupdate(self,ctx):
         for guild in self.bot.guilds:
-            dbObject = await dbFind("guilds",{"id": guild.id})
+            dbObject = await db.dbFind("guilds",{"id": guild.id})
             # DB UPDATES BELOW
             dbObject["automod"]["unshortenURL"] = False
             # SEND DB UPDATE
-            await dbUpdate("guilds",{"id": guild.id},dbObject)
+            await db.dbUpdate("guilds",{"id": guild.id},dbObject)
 
 def setup(bot):
     bot.add_cog(dev(bot))

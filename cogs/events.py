@@ -113,7 +113,7 @@ class events(commands.Cog):
                     url = re.findall(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",string)
                     return url
                 shortenedURLs = []
-                for url in await findURL(ctx.content):
+                for url in await findURLs(ctx.content):
                     shortenedURL = await httpxClient.head(url,allow_redirects=True).url
                     if shortenedURL != url:
                         shortenedURLs.append(shortenedURL)

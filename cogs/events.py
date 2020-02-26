@@ -13,6 +13,7 @@ import cogs.utils.useful as useful
 import re
 
 pf = ProfanityFilter()
+httpxClient = httpx.AsyncClient()
 
 class events(commands.Cog):
     def __init__(self,bot):
@@ -108,10 +109,15 @@ class events(commands.Cog):
             if not removed and guild["automod"]["antiURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
                 await RuleViolator(ctx,"tried to post a link",channel)
             if not removed and guild["automod"]["unshortenURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
-                async def findURL(string):
+                async def findURLs(string):
                     url = re.findall(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",string)
                     return url
-                print(await findURL(ctx.content))
+                shortenedURLs = []
+                for url in await findURL(ctx.content):
+                    shortenedURL = await httpxClient.head(url,allow_redirects=True).url
+                    if shortenedURL != url:
+                        shortenedURLs.append(shortenedURL)
+                await RuleViolator(ctx,f"tried to shorten links ({shortenedURLs})",channel)
             if not removed and guild["automod"]["profanity"] and pf.is_profane(ctx.content):
                 await RuleViolator(ctx,"tried to swear",channel)
             if not removed and guild["automod"]["caps"] > 0 and len(ctx.content) > 0 and guild["automod"]["caps"] < (sum(1 for x in ctx.content if str.isupper(x))/len(ctx.content))*100:

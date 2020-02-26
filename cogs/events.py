@@ -114,9 +114,9 @@ class events(commands.Cog):
                     return url
                 shortenedURLs = []
                 for url in await findURLs(ctx.content):
-                    shortenedURL = await httpxClient.head(url,allow_redirects=True).url
-                    if shortenedURL != url:
-                        shortenedURLs.append(shortenedURL)
+                    shortenedURL = await httpxClient.head(url,allow_redirects=True)
+                    if shortenedURL.url != url:
+                        shortenedURLs.append(shortenedURL.url)
                 await RuleViolator(ctx,f"tried to shorten links ({shortenedURLs})",channel)
             if not removed and guild["automod"]["profanity"] and pf.is_profane(ctx.content):
                 await RuleViolator(ctx,"tried to swear",channel)

@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 import asyncio
 from profanity_filter import ProfanityFilter
+import httpx
 from datetime import datetime
 import cogs.utils.embeds as embeds
 from cogs.utils.useful import getPrefix
@@ -106,6 +107,11 @@ class events(commands.Cog):
                 await RuleViolator(ctx,"tried to advertise",channel)
             if not removed and guild["automod"]["antiURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
                 await RuleViolator(ctx,"tried to post a link",channel)
+            if not removed and guild["automod"]["unshortenURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
+                async def findURL(string):
+                    url = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+] |[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', string)
+                    return url
+                print(findURL(ctx.content))
             if not removed and guild["automod"]["profanity"] and pf.is_profane(ctx.content):
                 await RuleViolator(ctx,"tried to swear",channel)
             if not removed and guild["automod"]["caps"] > 0 and len(ctx.content) > 0 and guild["automod"]["caps"] < (sum(1 for x in ctx.content if str.isupper(x))/len(ctx.content))*100:

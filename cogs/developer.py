@@ -64,7 +64,7 @@ class dev(commands.Cog):
         for guild in self.bot.guilds:
             dbObject = await db.dbFind("guilds",{"id": guild.id})
             # DB UPDATES BELOW
-            dbObject["automod"]["unshortenURL"] = False
+            dbObject["automod"]["shortURL"] = False
             # SEND DB UPDATE
             await db.dbUpdate("guilds",{"id": guild.id},dbObject)
 

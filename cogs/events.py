@@ -109,7 +109,7 @@ class events(commands.Cog):
                 await channel.send(embed=await RuleViolator(ctx,"tried to advertise",True))
             if not removed and guild["automod"]["antiURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
                 await channel.send(embed=await RuleViolator(ctx,"tried to post a link",True))
-            if not removed and guild["automod"]["unshortenURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
+            if not removed and guild["automod"]["shortURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
                 async def findURLs(string):
                     url = re.findall(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",string)
                     return url
@@ -121,8 +121,7 @@ class events(commands.Cog):
                 if shortenedURLs != []:
                     await RuleViolator(ctx,"",False)
                     shortenedURLstriped = str(shortenedURLs).strip("[]([URL(')])")
-                    msg = await embeds.generate("Shortened URLs detected!",f"{ctx.author.mention} posted a shortened link leading to: {shortenedURLstriped}")
-                    await ctx.channel.send(embed=msg)
+                    await ctx.channel.send(embed=(await embeds.generate("Shortened URLs detected!",f"{ctx.author.mention} posted a shortened link(s) leading to: {shortenedURLstriped}")))
             if not removed and guild["automod"]["profanity"] and pf.is_profane(ctx.content):
                 await channel.send(embed=await RuleViolator(ctx,"tried to swear",True))
             if not removed and guild["automod"]["caps"] > 0 and len(ctx.content) > 0 and guild["automod"]["caps"] < (sum(1 for x in ctx.content if str.isupper(x))/len(ctx.content))*100:

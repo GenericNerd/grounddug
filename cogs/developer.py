@@ -44,7 +44,7 @@ class dev(commands.Cog):
     @checks.has_required_level(3)
     async def unload(self,ctx,module):
         self.bot.unload_extension(f"cogs.{module}")
-        await ctx.send(embed=(await embeds.generate(f"Module {module} loaded",None)))
+        await ctx.send(embed=(await embeds.generate(f"Module {module} unloaded",None)))
 
     @developer.command(name="invite",hidden=True)
     @checks.has_required_level(3)

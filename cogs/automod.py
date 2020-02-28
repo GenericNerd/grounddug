@@ -504,7 +504,7 @@ class automod(commands.Cog):
                 else:
                     guildSettings["automod"]["shortURL"] = False
             await msg.delete()
-            await dbUpdate("guilds",{"id": ctx.guild.id},{"automod": guildSettings["shortURL"]})
+            await dbUpdate("guilds",{"id": ctx.guild.id},{"automod": guildSettings["automod"]})
             msg = await embeds.generate("Auto-Moderation Changed Successfully",None)
             await ctx.send(embed=msg)
 

@@ -4,9 +4,13 @@ import discord
 import asyncio
 import cogs.utils.dbhandle as db
 from bson.objectid import ObjectId
+import os
+
+environment = os.getenv("GD_ENV", "beta")
 
 async def getPrefix(bot,message):
-    # return "gb!"
+    if environment == "beta":
+        return "gb!"
     if not message.guild:
         return "g!"
     else:

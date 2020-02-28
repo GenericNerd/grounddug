@@ -121,7 +121,7 @@ class events(commands.Cog):
                 if shortenedURLs != []:
                     await RuleViolator(ctx,"",False)
                     msg = await embeds.generate("Shortened URLs detected!",str(shortenedURLs).strip("[]([URL(')])"))
-                    await ctx.send(embed=msg)
+                    await ctx.channel.send(embed=msg)
             if not removed and guild["automod"]["profanity"] and pf.is_profane(ctx.content):
                 await channel.send(embed=await RuleViolator(ctx,"tried to swear",True))
             if not removed and guild["automod"]["caps"] > 0 and len(ctx.content) > 0 and guild["automod"]["caps"] < (sum(1 for x in ctx.content if str.isupper(x))/len(ctx.content))*100:

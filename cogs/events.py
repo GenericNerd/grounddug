@@ -120,7 +120,7 @@ class events(commands.Cog):
                         shortenedURLs.append(shortenedURL.url)
                 if shortenedURLs != []:
                     await RuleViolator(ctx,"",False)
-                    shortenedURLstriped = str(shortenedURLs).strip("[]([URL(')])")
+                    shortenedURLstriped = str(shortenedURLs).strip("[]([),URL(')])")
                     await ctx.channel.send(embed=(await embeds.generate("Shortened URLs detected!",f"{ctx.author.mention} posted a shortened link(s) leading to: {shortenedURLstriped}")))
             if not removed and guild["automod"]["profanity"] and pf.is_profane(ctx.content):
                 await channel.send(embed=await RuleViolator(ctx,"tried to swear",True))

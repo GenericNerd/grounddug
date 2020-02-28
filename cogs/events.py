@@ -95,19 +95,20 @@ class events(commands.Cog):
             guild = await db.dbFind("guilds",{"id": ctx.guild.id})
             channel = self.bot.get_channel(guild["channel"])
             removed = False
-            async def RuleViolator(msg,text,channel):
+            async def RuleViolator(msg,text,delete):
                 global removed,guild
-                await msg.delete()
-                await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator} {text} in #{ctx.channel.name}",f"`{ctx.content}`")))
+                if delete:
+                    await msg.delete()
+                    removed = True
                 # userDB = await db.dbFind("users",{"guild": ctx.guild.id, "user": user.id})
                 # userDB["strikes"][str(guildDB["cases"])] = {"moderator": ctx.author.id, "reason": text.capitalize()}
                 # await db.dbUpdate("users",{"_id": userDB["_id"]},{"strikes": userDB["strikes"]})
                 # await db.dbUpdate("guilds",{"_id": guildDB["_id"]},{"cases": guildDB["cases"] + 1})
-                removed = True
+                return await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator} {text} in #{ctx.channel.name}",f"`{ctx.content}`")
             if not removed and guild["automod"]["antiInvite"] and re.search("(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/.+[a-z]",ctx.content):
-                await RuleViolator(ctx,"tried to advertise",channel)
+                await channel.send(embed=await RuleViolator(ctx,"tried to advertise",True))
             if not removed and guild["automod"]["antiURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
-                await RuleViolator(ctx,"tried to post a link",channel)
+                await channel.send(embed=await RuleViolator(ctx,"tried to post a link",True))
             if not removed and guild["automod"]["unshortenURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
                 async def findURLs(string):
                     url = re.findall(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",string)
@@ -117,13 +118,16 @@ class events(commands.Cog):
                     shortenedURL = await httpxClient.head(url,allow_redirects=True)
                     if shortenedURL.url != url:
                         shortenedURLs.append(shortenedURL.url)
-                await RuleViolator(ctx,f"tried to shorten links ({shortenedURLs})",channel)
+                if shortenedURLs != []:
+                    await RuleViolator(ctx,"",False)
+                    msg = await embeds.generate("Shortened URLs detected!",str(shortenedURLs).strip("[]([URL(')])"))
+                    await ctx.send(embed=msg)
             if not removed and guild["automod"]["profanity"] and pf.is_profane(ctx.content):
-                await RuleViolator(ctx,"tried to swear",channel)
+                await channel.send(embed=await RuleViolator(ctx,"tried to swear",True))
             if not removed and guild["automod"]["caps"] > 0 and len(ctx.content) > 0 and guild["automod"]["caps"] < (sum(1 for x in ctx.content if str.isupper(x))/len(ctx.content))*100:
-                await RuleViolator(ctx,"used too many CAPS",channel)
+                await channel.send(embed=await RuleViolator(ctx,"used too many CAPS",True))
             if not removed and guild["automod"]["massMentions"] > 0 and len(ctx.raw_mentions) > guild["automod"]["massMentions"]:
-                await RuleViolator(ctx,"pinged too many people",channel)
+                await channel.send(embed=await RuleViolator(ctx,"pinged too many people",True))
 
     @commands.Cog.listener()
     async def on_command(self,ctx):

@@ -7,6 +7,7 @@ import cogs.utils.checks as checks
 import cogs.utils.embeds as embeds
 import cogs.utils.dbhandle as dbhandle
 import cogs.utils.levels as levels
+import cogs.utils.dbhandle as db
 
 class dev(commands.Cog):
     def __init__(self,bot):
@@ -43,7 +44,7 @@ class dev(commands.Cog):
     @checks.has_required_level(3)
     async def unload(self,ctx,module):
         self.bot.unload_extension(f"cogs.{module}")
-        await ctx.send(embed=(await embeds.generate(f"Module {module} loaded",None)))
+        await ctx.send(embed=(await embeds.generate(f"Module {module} unloaded",None)))
 
     @developer.command(name="invite",hidden=True)
     @checks.has_required_level(3)
@@ -56,6 +57,16 @@ class dev(commands.Cog):
                 continue
             finally:
                 return await ctx.send(embed=(await embeds.generate(f"{guild.name} invite",invite.url)))
+
+    @developer.command(name="dbupdate",hidden=True)
+    @checks.has_required_level(5)
+    async def dbupdate(self,ctx):
+        for guild in self.bot.guilds:
+            dbObject = await db.dbFind("guilds",{"id": guild.id})
+            # DB UPDATES BELOW
+            dbObject["automod"]["shortURL"] = False
+            # SEND DB UPDATE
+            await db.dbUpdate("guilds",{"id": guild.id},dbObject)
 
 def setup(bot):
     bot.add_cog(dev(bot))

@@ -1,4 +1,4 @@
-#GroundDug AutoMod Module .
+#GroundDug AutoMod Module
 
 import discord
 from discord.ext import commands
@@ -42,6 +42,7 @@ class automod(commands.Cog):
         two = "2\N{combining enclosing keycap}"
         three = "3\N{combining enclosing keycap}"
         four = "4\N{combining enclosing keycap}"
+        five = "5\N{combining enclosing keycap}"
         tick = "<:check:679095420202516480>"
         cross = "<:cross:679095420319694898>"
 
@@ -221,6 +222,28 @@ class automod(commands.Cog):
 
             await msg.delete()
 
+            #SHORTURL DETECTOR
+
+            msg = await embeds.generate("GroundDug Auto-Moderation","Setting up your Auto-Moderation!")
+            msg = await embeds.add_field(msg,"Short URL Detector","Would you like to enable this feature?")
+            msg = await ctx.send(embed=msg)
+            await msg.add_reaction(tick)
+            await msg.add_reaction(cross)
+
+            def check(reaction, user):
+                return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
+
+            try:
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                await msg.delete()
+                return await ctx.send(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+
+            if str(reaction) == tick:
+                guildSettings["automod"]["shortURL"] = True
+
+            await msg.delete()
+
             #FINAL MESSAGE
 
             def emoteReturn(setting):
@@ -266,6 +289,7 @@ class automod(commands.Cog):
                 msg = await embeds.add_field(msg,"Mass Mention Protection",cross)
             else:
                 msg = await embeds.add_field(msg,"Mass Mention Protection",f"{tick} - Activated at {guildSettings['automod']['massMentions']} mentions")
+            msg = await embeds.add_field(msg,"Short URL Detector",emoteReturn(guildSettings["automod"]["shortURL"]))
             
             await ctx.send(embed=msg)
 
@@ -291,6 +315,7 @@ class automod(commands.Cog):
                 msg = await embeds.add_field(msg,f"{four} - Mass Mention Protection",cross)
             else:
                 msg = await embeds.add_field(msg,f"{four} - Mass Mention Protection",f"{tick} - Activated at {guildSettings['automod']['massMentions']} mentions")
+            msg = await embeds.add_field(msg,f"{five} - Short URL Detector",emoteReturn(guildSettings["automod"]["shortURL"]))
 
             msg = await ctx.send(embed=msg)
             await msg.add_reaction(zero)
@@ -298,9 +323,10 @@ class automod(commands.Cog):
             await msg.add_reaction(two)
             await msg.add_reaction(three)
             await msg.add_reaction(four)
+            await msg.add_reaction(five)
 
             def check(reaction, user):
-                return user == ctx.author and (str(reaction.emoji) == zero or str(reaction.emoji) == one or str(reaction.emoji) == two or str(reaction.emoji) == three or str(reaction.emoji) == four)
+                return user == ctx.author and (str(reaction.emoji) == zero or str(reaction.emoji) == one or str(reaction.emoji) == two or str(reaction.emoji) == three or str(reaction.emoji) == four or str(reaction.emoji) == five)
         
             try:
                 reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
@@ -394,6 +420,7 @@ class automod(commands.Cog):
                     guildSettings["automod"]["antiURL"] = True
                 else:
                     guildSettings["automod"]["antiURL"] = False
+
             elif str(reaction) == three:
                 msg = await embeds.generate("GroundDug Auto-Moderation","Changing up your Auto-Moderation!")
                 msg = await embeds.add_field(msg,"Profanity Filter","Would you like to enable this feature?")
@@ -456,7 +483,26 @@ class automod(commands.Cog):
                         guildSettings["automod"]["massMentions"] = int(message.content)
                 else:
                     guildSettings["automod"]["massMentions"] = 0
+            elif str(reaction) == five:
+                msg = await embeds.generate("GroundDug Auto-Moderation","Changing up your Auto-Moderation!")
+                msg = await embeds.add_field(msg,"Short URL Detector","Would you like to enable this feature?")
+                msg = await ctx.send(embed=msg)
+                await msg.add_reaction(tick)
+                await msg.add_reaction(cross)
 
+                def check(reaction, user):
+                    return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
+
+                try:
+                    reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
+                except asyncio.TimeoutError:
+                    await msg.delete()
+                    return await ctx.send(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+
+                if str(reaction) == tick:
+                    guildSettings["automod"]["shortURL"] = True
+                else:
+                    guildSettings["automod"]["shortURL"] = False
             await msg.delete()
             await dbUpdate("guilds",{"id": ctx.guild.id},{"automod": guildSettings["automod"]})
             msg = await embeds.generate("Auto-Moderation Changed Successfully",None)

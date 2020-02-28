@@ -52,45 +52,6 @@ class logs(commands.Cog):
                 except:
                     pass
 
-    @logs.command(name="setup",hidden=True)
-    @checks.has_required_level(5)
-    async def setup(self,ctx):
-        msg = await embeds.generate("The following guilds were added to the database",None)
-        for guild in self.bot.guilds:
-            data = {
-                "id": guild.id,
-                "prefix": "g!",
-                "channel": 0,
-                "logs": {
-                    "misc": False,
-                    "logs": False,
-                    "mod": False,
-                    "perms": False,
-                    "automod": False,
-                },
-                "raid_mode": False,
-                "cases": 0,
-                "automod": {
-                    "caps": 0,
-                    "antiInvite": False,
-                    "antiURL": False,
-                    "profanity": False,
-                    "massMentions": 0
-                }}
-            if (await dbFind("guilds",{"id": guild.id})) == None:
-                result = await dbInsert("guilds",data)
-                msg = await embeds.add_field(msg,f"Created {guild.name}",f"`{guild.id}`")
-        await ctx.send(embed=msg)
-    
-    @logs.command(name="update",hidden=True)
-    @checks.has_required_level(5)
-    async def update(self,ctx):
-        for guild in self.bot.guilds:
-            dbObject = await dbFind("guilds",{"id": guild.id})
-            dbObject["logs"]["admin"] = False
-            dbObject["blacklistChannels"] = []
-            await dbUpdate("guilds",{"id": guild.id},dbObject)
-
     @logs.command(name="setchannel",description="[channel] | Set the channel to which all command logs will be sent to on the guild")
     @commands.guild_only()
     @checks.has_GD_permission("ADMINISTRATOR")

@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 import asyncio
 from profanity_filter import ProfanityFilter
+import httpx
 from datetime import datetime
 import cogs.utils.embeds as embeds
 from cogs.utils.useful import getPrefix
@@ -12,6 +13,7 @@ import cogs.utils.useful as useful
 import re
 
 pf = ProfanityFilter()
+httpxClient = httpx.AsyncClient()
 
 class events(commands.Cog):
     def __init__(self,bot):
@@ -24,11 +26,8 @@ class events(commands.Cog):
         await self.bot.get_channel(664541295448031295).send(embed=(await embeds.generate("I'm online",f"As of {str(datetime.utcnow()).split('.')[0]} UTC, I am performing my member checks now!")))
         for guild in self.bot.guilds:
             for member in guild.members:
-                if (await db.dbFind("users", {"guild": guild.id, "user": member.id})) == None:
-                    if member.id == guild.owner_id:
-                        await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True,"WARN_MEMBERS": True,"MUTE_MEMBERS": True,"KICK_MEMBERS": True,"BAN_MEMBERS": True,"ADMINISTRATOR": True}, "strikes": {}})
-                    else:
-                        await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False,"WARN_MEMBERS": False,"MUTE_MEMBERS": False,"KICK_MEMBERS": False,"BAN_MEMBERS": False,"ADMINISTRATOR": False}, "strikes": {}})
+                if (await db.itemExist("users", {"guild": guild.id, "user": member.id})):
+                    await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False,"WARN_MEMBERS": False,"MUTE_MEMBERS": False,"KICK_MEMBERS": False,"BAN_MEMBERS": False,"ADMINISTRATOR": False}, "strikes": {}})
         await self.bot.get_channel(664541295448031295).send(embed=(await embeds.generate("Checks completed!",f"I am now fully online as of {str(datetime.utcnow()).split('.')[0]} UTC")))
         await self.bot.change_presence(status=discord.Status.online,activity=discord.Game("g!help to get started"))
 
@@ -96,25 +95,39 @@ class events(commands.Cog):
             guild = await db.dbFind("guilds",{"id": ctx.guild.id})
             channel = self.bot.get_channel(guild["channel"])
             removed = False
-            async def RuleViolator(msg,text,channel):
+            async def RuleViolator(msg,text,delete):
                 global removed,guild
-                await msg.delete()
-                await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator} {text} in #{ctx.channel.name}",f"`{ctx.content}`")))
+                if delete:
+                    await msg.delete()
+                    removed = True
                 # userDB = await db.dbFind("users",{"guild": ctx.guild.id, "user": user.id})
                 # userDB["strikes"][str(guildDB["cases"])] = {"moderator": ctx.author.id, "reason": text.capitalize()}
                 # await db.dbUpdate("users",{"_id": userDB["_id"]},{"strikes": userDB["strikes"]})
                 # await db.dbUpdate("guilds",{"_id": guildDB["_id"]},{"cases": guildDB["cases"] + 1})
-                removed = True
+                return await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator} {text} in #{ctx.channel.name}",f"`{ctx.content}`")
             if not removed and guild["automod"]["antiInvite"] and re.search("(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/.+[a-z]",ctx.content):
-                await RuleViolator(ctx,"tried to advertise",channel)
+                await channel.send(embed=await RuleViolator(ctx,"tried to advertise",True))
             if not removed and guild["automod"]["antiURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
-                await RuleViolator(ctx,"tried to post a link",channel)
+                await channel.send(embed=await RuleViolator(ctx,"tried to post a link",True))
+            if not removed and guild["automod"]["shortURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
+                async def findURLs(string):
+                    url = re.findall(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",string)
+                    return url
+                shortenedURLs = []
+                for url in await findURLs(ctx.content):
+                    shortenedURL = await httpxClient.head(url,allow_redirects=True)
+                    if shortenedURL.url != url:
+                        shortenedURLs.append(shortenedURL.url)
+                if shortenedURLs != []:
+                    await RuleViolator(ctx,"",False)
+                    shortenedURLstriped = str(shortenedURLs).strip("[]([),URL(')])")
+                    await ctx.channel.send(embed=(await embeds.generate("Shortened URLs detected!",f"{ctx.author.mention} posted a shortened link(s) leading to: {shortenedURLstriped}")))
             if not removed and guild["automod"]["profanity"] and pf.is_profane(ctx.content):
-                await RuleViolator(ctx,"tried to swear",channel)
+                await channel.send(embed=await RuleViolator(ctx,"tried to swear",True))
             if not removed and guild["automod"]["caps"] > 0 and len(ctx.content) > 0 and guild["automod"]["caps"] < (sum(1 for x in ctx.content if str.isupper(x))/len(ctx.content))*100:
-                await RuleViolator(ctx,"used too many CAPS",channel)
+                await channel.send(embed=await RuleViolator(ctx,"used too many CAPS",True))
             if not removed and guild["automod"]["massMentions"] > 0 and len(ctx.raw_mentions) > guild["automod"]["massMentions"]:
-                await RuleViolator(ctx,"pinged too many people",channel)
+                await channel.send(embed=await RuleViolator(ctx,"pinged too many people",True))
 
     @commands.Cog.listener()
     async def on_command(self,ctx):
@@ -129,17 +142,17 @@ class events(commands.Cog):
                 except:
                     pass
 
-    @commands.Cog.listener()
-    async def on_command_error(self,ctx,error):
-        prefix = await getPrefix(self.bot,ctx)
-        if isinstance(error,commands.MissingRequiredArgument):
-            await embeds.error(ctx,f"{error} - Use {prefix}help to find the required arguments")
-        elif isinstance(error,commands.CommandNotFound):
-            pass
-        elif isinstance(error,commands.CheckFailure):
-            await embeds.error(ctx,f"You do not have the valid permissions to run this command")
-        else:
-            await embeds.error(ctx,f"{error} - Report to developers")
+    # @commands.Cog.listener()
+    # async def on_command_error(self,ctx,error):
+    #     prefix = await getPrefix(self.bot,ctx)
+    #     if isinstance(error,commands.MissingRequiredArgument):
+    #         await embeds.error(ctx,f"{error} - Use {prefix}help to find the required arguments")
+    #     elif isinstance(error,commands.CommandNotFound):
+    #         pass
+    #     elif isinstance(error,commands.CheckFailure):
+    #         await embeds.error(ctx,f"You do not have the valid permissions to run this command")
+    #     else:
+    #         await embeds.error(ctx,f"{error} - Report to developers")
 
 def setup(bot):
 	bot.add_cog(events(bot))

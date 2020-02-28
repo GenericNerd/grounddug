@@ -72,7 +72,16 @@ class core(commands.Cog):
         if user is None:
             user = ctx.author
         msg = await embeds.generate(f"{user.name}#{user.discriminator}",f"{user.mention} - {user.id}")
-        msg = await embeds.add_field(msg,"Status",user.status,True)
+        if str(user.status) == "online":
+            msg = await embeds.add_field(msg,"Status","<:status_online:679095420605038617>",True)
+        elif str(user.status) == "idle":
+            msg = await embeds.add_field(msg,"Status","<:status_idle:679095420819079188>",True)
+        elif str(user.status) == "dnd":
+            msg = await embeds.add_field(msg,"Status","<:status_dnd:679095420626141214>",True)
+        elif str(user.status) == "streaming":
+            msg = await embeds.add_field(msg,"Status","<:status_streaming:679095420944777227>",True)
+        else:
+            msg = await embeds.add_field(msg,"Status","<:status_offline:679095420684730368>",True)
         msg = await embeds.add_field(msg,"Server join date",f"{str(user.joined_at).split('.')[0]} - `{str(datetime.utcnow()-user.joined_at).split('.')[0]} ago`",True)
         msg = await embeds.add_field(msg,"Account age",f"{str(user.created_at).split('.')[0]} - `{str(datetime.utcnow()-user.created_at).split('.')[0]} ago`",True)
         msg.set_thumbnail(url=user.avatar_url)

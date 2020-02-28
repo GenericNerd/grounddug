@@ -117,11 +117,13 @@ class events(commands.Cog):
                 for url in await findURLs(ctx.content):
                     shortenedURL = await httpxClient.head(url,allow_redirects=True)
                     if shortenedURL.url != url:
-                        shortenedURLs.append(shortenedURL.url)
+                        shortenedURLs.append(str(shortenedURL.url))
                 if shortenedURLs != []:
                     await RuleViolator(ctx,"",False)
-                    shortenedURLstriped = str(shortenedURLs).strip("[]([),URL(')])")
-                    await ctx.channel.send(embed=(await embeds.generate("Shortened URLs detected!",f"{ctx.author.mention} posted a shortened link(s) leading to: {shortenedURLstriped}")))
+                    desc = ""
+                    for item in shortenedURLs:
+                        desc += f"{item} "
+                    await ctx.channel.send(embed=(await embeds.generate("Shortened URLs detected!",f"{ctx.author.mention} posted a shortened link(s) leading to: {desc}")))
             if not removed and guild["automod"]["profanity"] and pf.is_profane(ctx.content):
                 await channel.send(embed=await RuleViolator(ctx,"tried to swear",True))
             if not removed and guild["automod"]["caps"] > 0 and len(ctx.content) > 0 and guild["automod"]["caps"] < (sum(1 for x in ctx.content if str.isupper(x))/len(ctx.content))*100:

@@ -142,17 +142,17 @@ class events(commands.Cog):
                 except:
                     pass
 
-    @commands.Cog.listener()
-    async def on_command_error(self,ctx,error):
-        prefix = await getPrefix(self.bot,ctx)
-        if isinstance(error,commands.MissingRequiredArgument):
-            await embeds.error(ctx,f"{error} - Use {prefix}help to find the required arguments")
-        elif isinstance(error,commands.CommandNotFound):
-            pass
-        elif isinstance(error,commands.CheckFailure):
-            await embeds.error(ctx,f"You do not have the valid permissions to run this command")
-        else:
-            await embeds.error(ctx,f"{error} - Report to developers")
+    # @commands.Cog.listener()
+    # async def on_command_error(self,ctx,error):
+    #     prefix = await getPrefix(self.bot,ctx)
+    #     if isinstance(error,commands.MissingRequiredArgument):
+    #         await embeds.error(ctx,f"{error} - Use {prefix}help to find the required arguments")
+    #     elif isinstance(error,commands.CommandNotFound):
+    #         pass
+    #     elif isinstance(error,commands.CheckFailure):
+    #         await embeds.error(ctx,f"You do not have the valid permissions to run this command")
+    #     else:
+    #         await embeds.error(ctx,f"{error} - Report to developers")
 
 def setup(bot):
 	bot.add_cog(events(bot))

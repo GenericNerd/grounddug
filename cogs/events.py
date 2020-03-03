@@ -52,7 +52,8 @@ class events(commands.Cog):
                 "antiURL": False,
                 "profanity": False,
                 "massMentions": 0
-            }}
+            },
+	    "blacklistChannels": []}
         await db.dbInsert("guilds",data)
         for member in guild.members:
             if member.guild_permissions.administrator:

@@ -34,10 +34,8 @@ async def changePermission(self,ctx,user,change,permission=None):
                 permissions[perm] = change
             await dbUpdate("users",{"guild": ctx.guild.id, "user": user.id},{"permissions": permissions})
         else:
-            notChange = not change
-            if permissions[permission] == notChange:
-                permissions[permission] = change
-                dbUpdate("users",{"guild": ctx.guild.id, "user": user.id},{"permissions": permissions})
+            permissions[permission] = change
+            await dbUpdate("users",{"guild": ctx.guild.id, "user": user.id},{"permissions": permissions})
         await ctx.send(embed=(await embeds.generate("Permission changed",f"Permission `{permission}` to {user.name}#{user.discriminator} was changed to `{change}`")))
 
 class perms(commands.Cog):

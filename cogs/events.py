@@ -43,7 +43,7 @@ class events(commands.Cog):
                 "mod": False,
                 "perms": False,
                 "automod": False,
-		"admin": False,
+		            "admin": False,
             },
             "raid_mode": False,
             "cases": 0,
@@ -53,8 +53,9 @@ class events(commands.Cog):
                 "antiURL": False,
                 "profanity": False,
                 "massMentions": 0,
-		"shortURL": False,
-            }}
+		            "shortURL": False,
+            },
+	          "blacklistChannels": []}
         await db.dbInsert("guilds",data)
         for member in guild.members:
             if member.guild_permissions.administrator:

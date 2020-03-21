@@ -152,7 +152,7 @@ class Events(commands.Cog):
                         # If the browser URL after redirects is not the URL it was given, append it to shortenedURLs
                         if browser.url != url:
                             shortened_URLs.append(str(browser.url))
-                    if shortened_URLs not []:
+                    if shortened_URLs is not []:
                         await ctx.delete()
                         # Embed description
                         description = ""

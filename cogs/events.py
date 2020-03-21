@@ -115,6 +115,8 @@ class Events(commands.Cog):
         # Try needed because if guild is in raid mode, a object is never inserted
         try:
             await db.remove("users",{"guild": member.guild.id, "user": member.id})
+        except Exception as e:
+            logger.error(e)
 
     @commands.Cog.listener()
     async def on_message(self,ctx):

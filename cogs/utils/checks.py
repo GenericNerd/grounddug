@@ -1,34 +1,44 @@
-#GroundDug Custom Check Handler
+# GroundDug Custom Checks
 
 import discord
 from discord.ext import commands
 import asyncio
-from cogs.utils.levels import get_level
-import cogs.utils.dbhandle as dbhandle
+import cogs.utils.levels as levels
+import cogs.utils.db as db
 
+# Permissions failure class if level is not sufficient
 class LevelPermissionsError(commands.CheckFailure):
     def __init__(self,required,current):
         self.required = required
         self.current = current
 
-class MissingGDPermission(commands.CheckFailure):
+# Permissions failure class if GD permission is missing
+class MissingGDPermissionError(commands.CheckFailure):
     def __init__(self,required):
         self.required = required
 
-def has_required_level(required: int = 0):
-    async def levelCalculate(ctx):
-        level = await get_level(ctx.message.author)
+# Checks if user has required level
+def hasRequiredLevel(required: int=0):
+    # Async check function
+    async def calculateIfLevelSufficent(ctx):
+        level = await levels.getLevel(ctx.message.author)
         if level >= required:
             return True
         else:
-            raise LevelPermissionsError(required=required, current=level)
-    return commands.check(levelCalculate)
+            # Raise custom error showing current and required levels
+            raise LevelPermissionsError(required=required,current=level)
+    # Check level using async function
+    return commands.check(calculateIfLevelSufficent)
 
-def has_GD_permission(permission):
-    async def permissionCalculate(ctx):
-        dbObject = await dbhandle.dbFind("users",{"guild": ctx.guild.id, "user": ctx.author.id})
-        if dbObject["permissions"][permission]:
+# Checks if user had the GD permission permission
+def hasGDPermission(permission):
+    # Async check function
+    async def permissionCheck(ctx):
+        user_Object = await db.find("users",{"guild": ctx.guild.id, "user": ctx.author.id})
+        if user_Object["permissions"][permission]:
             return True
         else:
-            raise MissingGDPermission(required=permission)
-    return commands.check(permissionCalculate)
+            # Raise custom error showing the required permission
+            raise MissingGDPermissionError(required=permission)
+    # Check level using async function
+    return commands.check(permissionCheck)

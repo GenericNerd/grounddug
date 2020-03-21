@@ -1,17 +1,21 @@
-#GroundDug Core Bot File
+# GroundDug Core Bot File
 
 import discord
 from discord.ext import commands
 import asyncio
-import cogs.utils.useful as useful
-import cogs.utils.dbhandle as db
-from bson.objectid import ObjectId
 import os
+from datetime import datetime
+import cogs.utils.misc as misc
+import cogs.utils.db as db
+import cogs.utils.logger as logger
 
-environment = os.getenv("GD_ENV", "beta")
+# Find current environment
+environment = os.getenv("GD_ENV","beta")
 
-startupExtensions = ["core","mod","logs","perms","developer","events","automod","admin"]
-bot = commands.AutoShardedBot(command_prefix=useful.getPrefix)
+# Cogs to load on bot ready
+startupExtensions = ["events"]
+# Get prefix depending on message context
+bot = commands.AutoShardedBot(command_prefix=misc.getPrefix)
 
 bot.remove_command("help")
 
@@ -19,26 +23,27 @@ for module in startupExtensions:
     try:
         bot.load_extension(f"cogs.{module}")
     except Exception as e:
-        print(f"Failed to load module {module}\n{e}")
+        logger.error(f"Failed to load module {module} - {e}")
 
+# Check if channel is blacklisted before running command
 @bot.check
-async def blacklistCalculate(ctx):
+async def blacklistChannelCheck(ctx):
     if ctx.guild is not None:
-        dbObject = await db.dbFind("guilds",{"id": ctx.guild.id})
-        if ctx.channel.id not in dbObject["blacklistChannels"]:
+        guild_Object = await db.find("guilds",{"id": ctx.guild.id})
+        # Check if channel ID is in guilds' blacklisted channels
+        if ctx.channel.id not in guild_Object["blacklistChannels"]:
             return True
         else:
+            # Raise CommandNotFound, which should not cause an eh event handle
             raise commands.CommandNotFound()
-    else:
-        return True
 
+# Check current environment, and run appropriate instance
 if environment == "beta":
-    print("Running beta")
+    logger.info("Running GroundDugBeta")
     bot.run("NjY3MDgzMTM3OTMwNjI1MDI0.Xh9jpw.KygIs_cyCxF6n--bKkvOSATlsB4")
-elif environment == "prod":
-    print("Running prod")
-    bot.run(
-        db.dbNSyncFind("settings",
-                       {"_id": ObjectId("5e18fd4d123a50ef10d8332e")})["token"])
+elif environment == "production":
+    logger.info("Running GroundDug")
+    bot.run(db.nsyncfind("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})["token"])
 else:
-    print("What the fuck is this environment? GD_ENV is not set or is not beta/prod.")
+    logger.error("Invalid environment, aborting instance")
+    exit()

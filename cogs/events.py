@@ -179,7 +179,7 @@ class Events(commands.Cog):
         else:
             await embed.error(ctx,f"{error} - Report sent to developer")
             logger.error(f"{error} -- Context: {ctx.message.content}")
-            await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"{ctx.message.content} raised an error",error)))
+            await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"{ctx.message.content} raised an error",str(error))))
 
 def setup(bot):
     bot.add_cog(Events(bot))

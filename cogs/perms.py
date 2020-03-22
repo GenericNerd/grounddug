@@ -99,7 +99,7 @@ class Perms(commands.Cog):
         for user in role.members:
             await changePermission(ctx,user,False,permission)
 
-    @pemrs.command(name="list",description="[user] | Shows the current GroundDug (`GD`) permissions currently assigned to a user")
+    @perms.command(name="list",description="[user] | Shows the current GroundDug (`GD`) permissions currently assigned to a user")
     @commands.guild_only()
     async def permsList(self,ctx,user:discord.Member=None):
         if user is None:

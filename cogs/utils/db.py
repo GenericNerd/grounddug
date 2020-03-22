@@ -4,32 +4,40 @@ import asyncio
 import pymongo
 from motor import motor_asyncio
 
-connection_String = "mongodb+srv://GroundDug:qLuVr1KFT8rr29sU@grounddug-z0fef.mongodb.net/test?retryWrites=true&w=majority"
-async_DB_Client = motor_asyncio.AsyncIOMotorClient(connection_String)
-nsync_DB_Client = pymongo.MongoClient(connection_String)
-async_DB = async_DB_Client.grounddug
-nsync_DB = nsync_DB_Client.grounddug
+connectionString = "mongodb+srv://GroundDug:qLuVr1KFT8rr29sU@grounddug-z0fef.mongodb.net/test?retryWrites=true&w=majority"
+asyncDBClient = motor_asyncio.AsyncIOMotorClient(connectionString)
+nsyncDBClient = pymongo.MongoClient(connectionString)
+asyncDB = asyncDBClient.grounddug
+nsyncDB = nsyncDBClient.grounddug
 
 async def find(database,filter):
-    return await async_DB[database].find_one(filter)
+    return await asyncDB[database].find_one(filter)
 
 async def findAll(database,filter):
-    return await async_DB[database].find(filter)
+    return await asyncDB[database].find(filter)
 
 async def insert(database,data):
-    await async_DB[database].insert_one(data)
+    await asyncDB[database].insert_one(data)
+
+async def getUser(guild,user):
+    try:
+        return await find("users",{"guild": guild, "user": user})
+    except pymongo.errors.OperationFailure as e:
+        userData = {"guild": guild, "user": user, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}}
+        await insert("users",userData)
+        return userData
 
 async def remove(database,filter):
-    await async_DB[database].delete_one(filter)
+    await asyncDB[database].delete_one(filter)
 
 async def removeMany(database,filter):
-    await async_DB[database].delete_many(filter)
+    await asyncDB[database].delete_many(filter)
 
 async def update(database,filter,update):
-    await async_DB[database].update_one(filter,{"$set": update})
+    await asyncDB[database].update_one(filter,{"$set": update})
 
 def nsyncFind(database,filter):
-    return nsync_DB[database].find_one(filter)
+    return nsyncDB[database].find_one(filter)
 
 def nsyncFindAll(database,filter):
-    return nsync_DB[database].find(filter)
+    return nsyncDB[database].find(filter)

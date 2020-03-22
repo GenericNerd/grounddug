@@ -34,8 +34,8 @@ def hasRequiredLevel(required: int=0):
 def hasGDPermission(permission):
     # Async check function
     async def permissionCheck(ctx):
-        user_Object = await db.find("users",{"guild": ctx.guild.id, "user": ctx.author.id})
-        if user_Object["permissions"][permission]:
+        userObject = await db.getUser(ctx.guild.id,ctx.author.id)
+        if userObject["permissions"][permission]:
             return True
         else:
             # Raise custom error showing the required permission

@@ -29,9 +29,9 @@ for module in startupExtensions:
 @bot.check
 async def blacklistChannelCheck(ctx):
     if ctx.guild is not None:
-        guild_Object = await db.find("guilds",{"id": ctx.guild.id})
+        guildObject = await db.find("guilds",{"id": ctx.guild.id})
         # Check if channel ID is in guilds' blacklisted channels
-        if ctx.channel.id not in guild_Object["blacklistChannels"]:
+        if ctx.channel.id not in guildObject["blacklistChannels"]:
             return True
         else:
             # Raise CommandNotFound, which should not cause an eh event handle

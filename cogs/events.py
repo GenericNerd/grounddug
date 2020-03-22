@@ -28,8 +28,9 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         logger.info("Online")
+        prefix = await misc.getPrefix(self.bot,None)
         # Change bot status to online when bot is ready
-        await self.bot.change_presence(status=discord.Status.online,activity=discord.Game("g!help to get started"))
+        await self.bot.change_presence(status=discord.Status.online,activity=discord.Game(f"{prefix}!help to get started"))
         # Send a message to the core channel
         await self.bot.get_channel(coreChannel).send(embed=(await embed.generate("I'm online",None)))        
 

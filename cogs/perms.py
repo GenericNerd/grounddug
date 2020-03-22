@@ -7,6 +7,7 @@ import cogs.utils.checks as checks
 import cogs.utils.misc as misc
 import cogs.utils.embed as embed
 import cogs.utils.db as db
+import cogs.utils.logger as logger
 
 async def changePermission(bot,ctx,user,permChangeTo,permission=None):
     # Get the current user permissions
@@ -27,7 +28,7 @@ async def changePermission(bot,ctx,user,permChangeTo,permission=None):
             # Check whether the permission is the opposite, hence changable and add a field describing how to change the permission
             if userPermissions[permission] is not permChangeTo:
                 # In future, change this so permission does not need to include the underscore
-                msg = await embed.add_field(msg,permissionName,f"Change this permission by running `{prefix}perms <add/remove> @{user.name}#{user.discriminator} {permission.lower()}`")
+                msg = await embed.add_field(msg,permissionName,f"Change this permission by running `{prefix}perms <give/remove> @{user.name}#{user.discriminator} {permission.lower()}`")
         # If no permissions were listed, all permissions are set to permChangeTo
         if msg.fields == []:
             msg.title = "All permissions are already set to this"
@@ -45,7 +46,8 @@ async def changePermission(bot,ctx,user,permChangeTo,permission=None):
             # Try to change the permission, if the key doesn't exist, raise an error
             try:
                 userPermissions[permission] = change
-            except Exception:
+            except Exception as e:
+                logger.error(e)
                 return await embed.error(ctx,f"Permission {permission} cannot be found")
             else:
                 # Update the permissions if the key was changed

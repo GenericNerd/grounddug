@@ -8,14 +8,14 @@ import cogs.utils.misc as misc
 import cogs.utils.embed as embed
 import cogs.utils.db as db
 
-async def changePermission(ctx,user,permChangeTo,permission=None):
+async def changePermission(bot,ctx,user,permChangeTo,permission=None):
     # Get the current user permissions
     userPermissions = await db.getUser(ctx.guild.id,ctx.author.id)
     userPermissions = userPermissions["permissions"]
     # If the permission to change is none
     # Check what permissions can be changed to permChangeTo and send a message
     if permission == None:
-        prefix = await misc.getPrefix(self.bot,ctx)
+        prefix = await misc.getPrefix(bot,ctx)
         msg = await embed.generate("Permissions",f"{user.name}'s permissions that can be changed")
         for permission in userPermissions:
             permissionName = permission.split("_")
@@ -78,27 +78,27 @@ class Perms(commands.Cog):
     @commands.guild_only()
     @checks.hasGDPermission("ADMINISTRATOR")
     async def add(self,ctx,user:discord.Member,permission=None):
-        await changePermission(ctx,user,True,permission)
+        await changePermission(self.bot,ctx,user,True,permission)
 
     @perms.command(name="remove",description="<user> [permission] | Remove a users GroundDug (`GD`) permission")
     @commands.guild_only()
     @checks.hasGDPermission("ADMINISTRATOR")
     async def remove(self,ctx,user:discord.Member,permission=None):
-        await changePermission(ctx,user,False,permission)
+        await changePermission(self.bot,ctx,user,False,permission)
 
     @perms.command(name="massadd",description="<role> <permission> | Give multiple users within a role a GroundDug (`GD`) permission")
     @commands.guild_only()
     @checks.hasGDPermission("ADMINISTRATOR")
     async def massAdd(self,ctx,role:discord.Role,permission):
         for user in role.members:
-            await changePermission(ctx,user,True,permission)
+            await changePermission(self.bot,ctx,user,True,permission)
 
     @perms.command(name="massremove",description="<role> <permission> | Remove a GroundDug (`GD`) permission from users within a role")
     @commands.guild_only()
     @checks.hasGDPermission("ADMINISTRATOR")
     async def massRemove(self,ctx,role:discord.Role,permission):
         for user in role.members:
-            await changePermission(ctx,user,False,permission)
+            await changePermission(self.bot,ctx,user,False,permission)
 
     @perms.command(name="list",description="[user] | Shows the current GroundDug (`GD`) permissions currently assigned to a user")
     @commands.guild_only()

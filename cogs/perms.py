@@ -70,6 +70,8 @@ class Perms(commands.Cog):
                 channel = self.bot.get_command(guild["channel"])
                 try:
                     await channel.send(embed=(await embed.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in #{ctx.channel.name}")))
+                except:
+                    pass
 
     @perms.command(name="give",description="<user> [permission] | Give a user a GroundDug (`GD`) permission")
     @commands.guild_only()

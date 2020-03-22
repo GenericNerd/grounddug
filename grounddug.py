@@ -13,7 +13,7 @@ import cogs.utils.logger as logger
 environment = os.getenv("GD_ENV","beta")
 
 # Cogs to load on bot ready
-startupExtensions = ["events"]
+startupExtensions = ["events","perms"]
 # Get prefix depending on message context
 bot = commands.AutoShardedBot(command_prefix=misc.getPrefix)
 

@@ -26,6 +26,7 @@ async def changePermission(bot,ctx,user,permChangeTo,permission=None):
             else:
                 permissionName = permission.lower().capitalize()
             # Check whether the permission is the opposite, hence changable and add a field describing how to change the permission
+            logger.work(f"{userPermissions[permission]} {permChangeTo}")
             if userPermissions[permission] is not permChangeTo:
                 logger.info("Passed permChangeTo if statement")
                 # In future, change this so permission does not need to include the underscore
@@ -33,7 +34,7 @@ async def changePermission(bot,ctx,user,permChangeTo,permission=None):
         # If no permissions were listed, all permissions are set to permChangeTo
         if msg.fields == []:
             msg.title = "All permissions are already set to this"
-            msg.description = f"{user.mention} already has all their permissions set to {permChangeTo}"
+            msg.description = f"{user.mention} already has all their permissions set to `{permChangeTo}`"
         await ctx.send(embed=msg)
     else:
         # Make the given permission upper case, if it wasn't already
@@ -117,7 +118,7 @@ class Perms(commands.Cog):
             if len(permissionName) >= 2:
                 permissionName = f"{permissionName[0].lower().capitalize()} {permissionName[1].lower().capitalize()}"
             else:
-                permissionName = permission[0].lower().capitalize()
+                permissionName = permission.lower().capitalize()
             # If the permission is set to True, add a field to the embed
             if userPermissions[permission]:
                 msg = await embed.add_field(msg,permissionName,"<:check:679095420202516480>",True)

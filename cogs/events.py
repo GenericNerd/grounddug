@@ -178,8 +178,8 @@ class Events(commands.Cog):
             await embed.error(ctx,"You do not have the required level to run this command")
         else:
             await embed.error(ctx,f"{error} - Report sent to developer")
-            logger.error(f"{error} -- Context: {ctx}")
-            await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"{ctx} raised an error",error)))
+            logger.error(f"{error} -- Context: {ctx.message.content}")
+            await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"{ctx.message.content} raised an error",error)))
 
 def setup(bot):
     bot.add_cog(Events(bot))

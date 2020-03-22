@@ -39,10 +39,10 @@ class Events(commands.Cog):
             if document["user"] not in database:
                 database.append(document["user"])
         # Step through every user, if the user is not in the database, add it
-        for guild in self.bot.guilds:
-            for user in guild.members:
-                if user.id not in database:
-                    await db.insert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False,"WARN_MEMBERS": False,"MUTE_MEMBERS": False,"KICK_MEMBERS": False,"BAN_MEMBERS": False,"ADMINISTRATOR": False}, "strikes": {}})
+        # for guild in self.bot.guilds:
+        #     for user in guild.members:
+        #         if user.id not in database:
+        #             await db.insert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False,"WARN_MEMBERS": False,"MUTE_MEMBERS": False,"KICK_MEMBERS": False,"BAN_MEMBERS": False,"ADMINISTRATOR": False}, "strikes": {}})
         logger.work("Checks completed")
         # Send message to core channel saying checks are complete and make bot show as online
         await self.bot.get_channel(core_Channel).send(embed=(await embed.generate("Checks complete","Showing as online")))

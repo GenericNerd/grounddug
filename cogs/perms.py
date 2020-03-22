@@ -7,13 +7,11 @@ import cogs.utils.checks as checks
 import cogs.utils.misc as misc
 import cogs.utils.embed as embed
 import cogs.utils.db as db
-import cogs.utils.logger as logger
 
 async def changePermission(bot,ctx,user,permChangeTo,permission=None):
     # Get the current user permissions
-    userPermissions = await db.getUser(ctx.guild.id,ctx.author.id)
+    userPermissions = await db.getUser(ctx.guild.id,user.id)
     userPermissions = userPermissions["permissions"]
-    logger.work(userPermissions)
     # If the permission to change is none
     # Check what permissions can be changed to permChangeTo and send a message
     if permission == None:
@@ -27,9 +25,7 @@ async def changePermission(bot,ctx,user,permChangeTo,permission=None):
             else:
                 permissionName = permission.lower().capitalize()
             # Check whether the permission is the opposite, hence changable and add a field describing how to change the permission
-            logger.work(f"{userPermissions[permission]} {permChangeTo}")
             if userPermissions[permission] is not permChangeTo:
-                logger.info("Passed permChangeTo if statement")
                 # In future, change this so permission does not need to include the underscore
                 msg = await embed.add_field(msg,permissionName,f"Change this permission by running `{prefix}perms <add/remove> @{user.name}#{user.discriminator} {permission.lower()}`")
         # If no permissions were listed, all permissions are set to permChangeTo

@@ -114,7 +114,7 @@ class Perms(commands.Cog):
             if len(permissionName) >= 2:
                 permissionName = f"{permissionName[0].lower().capitalize()} {permissionName[1].lower().capitalize()}"
             else:
-                permissionName = permission.lower()
+                permissionName = permission.lower().capitalize()
             # If the permission is set to True, add a field to the embed
             if userPermissions[permission]:
                 msg = await embed.add_field(msg,permissionName,"<:check:679095420202516480>",True)

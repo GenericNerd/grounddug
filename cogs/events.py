@@ -34,11 +34,10 @@ class Events(commands.Cog):
         await self.bot.get_channel(core_Channel).send(embed=(await embed.generate("I'm online","Starting member checks")))
         logger.work("Starting checks")
         database = []
-        # # For every document on the database, append it to the database array
+        # For every document on the database, append it to the database array
         for document in db.nsyncFindAll("users",{}):
-            pass
-            # if document["user"] not in database:
-            #     database.append(document["user"])
+            if document["user"] not in database:
+                database.append(document["user"])
         # Step through every user, if the user is not in the database, add it
         # for guild in self.bot.guilds:
         #     for user in guild.members:

@@ -13,6 +13,7 @@ async def changePermission(bot,ctx,user,permChangeTo,permission=None):
     # Get the current user permissions
     userPermissions = await db.getUser(ctx.guild.id,ctx.author.id)
     userPermissions = userPermissions["permissions"]
+    logger.work(userPermissions)
     # If the permission to change is none
     # Check what permissions can be changed to permChangeTo and send a message
     if permission == None:

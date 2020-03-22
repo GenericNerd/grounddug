@@ -7,7 +7,6 @@ import cogs.utils.checks as checks
 import cogs.utils.misc as misc
 import cogs.utils.embed as embed
 import cogs.utils.db as db
-import cogs.utils.logger as logger
 
 async def changePermission(bot,ctx,user,permChangeTo,permission=None):
     # Get the current user permissions
@@ -45,9 +44,8 @@ async def changePermission(bot,ctx,user,permChangeTo,permission=None):
         else:
             # Try to change the permission, if the key doesn't exist, raise an error
             try:
-                userPermissions[permission] = change
+                userPermissions[permission] = permChangeTo
             except Exception as e:
-                logger.error(e)
                 return await embed.error(ctx,f"Permission {permission} cannot be found")
             else:
                 # Update the permissions if the key was changed

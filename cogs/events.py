@@ -163,9 +163,8 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self,member,before,after):
-        logger.info(member)
-        logger.info(before)
-        logger.info(after)
+        if before.channel == None and after.channel.id == 687004833274003578:
+            logger.info(member)
 
     @commands.Cog.listener()
     async def on_command_error(self,ctx,error):

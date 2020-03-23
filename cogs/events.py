@@ -162,7 +162,7 @@ class Events(commands.Cog):
             pass
 
     @commands.Cog.listener()
-    async def on_voice_state_update(member,before,after):
+    async def on_voice_state_update(self,member,before,after):
         logger.info(member)
         logger.info(before)
         logger.info(after)

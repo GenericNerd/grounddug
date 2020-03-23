@@ -4,7 +4,6 @@ import discord
 from discord.ext import commands
 import asyncio
 import os
-from datetime import datetime
 import cogs.utils.misc as misc
 import cogs.utils.db as db
 import cogs.utils.logger as logger

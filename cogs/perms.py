@@ -58,8 +58,7 @@ class Perms(commands.Cog):
     async def perms(self,ctx):
         # Send a help perms command if no subcommand invoked
         if ctx.invoked_subcommand is None:
-            pass
-            # await ctx.invoke(self.bot.get_command("help"),"perms")
+            await ctx.invoke(self.bot.get_command("help"),"perms")
         else:
             # Check whether logging for perms is enabled
             guild = await db.find("guilds",{"id": ctx.guild.id})

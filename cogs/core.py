@@ -59,7 +59,7 @@ class Core(commands.Cog):
             else:
                 # Repeat the same from above, but with full command name instead
                 # Possible future optimisations here?
-                for command in sorted(cogObject, key=lambda obj: f"{obj.full_parent_name} {obj.name}"):
+                for command in sorted(cogObject.commands, key=lambda obj: f"{obj.full_parent_name} {obj.name}"):
                     commandDesc = command.description.split("|")
                     if command.full_parent_name == "mod":
                         if len(commandDesc) >= 2 and not command.hidden:

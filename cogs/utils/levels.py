@@ -3,7 +3,7 @@
 import discord
 import asyncio
 from bson.objectid import ObjectId
-import cogs.utils.db
+import cogs.utils.db as db
 
 levelObject = ObjectId("5e18fd4d123a50ef10d8332e")
 

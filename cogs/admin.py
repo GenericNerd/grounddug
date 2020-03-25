@@ -43,7 +43,7 @@ class Admin(commands.Cog):
             await ctx.send(embed=(await embed.generate(f"{ctx.guild.name} Raid Mode",f"Raid Mode has been `disabled` by {ctx.author.mention}")))
         else:
             # Say that state must be true or false
-            await embed.error(ctx,"Raid Mode state needs to be either `True` or `False`")
+            await embed.error(ctx,"Raid Mode state needs to be either 'True' or 'False'")
 
     @admin.command(name="setprefix",description="<prefix> | Set a custom prefix for your guild. Bot default is `g!`")
     @commands.guild_only()

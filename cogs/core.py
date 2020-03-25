@@ -52,23 +52,23 @@ class Core(commands.Cog):
                 # Step through each command, iterating through the full name of the command object
                 for command in sorted(cogObject, key=lambda obj: f"{obj.full_parent_name} {obj.name}"):
                     # If the command is not hidden, create an embed field, based on how command description was split
-                    if len(split) >= 2 and not command.hidden:
+                    if len(commandDesc) >= 2 and not command.hidden:
                         msg = await embed.add_field(msg,f"{prefix}{command.name} {split[0]}",split[1])
-                    elif len(split) < 2 and not command.hidden:
+                    elif len(commandDesc) < 2 and not command.hidden:
                         msg = await embed.add_field(msg,f"{prefix}{command.name}",command.description)
             else:
                 # Repeat the same from above, but with full command name instead
                 # Possible future optimisations here?
                 for command in sorted(cogObject, key=lambda obj: f"{obj.full_parent_name} {obj.name}"):
                     if command.full_parent_name == "mod":
-                        if len(split) >= 2 and not command.hidden:
+                        if len(commandDesc) >= 2 and not command.hidden:
                             msg = await embeds.add_field(msg,f"{prefix}{command.name} {split[0]}",split[1])
-                        elif len(split) < 2 and not command.hidden:
+                        elif len(commandDesc) < 2 and not command.hidden:
                             msg = await embeds.add_field(msg,f"{prefix}{command.name}",command.description)
                     else:
-                        if len(split) >= 2 and not command.hidden:
+                        if len(commandDesc) >= 2 and not command.hidden:
                             msg = await embeds.add_field(msg,f"{prefix}{command.full_parent_name} {command.name} {split[0]}",split[1])
-                        elif len(split) < 2 and not command.hidden:
+                        elif len(commandDesc) < 2 and not command.hidden:
                             msg = await embeds.add_field(msg,f"{prefix}{command.full_parent_name} {command.name}",command.description)
         await ctx.send(embed=msg)
 

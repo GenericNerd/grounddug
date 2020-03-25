@@ -116,6 +116,7 @@ class Core(commands.Cog):
             msg = await embed.add_field(msg,"Roles","No significant roles")
         else:
             msg = await embed.add_field(msg,"Roles",roles)
+        await ctx.send(embed=msg)
 
     @commands.command(name="botinfo",description="| Returns information about the bot, including guilds, users and shard latency information")
     async def botinfo(self,ctx):

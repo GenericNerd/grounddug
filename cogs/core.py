@@ -53,7 +53,7 @@ class Core(commands.Cog):
                 for command in sorted(cogObject, key=lambda obj: f"{obj.full_parent_name} {obj.name}"):
                     # If the command is not hidden, create an embed field, based on how command description was split
                     if len(commandDesc) >= 2 and not command.hidden:
-                        msg = await embed.add_field(msg,f"{prefix}{command.name} {split[0]}",split[1])
+                        msg = await embed.add_field(msg,f"{prefix}{command.name} {commandDesc[0]}",commandDesc[1])
                     elif len(commandDesc) < 2 and not command.hidden:
                         msg = await embed.add_field(msg,f"{prefix}{command.name}",command.description)
             else:
@@ -62,12 +62,12 @@ class Core(commands.Cog):
                 for command in sorted(cogObject, key=lambda obj: f"{obj.full_parent_name} {obj.name}"):
                     if command.full_parent_name == "mod":
                         if len(commandDesc) >= 2 and not command.hidden:
-                            msg = await embeds.add_field(msg,f"{prefix}{command.name} {split[0]}",split[1])
+                            msg = await embeds.add_field(msg,f"{prefix}{command.name} {commandDesc[0]}",commandDesc[1])
                         elif len(commandDesc) < 2 and not command.hidden:
                             msg = await embeds.add_field(msg,f"{prefix}{command.name}",command.description)
                     else:
                         if len(commandDesc) >= 2 and not command.hidden:
-                            msg = await embeds.add_field(msg,f"{prefix}{command.full_parent_name} {command.name} {split[0]}",split[1])
+                            msg = await embeds.add_field(msg,f"{prefix}{command.full_parent_name} {command.name} {commandDesc[0]}",commandDesc[1])
                         elif len(commandDesc) < 2 and not command.hidden:
                             msg = await embeds.add_field(msg,f"{prefix}{command.full_parent_name} {command.name}",command.description)
         await ctx.send(embed=msg)

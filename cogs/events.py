@@ -7,7 +7,6 @@ from profanity_filter import ProfanityFilter
 import httpx
 import re
 from datetime import datetime
-from colorama import Fore
 import cogs.utils.embed as embed
 import cogs.utils.misc as misc
 import cogs.utils.db as db
@@ -188,7 +187,7 @@ class Events(commands.Cog):
         else:
             await embed.error(ctx,f"{error} - Report sent to developer")
             logger.error(f"{error} -- Context: {ctx.message.content}")
-            await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"{ctx.message.content} raised an error",f"`{error}`")))
+            await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"{ctx.message.content} raised an error",f"`{error}`",0xff0000)))
 
 def setup(bot):
     bot.add_cog(Events(bot))

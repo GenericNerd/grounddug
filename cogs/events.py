@@ -167,25 +167,25 @@ class Events(commands.Cog):
         if before.channel == None and after.channel.id == 665690058288005122:
             logger.info(member)
 
-    # @commands.Cog.listener()
-    # async def on_command_error(self,ctx,error):
-    #     prefix = await misc.getPrefix(self.bot,ctx)
-    #     # Is the error a required argument?
-    #     if isinstance(error,commands.MissingRequiredArgument):
-    #         await embed.error(ctx,f"{error} - Use {prefix}help to find the required arguments")
-    #     # Is the error that the command doesn't exist?
-    #     elif isinstance(error,commands.CommandNotFound):
-    #         pass
-    #     # Is the user missing the GD permission?
-    #     elif isinstance(error,checks.MissingGDPermissionError):
-    #         await embed.error(ctx,"You do not have the required GD permission to run this command")
-    #     # Is the user missing the required level?
-    #     elif isinstance(error,checks.LevelPermissionsError):
-    #         await embed.error(ctx,"You do not have the required level to run this command")
-    #     else:
-    #         await embed.error(ctx,f"{error} - Report sent to developer")
-    #         logger.error(f"{error} -- Context: {ctx.message.content}")
-    #         await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"{ctx.message.content} raised an error",f"`{error}`")))
+    @commands.Cog.listener()
+    async def on_command_error(self,ctx,error):
+        prefix = await misc.getPrefix(self.bot,ctx)
+        # Is the error a required argument?
+        if isinstance(error,commands.MissingRequiredArgument):
+            await embed.error(ctx,f"{error} - Use {prefix}help to find the required arguments")
+        # Is the error that the command doesn't exist?
+        elif isinstance(error,commands.CommandNotFound):
+            pass
+        # Is the user missing the GD permission?
+        elif isinstance(error,checks.MissingGDPermissionError):
+            await embed.error(ctx,"You do not have the required GD permission to run this command")
+        # Is the user missing the required level?
+        elif isinstance(error,checks.LevelPermissionsError):
+            await embed.error(ctx,"You do not have the required level to run this command")
+        else:
+            await embed.error(ctx,f"{error} - Report sent to developer")
+            logger.error(f"{error} -- Context: {ctx.message.content}")
+            await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"{ctx.message.content} raised an error",f"`{error}`")))
 
 def setup(bot):
     bot.add_cog(Events(bot))

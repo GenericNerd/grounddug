@@ -35,6 +35,8 @@ async def blacklistChannelCheck(ctx):
         else:
             # Raise CommandNotFound, which should not cause an eh event handle
             raise commands.CommandNotFound()
+    else:
+        return True
 
 # Check current environment, and run appropriate instance
 if environment == "beta":

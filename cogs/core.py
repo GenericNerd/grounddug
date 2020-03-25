@@ -86,7 +86,7 @@ class Core(commands.Cog):
         # If no user passed, use the author
         if user is None:
             user = ctx.author
-        msg = await embeds.generate(f"{user.name}#{user.discriminator}",f"{user.mention} - `{user.id}`")
+        msg = await embed.generate(f"{user.name}#{user.discriminator}",f"{user.mention} - `{user.id}`")
         # Check the status, add an emoji representing icon
         # Possible future optimisations here?
         if str(user.status) == "online":

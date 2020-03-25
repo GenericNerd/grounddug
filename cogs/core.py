@@ -7,6 +7,7 @@ import cogs.utils.checks as checks
 import cogs.utils.misc as misc
 import cogs.utils.embed as embed
 import cogs.utils.db as db
+import cogs.utils.levels as levels
 from datetime import datetime
 from bson.objectid import ObjectId
 
@@ -107,10 +108,9 @@ class Core(commands.Cog):
         msg = await embed.add_field(msg,"Account age",f"{str(user.created_at).split('.')[0]} - `{str(datetime.utcnow()-user.created_at).split('.')[0]} ago`",True)
         msg.set_thumbnail(url=user.avatar_url)
         # Iterate through user roles, if not @everyone, add it to the roles variable
-        roles = "@everyone"
+        roles = ""
         for role in user.roles:
-            if role.name is not "@everyone":
-                roles += f", @{role.name}"
+            roles += f"- @{role.name}"
         # If roles is @everyone, user has no special roles, otherwise, send the roles
         if roles is "@everyone":
             msg = await embed.add_field(msg,"Roles","No significant roles")
@@ -144,7 +144,7 @@ class Core(commands.Cog):
         if user == None:
             user = ctx.author
         # Get the current user level
-        level = await get_level(user)
+        level = await levels.getLevel(user)
         msg = await embed.generate(f"@{user.name}#{user.discriminator} - {self.bot.user.name} Badges",None)
         # Add a field best related to the level
         # Possible improvements here?

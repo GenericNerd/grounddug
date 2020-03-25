@@ -79,7 +79,7 @@ class Core(commands.Cog):
         try:
             await ctx.author.send(embed=(await embed.generate(f"Invite {self.bot.user.name}",f"[Click here](https://discordapp.com/oauth2/authorize?client_id=553602353962549249&scope=bot&permissions=8) to invite {self.bot.user.name} to your server")))
         except:
-            await ctx.send(embed=(await embeds.generate(f"Invite {self.bot.user.name}",f"[Click here](https://discordapp.com/oauth2/authorize?client_id=553602353962549249&scope=bot&permissions=8) to invite {self.bot.user.name} to your server")))
+            await ctx.send(embed=(await embed.generate(f"Invite {self.bot.user.name}",f"[Click here](https://discordapp.com/oauth2/authorize?client_id=553602353962549249&scope=bot&permissions=8) to invite {self.bot.user.name} to your server")))
 
     @commands.command(name="userinfo",description="[user] | Get information on a user, such as server join date, account age etc.")
     async def userinfo(self,ctx,user:discord.Member=None):

@@ -63,14 +63,14 @@ class Core(commands.Cog):
                     commandDesc = command.description.split("|")
                     if command.full_parent_name == "mod":
                         if len(commandDesc) >= 2 and not command.hidden:
-                            msg = await embeds.add_field(msg,f"{prefix}{command.name} {commandDesc[0]}",commandDesc[1])
+                            msg = await embed.add_field(msg,f"{prefix}{command.name} {commandDesc[0]}",commandDesc[1])
                         elif len(commandDesc) < 2 and not command.hidden:
-                            msg = await embeds.add_field(msg,f"{prefix}{command.name}",command.description)
+                            msg = await embed.add_field(msg,f"{prefix}{command.name}",command.description)
                     else:
                         if len(commandDesc) >= 2 and not command.hidden:
-                            msg = await embeds.add_field(msg,f"{prefix}{command.full_parent_name} {command.name} {commandDesc[0]}",commandDesc[1])
+                            msg = await embed.add_field(msg,f"{prefix}{command.full_parent_name} {command.name} {commandDesc[0]}",commandDesc[1])
                         elif len(commandDesc) < 2 and not command.hidden:
-                            msg = await embeds.add_field(msg,f"{prefix}{command.full_parent_name} {command.name}",command.description)
+                            msg = await embed.add_field(msg,f"{prefix}{command.full_parent_name} {command.name}",command.description)
         await ctx.send(embed=msg)
 
     @commands.command(name="invite",description="| Receive a message with an invite link for GroundDug")

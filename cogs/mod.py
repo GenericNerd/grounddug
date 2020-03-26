@@ -124,7 +124,7 @@ class Mod(commands.Cog):
         for channel in ctx.guild.text_channels:
             await channel.set_permissions(member,send_messages=False)
         # Send a message in the channel notifying of successful mute
-        await ctx.send(embed=(await embed.generate(f"{member.name} has been muted",f"{ctx.mention} muted this user for: `{reason}`")))
+        await ctx.send(embed=(await embed.generate(f"{member.name} has been muted",f"{ctx.author.mention} muted this user for: `{reason}`")))
     
     @mod.command(name="unmute",description="<member> [reason] | Allow a user to typing in all text channels again")
     @commands.guild_only()
@@ -134,7 +134,7 @@ class Mod(commands.Cog):
         for channel in ctx.guild.text_channels:
             await channel.set_permissions(member,send_messages=True)
         # Send a message in the channel notifying of successful unmute
-        await ctx.send(embed=(await embed.generate(f"{member.name} has been unmutted",f"{ctx.mention} unmutted this user for: `{reason}`")))
+        await ctx.send(embed=(await embed.generate(f"{member.name} has been unmutted",f"{ctx.author.mention} unmutted this user for: `{reason}`")))
 
     @mod.command(name="purge",description="[member/bot/all] [amount (100 default)] | Deletes multiple messages at once from the text channel the command was ran in, depending on check")
     @commands.guild_only()

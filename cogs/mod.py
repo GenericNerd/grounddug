@@ -192,7 +192,7 @@ class Mod(commands.Cog):
         history = await db.find("users",{"guild": ctx.guild.id, "user": user.id})
         # For every strike, add a field to the embed
         for key in history["strikes"]:
-            msg = await embed.add_field(msg,f"Case number #{case}",reason)
+            msg = await embed.add_field(msg,f"Case number #{key}",reason)
         await ctx.send(embed=msg)
 
     @mod.command(name="case",description="<case #> | Returns the information for a specific case on the server")

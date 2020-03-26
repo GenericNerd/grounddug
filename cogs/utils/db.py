@@ -14,7 +14,7 @@ async def find(database,filter):
     return await asyncDB[database].find_one(filter)
 
 async def findAll(database,filter):
-    return await asyncDB[database].find(filter)
+    return asyncDB[database].find(filter)
 
 async def insert(database,data):
     await asyncDB[database].insert_one(data)

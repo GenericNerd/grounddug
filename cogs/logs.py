@@ -22,7 +22,7 @@ async def logModuleChange(self,ctx,changeTo,module=None):
     # to the state changeTo and list them in an embed field
     if module is None:
         prefix = await misc.getPrefix(self.bot,ctx)
-        msg = await embed.generate(f"Modules to {stateChange}")
+        msg = await embed.generate(f"Modules to {stateChange}",None)
         # Check every item in logs, if the key is not changeTo, add an embed field
         for item,key in guild["logs"].items():
             if key is not changeTo:

@@ -46,7 +46,7 @@ class Mod(commands.Cog):
         finally:
             # Ban the user and send a message confirming the ban
             await member.ban(reason=f"Banned by {ctx.author.name}#{ctx.author.discriminator} for: {reason}")
-            await ctx.send(embed=(await embed.generate(f"{member.name} has been banned",f"{member.name}#{member.discriminator} has been banned by {ctx.author} for `{reason}`",0xff5555)))
+            await ctx.send(embed=(await embed.generate(f"{member.name} has been banned",f"{member.name}#{member.discriminator} has been banned by {ctx.author.mention} for `{reason}`",0xff5555)))
     
     @mod.command(name="hackban",description="<ID> [reason] | Bans a user by their ID from the guild without them needing them to be in the guild")
     @commands.guild_only()
@@ -76,6 +76,7 @@ class Mod(commands.Cog):
             # Ban the member and immediately unban them
             await member.ban(reason=f"Soft-banned by {ctx.author.name}#{ctx.author.discriminator} for: {reason}")
             await member.unban()
+            await ctx.send(embed=(await embed.generate(f"{member.name} has been soft-banned",f"{member.name}#{member.discriminator} has been soft-banned by {ctx.author.mention} for `{reason}`",0xff5555)))
 
     @mod.command(name="kick",description="<member> [reason] | Kicks a member from the guild")
     @commands.guild_only()

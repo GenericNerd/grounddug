@@ -147,11 +147,11 @@ class Mod(commands.Cog):
         def bot_check(ctx):
             return ctx.author.bot
         # Check what check is called, the purge based on that check
-        if check.lower() is "member":
+        if check.lower() == "member":
             await ctx.channel.purge(limit=amount,check=member_check)
-        elif check.lower() is "bot":
+        elif check.lower() == "bot":
             await ctx.channel.purge(limit=amount,check=bot_check)
-        elif check.lower() is "all" or check is "":
+        elif check.lower() == "all" or check == "":
             await ctx.channel.purge(limit=amount)
         else:
             await embed.error(ctx,"Invalid purge check, view command usage")

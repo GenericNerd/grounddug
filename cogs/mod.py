@@ -204,8 +204,11 @@ class Mod(commands.Cog):
         # For field in each user
         async for field in users:
             # If the user has the strike number
-            if field["strikes"][str(case)]:
-                msg = await embed.add_field(msg,f"Here are the details for case number #{case}",field["strikes"][str(case)]["reason"])
+            try:
+                field["strikes"][str(case)]
+            except:
+                continue
+            msg = await embed.add_field(msg,f"Here are the details for case number #{case}",field["strikes"][str(case)]["reason"])
         # If there are no embed fields, the case could not be found
         if msg.fields is []:
             msg.description = f"There is no case information for case number #{case}"

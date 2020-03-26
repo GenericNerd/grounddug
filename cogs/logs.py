@@ -14,7 +14,8 @@ async def logModuleChange(self,ctx,changeTo,module=None):
         stateChange = "enable"
     else:
         stateChange = "disable"
-    module = module.lower()
+    if module is not None:
+        module = module.lower()
     # Get the current guild settings
     guild = await db.find("guilds", {"id": ctx.guild.id})
     # If no module was passed, step through all the modules that can be changed

@@ -58,7 +58,7 @@ class Developer(commands.Cog):
             except:
                 continue
             finally:
-                return await ctx.send(embed=(await embeds.generate(f"{guild.name} invite",invite.url)))
+                return await ctx.send(embed=(await embed.generate(f"{guild.name} invite",invite.url)))
 
 def setup(bot):
     bot.add_cog(Developer(bot))

@@ -21,6 +21,6 @@ async def createCase(guild:discord.Guild,user:discord.Member,moderator:discord.M
     await db.update("users",{"_id": userDB["_id"]},{"strikes": userDB["strikes"]})
     # Try to alert the user that they have been warned
     try:
-        user.send(embed=(await embed.generate("You have a new case open",f"{moderator.name} has opened a case for {action} with the reason: {reason}")))
+        await user.send(embed=(await embed.generate("You have a new case open",f"{moderator.name} has opened a case for {action} with the reason: {reason}")))
     except:
         pass

@@ -122,7 +122,7 @@ class Events(commands.Cog):
                     removed = True
                     if guild["automod"]["warnOnRemove"]:
                         # Create a case for automod violation if the guild decides to warn on remove
-                        await cases.createCase(ctx.guild,ctx.author,ctx.guild.me,"message deleted","Auto-Mod violation")
+                        await cases.createCase(ctx.guild,ctx.author,ctx.guild.me,"message deleted",text.capitalize())
                     # Return an embed with the text variable
                     return await embed.generate(f"{ctx.author.name}#{ctx.author.discriminator} {text} in #{ctx.channel.name}",f"`{ctx.content}`")
             if not removed:

@@ -12,6 +12,7 @@ import cogs.utils.misc as misc
 import cogs.utils.db as db
 import cogs.utils.logger as logger
 import cogs.utils.checks as checks
+import cogs.utils.cases as cases
 
 # Variables required for automod to work in future
 pf = ProfanityFilter()
@@ -57,6 +58,7 @@ class Events(commands.Cog):
                 "profanity": False,
                 "massMentions": 0,
 		        "shortURL": False,
+                "warnOnRemove": False,
             },
 	        "blacklistChannels": []}
         await db.insert("guilds",data)
@@ -112,10 +114,15 @@ class Events(commands.Cog):
             logChannel = self.bot.get_channel(guild["channel"])
             removed = False
             async def RuleViolator(msg,text,delete):
+                global removed
                 # Could possibly add a strike feature here
                 if delete:
+                    # Delete the message and set removed to True
                     await msg.delete()
                     removed = True
+                    if guild["automod"]["warnOnRemove"]:
+                        # Create a case for automod violation if the guild decides to warn on remove
+                        await cases.createCase(ctx.guild,ctx.author,ctx.guild.me,"message deleted","Auto-Mod violation")
                     # Return an embed with the text variable
                     return await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator} {text} in #{ctx.channel.name}",f"`{ctx.content}`")
             if not removed:

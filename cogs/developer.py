@@ -60,5 +60,15 @@ class Developer(commands.Cog):
             finally:
                 return await ctx.send(embed=(await embed.generate(f"{guild.name} invite",invite.url)))
 
+    @developer.command(name="dbupdate",hidden=True)
+    @checks.hasRequiredLevel(5)
+    async def dbupdate(self,ctx):
+        for guild in self.bot.guilds:
+            guildObject = await db.find("guilds",{"id": guild.id})
+            # Update database here
+            guildObject["automod"]["warnOnRemove"] = False
+            # Send database update
+            await db.update("guilds",{"_id": guildObject["_id"]},guildObject)
+
 def setup(bot):
     bot.add_cog(Developer(bot))

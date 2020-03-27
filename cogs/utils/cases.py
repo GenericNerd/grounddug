@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 import asyncio
 import cogs.utils.db as db
+import cogs.utils.embed as embed
 
 async def createCase(guild:discord.Guild,user:discord.Member,moderator:discord.Member,action,reason=None):
     """
@@ -18,3 +19,8 @@ async def createCase(guild:discord.Guild,user:discord.Member,moderator:discord.M
     # Update database with an increased case numbed and the new user strike
     await db.update("guilds",{"_id": guildDB["_id"]},{"cases": guildDB["cases"]+1})
     await db.update("users",{"_id": userDB["_id"]},{"strikes": userDB["strikes"]})
+    # Try to alert the user that they have been warned
+    try:
+        user.send(embed=(await embed.generate("You have a new case open",f"{moderator.name} has opened a case for {action} with the reason: {reason}")))
+    except:
+        pass

@@ -122,11 +122,12 @@ class AutoModSetup(commands.Cog):
             guildSettings = {
                 "automod": {
                     "caps": 0,
+                    "massMentions": 0,
                     "antiInvite": False,
                     "antiURL": False,
                     "profanity": False,
-                    "massMentions": 0,
-                    "shortURL": False
+                    "shortURL": False,
+                    "warnOnRemove": False
                 }
             }
 
@@ -177,64 +178,12 @@ class AutoModSetup(commands.Cog):
 
                 await message.delete()
 
-            # ANTI INVITE
-            e = await embed.generate("AutoMod Setup", "Would you like to enable Anti-Invite?")
-            await msg.edit(embed=e)
-
-            await msg.add_reaction(tick)
-            await msg.add_reaction(cross)
-
-            def check(reaction, user):
-                return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
-
-            try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
-            except asyncio.TimeoutError:
-                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
-
-            if str(reaction) == tick:
-                guildSettings["automod"]["antiInvite"] = True
-
-            await msg.remove_reaction(reaction, user)
-
-            # ANTI URL
-            e = await embed.generate("AutoMod Setup", "Would you like to enable Anti-URL?")
-            await msg.edit(embed=e)
-
-            def check(reaction, user):
-                return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
-
-            try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
-            except asyncio.TimeoutError:
-                await msg.clear_reactions()
-                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
-
-            if str(reaction) == tick:
-                guildSettings["automod"]["antiURL"] = True
-
-            # PROFANITY
-            e = await embed.generate("AutoMod Setup", "Would you like to enable the profanity filter?")
-            await msg.edit(embed=e)
-
-            await msg.remove_reaction(reaction, user)
-
-            def check(reaction, user):
-                return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
-
-            try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
-            except asyncio.TimeoutError:
-                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
-
-            if str(reaction) == tick:
-                guildSettings["automod"]["profanity"] = True
-
             # MASS-MENTION PROTECTION
             e = await embed.generate("AutoMod Setup", "Would you like to enable mass-mention protection?")
             await msg.edit(embed=e)
 
-            await msg.remove_reaction(reaction, user)
+            await msg.add_reaction(tick)
+            await msg.add_reaction(cross)
 
             def check(reaction, user):
                 return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
@@ -273,13 +222,64 @@ class AutoModSetup(commands.Cog):
 
                 await message.delete()
 
-            # SHORT URLS
-            await msg.clear_reactions()
-            e = await embed.generate("AutoMod Setup", "Would you like to enable short URL detection?")
+            # ANTI INVITE
+            e = await embed.generate("AutoMod Setup", "Would you like to enable Anti-Invite?")
             await msg.edit(embed=e)
 
             await msg.add_reaction(tick)
             await msg.add_reaction(cross)
+
+            def check(reaction, user):
+                return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
+
+            try:
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+
+            if str(reaction) == tick:
+                guildSettings["automod"]["antiInvite"] = True
+
+            await msg.remove_reaction(reaction, user)
+
+            # ANTI URL
+            e = await embed.generate("AutoMod Setup", "Would you like to enable Anti-URL?")
+            await msg.edit(embed=e)
+
+            def check(reaction, user):
+                return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
+
+            try:
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                await msg.clear_reactions()
+                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+
+            if str(reaction) == tick:
+                guildSettings["automod"]["antiURL"] = True
+
+            await msg.remove_reaction(reaction, user)
+
+            # PROFANITY
+            e = await embed.generate("AutoMod Setup", "Would you like to enable the profanity filter?")
+            await msg.edit(embed=e)
+
+            def check(reaction, user):
+                return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
+
+            try:
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+
+            if str(reaction) == tick:
+                guildSettings["automod"]["profanity"] = True
+
+            await msg.remove_reaction(reaction, user)
+
+            # SHORT URLS
+            e = await embed.generate("AutoMod Setup", "Would you like to enable short URL detection?")
+            await msg.edit(embed=e)
 
             def check(reaction, user):
                 return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
@@ -293,9 +293,27 @@ class AutoModSetup(commands.Cog):
             if str(reaction) == tick:
                 guildSettings["automod"]["shortURL"] = True
 
-            await db.update("guilds",{"id": ctx.guild.id},{"automod": guildSettings["automod"]})
+            await msg.remove_reaction(reaction, user)
+
+            # WARN ON REMOVE
+            e = await embed.generate("AutoMod Setup", "Should AutoMod warn a user when they trip a detection mechanism?")
+            await msg.edit(embed=e)
+
+            def check(reaction, user):
+                return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
+
+            try:
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                await msg.clear_reactions()
+                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+
+            if str(reaction) == tick:
+                guildSettings["automod"]["warnOnRemove"] = True
 
             # FINISH
+            await db.update("guilds",{"id": ctx.guild.id},{"automod": guildSettings["automod"]})
+
             await msg.clear_reactions()
             e = await embed.generate("AutoMod Setup", "AutoMod has been configured successfully. The Setup Wizard has now ended.")
             await msg.edit(embed=e)

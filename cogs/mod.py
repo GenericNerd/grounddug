@@ -94,7 +94,7 @@ class Mod(commands.Cog):
             await ctx.send(embed=(await embed.generate(f"{member.name} has been kicked",f"{member.name}#{member.discriminator} has been kicked by {ctx.author}",0xff5555)))
             await member.kick(reason=f"Kicked by {ctx.author.name}#{ctx.author.discriminator} for: {reason}")
         
-    @mod.command(name="gag",description="<member> [reason] | Stops a user from talking in all voice channels")
+    @mod.command(name="gag",alias=["vmute"],description="<member> [reason] | Stops a user from talking in all voice channels")
     @commands.guild_only()
     @checks.hasGDPermission("MUTE_MEMBERS")
     async def gag(self,ctx,member:discord.Member,reason=None):
@@ -106,7 +106,7 @@ class Mod(commands.Cog):
         # Send a message in the channel notifying of successful gag
         await ctx.send(embed=(await embed.generate(f"{member.name} has been gagged",f"{ctx.author.mention} gagged them for `{reason}`")))
     
-    @mod.command(name="ungag",description="<member> [reason] | Allows a user to talk in all voice channels")
+    @mod.command(name="ungag",alias=["vunmute"],description="<member> [reason] | Allows a user to talk in all voice channels")
     @commands.guild_only()
     @checks.hasGDPermission("MUTE_MEMBERS")
     async def ungag(self,ctx,member:discord.Member,reason=None):

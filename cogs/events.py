@@ -3,9 +3,6 @@
 import discord
 from discord.ext import commands
 import asyncio
-from profanity_filter import ProfanityFilter
-import httpx
-import re
 from datetime import datetime
 import cogs.utils.embed as embed
 import cogs.utils.misc as misc

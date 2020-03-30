@@ -8,6 +8,10 @@ import cogs.utils.db as db
 import cogs.utils.cases as cases
 import cogs.utils.checks as checks
 
+import re
+import httpx
+from profanity_filter import ProfanityFilter
+
 class AutoModListener(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

@@ -20,7 +20,7 @@ import sentry_sdk
 sentry_sdk.init("https://1503256c40d04d97a7752aff4305d469@sentry.io/5181048",release=botSettings["version"])
 
 # Cogs to load on bot ready
-startupExtensions = ["events","perms","core","admin","mod","developer","logs"]
+startupExtensions = ["events","perms","core","admin","mod","developer","logs","automod"]
 # Get prefix depending on message context
 bot = commands.AutoShardedBot(command_prefix=misc.getPrefix)
 

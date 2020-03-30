@@ -148,6 +148,8 @@ class AutoModSetup(commands.Cog):
                 await msg.clear_reactions()
                 return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
+            await msg.remove_reaction(reaction, user)
+
             if str(reaction) == tick:
                 await msg.clear_reactions()
 
@@ -194,6 +196,8 @@ class AutoModSetup(commands.Cog):
                 await msg.clear_reactions()
                 return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
+            await msg.remove_reaction(reaction, user)
+
             if str(reaction) == tick:
                 await msg.clear_reactions()
 
@@ -237,10 +241,10 @@ class AutoModSetup(commands.Cog):
             except asyncio.TimeoutError:
                 return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
+            await msg.remove_reaction(reaction, user)
+
             if str(reaction) == tick:
                 guildSettings["automod"]["antiInvite"] = True
-
-            await msg.remove_reaction(reaction, user)
 
             # ANTI URL
             e = await embed.generate("AutoMod Setup", "Would you like to enable Anti-URL?")
@@ -255,10 +259,10 @@ class AutoModSetup(commands.Cog):
                 await msg.clear_reactions()
                 return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
+            await msg.remove_reaction(reaction, user)
+
             if str(reaction) == tick:
                 guildSettings["automod"]["antiURL"] = True
-
-            await msg.remove_reaction(reaction, user)
 
             # PROFANITY
             e = await embed.generate("AutoMod Setup", "Would you like to enable the profanity filter?")
@@ -272,10 +276,10 @@ class AutoModSetup(commands.Cog):
             except asyncio.TimeoutError:
                 return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
+            await msg.remove_reaction(reaction, user)
+
             if str(reaction) == tick:
                 guildSettings["automod"]["profanity"] = True
-
-            await msg.remove_reaction(reaction, user)
 
             # SHORT URLS
             e = await embed.generate("AutoMod Setup", "Would you like to enable short URL detection?")
@@ -290,10 +294,10 @@ class AutoModSetup(commands.Cog):
                 await msg.clear_reactions()
                 return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
+            await msg.remove_reaction(reaction, user)
+
             if str(reaction) == tick:
                 guildSettings["automod"]["shortURL"] = True
-
-            await msg.remove_reaction(reaction, user)
 
             # WARN ON REMOVE
             e = await embed.generate("AutoMod Setup", "Should AutoMod warn a user when they trip a detection mechanism?")
@@ -307,6 +311,8 @@ class AutoModSetup(commands.Cog):
             except asyncio.TimeoutError:
                 await msg.clear_reactions()
                 return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+
+            await msg.remove_reaction(reaction, user)
 
             if str(reaction) == tick:
                 guildSettings["automod"]["warnOnRemove"] = True
@@ -336,16 +342,19 @@ class AutoModSetup(commands.Cog):
             else:
                 e = await embed.add_field(e, "Caps Lock Spam Protection", f"{tick} - Activated when message has {guildSettings['automod']['caps']}% of text in caps.")
 
-            e = await embed.add_field(e, "Anti-Invite", emoteReturn(guildSettings["automod"]["antiInvite"]))
-            e = await embed.add_field(e, "Anti-URL", emoteReturn(guildSettings["automod"]["antiURL"]))
-            e = await embed.add_field(e, "Profanity Filter", emoteReturn(guildSettings["automod"]["profanity"]))
-
             if guildSettings["automod"]["massMentions"] == 0:
                 e = await embed.add_field(e, "Mass-Mention Protection", cross)
             else:
-                e = await embed.add_field(e, "Mass-Mention Protection", f"{tick} - Activated at {guildSettings['automod']['massMentions']} mentions.")
+                e = await embed.add_field(
+                    e, "Mass-Mention Protection",
+                    f"{tick} - Activated at {guildSettings['automod']['massMentions']} mentions."
+                )
 
+            e = await embed.add_field(e, "Anti-Invite", emoteReturn(guildSettings["automod"]["antiInvite"]))
+            e = await embed.add_field(e, "Anti-URL", emoteReturn(guildSettings["automod"]["antiURL"]))
+            e = await embed.add_field(e, "Profanity Filter", emoteReturn(guildSettings["automod"]["profanity"]))
             e = await embed.add_field(e, "Short URL Detection", emoteReturn(guildSettings["automod"]["shortURL"]))
+            e = await embed.add_field(e, "Warn on Remove", emoteReturn(guildSettings["automod"]["warnOnRemove"]))
 
             await msg.edit(embed=e)
 

@@ -195,7 +195,7 @@ class AutoModSetup(commands.Cog):
                 guildSettings["automod"]["antiInvite"] = True
 
             # ANTI URL
-            e = await embeds.generate("AutoMod Setup", "Would you like to enable Anti-URL?")
+            e = await embed.generate("AutoMod Setup", "Would you like to enable Anti-URL?")
             await msg.edit(embed=e)
 
             await msg.add_reaction(tick)

@@ -1,25 +1,27 @@
-#GroundDug Developer Module
+# GroundDug Developer Cog
 
 import discord
 from discord.ext import commands
 import asyncio
 import cogs.utils.checks as checks
-import cogs.utils.embeds as embeds
-import cogs.utils.dbhandle as dbhandle
 import cogs.utils.levels as levels
-import cogs.utils.dbhandle as db
+import cogs.utils.embed as embed
+import cogs.utils.db as db
+import cogs.utils.cases as cases
+import cogs.utils.logger as logger
+import cogs.utils.misc as misc
 
-class dev(commands.Cog):
+class Developer(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
-    
-    @commands.group(name="developer",aliases=["dev"],hidden=True)
+
+    @commands.group(name="developer",aliases=["dev"])
     async def developer(self,ctx):
         if ctx.invoked_subcommand is None:
-            await embeds.error(ctx,"NO INVOKED SUBCOMMAND")
-
+            await embed.error(ctx,"No invoked subcommand")
+    
     @developer.command(name="eval",hidden=True)
-    @checks.has_required_level(5)
+    @checks.hasRequiredLevel(5)
     async def eval(self,ctx,cmd:str):
         try:
             result = (await eval(cmd))
@@ -28,26 +30,26 @@ class dev(commands.Cog):
         await ctx.send(result)
 
     @developer.command(name="modulereload",aliases=["mreload"],hidden=True)
-    @checks.has_required_level(3)
+    @checks.hasRequiredLevel(5)
     async def reload(self,ctx,module):
         self.bot.unload_extension(f"cogs.{module}")
         self.bot.load_extension(f"cogs.{module}")
-        await ctx.send(embed=(await embeds.generate(f"Module {module} reloaded",None)))
+        await ctx.send(embed=(await embed.generate(f"Module {module} reloaded",None)))
     
     @developer.command(name="moduleload",aliases=["mload"],hidden=True)
-    @checks.has_required_level(3)
+    @checks.hasRequiredLevel(5)
     async def load(self,ctx,module):
         self.bot.load_extension(f"cogs.{module}")
-        await ctx.send(embed=(await embeds.generate(f"Module {module} loaded",None)))
+        await ctx.send(embed=(await embed.generate(f"Module {module} loaded",None)))
 
     @developer.command(name="moduleunload",aliases=["munload"],hidden=True)
-    @checks.has_required_level(3)
+    @checks.hasRequiredLevel(5)
     async def unload(self,ctx,module):
         self.bot.unload_extension(f"cogs.{module}")
-        await ctx.send(embed=(await embeds.generate(f"Module {module} unloaded",None)))
+        await ctx.send(embed=(await embed.generate(f"Module {module} unloaded",None)))
 
     @developer.command(name="invite",hidden=True)
-    @checks.has_required_level(3)
+    @checks.hasRequiredLevel(3)
     async def guild_invite(self,ctx,gid: int):
         guild = discord.utils.get(self.bot.guilds, id=gid)
         for channel in guild.text_channels:
@@ -56,17 +58,17 @@ class dev(commands.Cog):
             except:
                 continue
             finally:
-                return await ctx.send(embed=(await embeds.generate(f"{guild.name} invite",invite.url)))
+                return await ctx.send(embed=(await embed.generate(f"{guild.name} invite",invite.url)))
 
     @developer.command(name="dbupdate",hidden=True)
-    @checks.has_required_level(5)
+    @checks.hasRequiredLevel(5)
     async def dbupdate(self,ctx):
         for guild in self.bot.guilds:
-            dbObject = await db.dbFind("guilds",{"id": guild.id})
-            # DB UPDATES BELOW
-            dbObject["automod"]["shortURL"] = False
-            # SEND DB UPDATE
-            await db.dbUpdate("guilds",{"id": guild.id},dbObject)
+            guildObject = await db.find("guilds",{"id": guild.id})
+            # Update database here
+            guildObject["automod"]["warnOnRemove"] = False
+            # Send database update
+            await db.update("guilds",{"_id": guildObject["_id"]},guildObject)
 
 def setup(bot):
-    bot.add_cog(dev(bot))
+    bot.add_cog(Developer(bot))

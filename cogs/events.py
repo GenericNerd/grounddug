@@ -1,38 +1,37 @@
-#GroundDug Event Handler Module
+# GroundDug Event Handler Cog
 
 import discord
 from discord.ext import commands
 import asyncio
-from profanity_filter import ProfanityFilter
-import httpx
 from datetime import datetime
-import cogs.utils.embeds as embeds
-from cogs.utils.useful import getPrefix
-import cogs.utils.dbhandle as db
-import cogs.utils.useful as useful
-import re
+import cogs.utils.embed as embed
+import cogs.utils.misc as misc
+import cogs.utils.db as db
+import cogs.utils.logger as logger
+import cogs.utils.checks as checks
+import cogs.utils.cases as cases
+from sentry_sdk import capture_exception
 
-pf = ProfanityFilter()
-httpxClient = httpx.AsyncClient()
+# Channel to send logs to
+coreChannel = 664541295448031295
 
-class events(commands.Cog):
-    def __init__(self,bot):
+class Events(commands.Cog):
+    def __init__(self, bot):
         self.bot = bot
-    
+
+    # on_ready performs checks and sends logs to GD Discord
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f"\n{self.bot.user.name}\nOnline\nFrom {str(datetime.utcnow()).split('.')[0]} UTC")
-        await self.bot.change_presence(status=discord.Status.dnd,activity=discord.Game("Booting up!"))
-        await self.bot.get_channel(664541295448031295).send(embed=(await embeds.generate("I'm online",f"As of {str(datetime.utcnow()).split('.')[0]} UTC, I am performing my member checks now!")))
-        for guild in self.bot.guilds:
-            for member in guild.members:
-                if (await db.itemExist("users", {"guild": guild.id, "user": member.id})):
-                    await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False,"WARN_MEMBERS": False,"MUTE_MEMBERS": False,"KICK_MEMBERS": False,"BAN_MEMBERS": False,"ADMINISTRATOR": False}, "strikes": {}})
-        await self.bot.get_channel(664541295448031295).send(embed=(await embeds.generate("Checks completed!",f"I am now fully online as of {str(datetime.utcnow()).split('.')[0]} UTC")))
-        await self.bot.change_presence(status=discord.Status.online,activity=discord.Game("g!help to get started"))
+        logger.info("Online")
+        prefix = await misc.getPrefix(self.bot,None)
+        # Change bot status to online when bot is ready
+        await self.bot.change_presence(status=discord.Status.online,activity=discord.Game(f"{prefix}help to get started"))
+        # Send a message to the core channel
+        await self.bot.get_channel(coreChannel).send(embed=(await embed.generate("I'm online",None)))
 
     @commands.Cog.listener()
     async def on_guild_join(self,guild):
+        # Create data variable with what will be inserted in DB and insert it
         data = {
             "id": guild.id,
             "prefix": "g!",
@@ -43,7 +42,7 @@ class events(commands.Cog):
                 "mod": False,
                 "perms": False,
                 "automod": False,
-		            "admin": False,
+          "admin": False,
             },
             "raid_mode": False,
             "cases": 0,
@@ -53,111 +52,91 @@ class events(commands.Cog):
                 "antiURL": False,
                 "profanity": False,
                 "massMentions": 0,
-		            "shortURL": False,
+          "shortURL": False,
+                "warnOnRemove": False,
             },
-	          "blacklistChannels": []}
-        await db.dbInsert("guilds",data)
+         "blacklistChannels": []}
+        await db.insert("guilds",data)
+        userObject = {"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}}
+        # Run through every member, if they are an admin, change all perms to be True
         for member in guild.members:
             if member.guild_permissions.administrator:
-                await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": True, "WARN_MEMBERS": True, "MUTE_MEMBERS": True, "KICK_MEMBERS": True, "BAN_MEMBERS": True, "ADMINISTRATOR": True}, "strikes": {}})
-            else:
-                await db.dbInsert("users",{"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}})
-        await self.bot.get_channel(664541295448031295).send(embed=(await embeds.generate(f"I have joined {guild.name}",f"{guild.name} has {guild.member_count} members")))
+                for item, key in userObject["permissions"].items():
+                    userObject["permissions"][item] = True
+        # Insert this to the database and send a message saying the bot joined
+        await db.insert("users",userObject)
+        await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"I have joined {guild.name}",f"{guild.name} has {guild.member_count} members")))
 
     @commands.Cog.listener()
     async def on_guild_remove(self,guild):
-        await db.dbRemoveMany("users",{"guild": guild.id})
-        await db.dbRemove("guilds",{"id": guild.id})
-        await self.bot.get_channel(664541295448031295).send(embed=(await embeds.generate(f"I have left {guild.name}",f"{guild.name} had {guild.member_count} members :(")))
+        # Remove all users in the guild and the guild information from both databases
+        await db.removeMany("users",{"guild": guild.id})
+        await db.remove("guilds",{"id": guild.id})
+        # Send a message to the core channel saying the bot left
+        await self.bot.channel(coreChannel).send(embed=(await embed.generate(f"I have left {guild.name}",f"{guild.name} had {guild.member_count} members :c")))
 
     @commands.Cog.listener()
     async def on_member_join(self,member):
-        if not (await db.dbFind("guilds",{"id": member.guild.id}))["raid_mode"]:
-            await db.dbInsert("users",{"guild": member.guild.id, "user": member.id, "permissions": {
-                "MANAGE_MESSAGES": False,
-                "WARN_MEMBERS": False,
-				"MUTE_MEMBERS": False,
-				"KICK_MEMBERS": False,
-				"BAN_MEMBERS": False,
-				"ADMINISTRATOR": False}, "strikes": {}})
+        # Check if raid mode is enabled
+        if not (await db.find("guilds",{"id": member.guild.id}))["raid_mode"]:
+            # Insert database object
+            await db.insert("users",{"guild": member.guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}})
         else:
+            # Create an invite to send to the user
+            invite = await member.guild.create_invite(max_uses=1,reason="Raid mode activated - Providing link to user")
+            # Try sending a message and alerting the user, kick them regardless of if they were notified
             try:
-                await member.send(embed=(await embeds.generate(f"{member.guild.name} is currently on lockdown","Please try to join again in a couple of hours")))
-            except Exception:
+                await member.send(embed=(await embed.generate(f"{member.guild.name} is currently in raid mode", f"This means that no new users can join. Please try and join again in a couple of hours on this link: https://discord.gg/{invite.code}")))
+            except:
                 pass
             finally:
-                await member.kick(reason="Guild is on lockdown")
+                await member.kick(reason="Guild is in raid mode")
 
     @commands.Cog.listener()
     async def on_member_remove(self,member):
-        await db.dbRemove("users",{"guild": member.guild.id, "user": member.id})
-
-    @commands.Cog.listener()
-    async def on_message(self,ctx):
-        if ctx.guild != None:
-            guild = await db.dbFind("guilds",{"id": ctx.guild.id})
-            channel = self.bot.get_channel(guild["channel"])
-            removed = False
-            async def RuleViolator(msg,text,delete):
-                global removed,guild
-                if delete:
-                    await msg.delete()
-                    removed = True
-                # userDB = await db.dbFind("users",{"guild": ctx.guild.id, "user": user.id})
-                # userDB["strikes"][str(guildDB["cases"])] = {"moderator": ctx.author.id, "reason": text.capitalize()}
-                # await db.dbUpdate("users",{"_id": userDB["_id"]},{"strikes": userDB["strikes"]})
-                # await db.dbUpdate("guilds",{"_id": guildDB["_id"]},{"cases": guildDB["cases"] + 1})
-                return await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator} {text} in #{ctx.channel.name}",f"`{ctx.content}`")
-            if not removed and guild["automod"]["antiInvite"] and re.search("(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/.+[a-z]",ctx.content):
-                await channel.send(embed=await RuleViolator(ctx,"tried to advertise",True))
-            if not removed and guild["automod"]["antiURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
-                await channel.send(embed=await RuleViolator(ctx,"tried to post a link",True))
-            if not removed and guild["automod"]["shortURL"] and re.search(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",ctx.content):
-                async def findURLs(string):
-                    url = re.findall(r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?",string)
-                    return url
-                shortenedURLs = []
-                for url in await findURLs(ctx.content):
-                    shortenedURL = await httpxClient.head(url,allow_redirects=True)
-                    if shortenedURL.url != url:
-                        shortenedURLs.append(str(shortenedURL.url))
-                if shortenedURLs != []:
-                    await RuleViolator(ctx,"",False)
-                    desc = ""
-                    for item in shortenedURLs:
-                        desc += f"{item} "
-                    await ctx.channel.send(embed=(await embeds.generate("Shortened URLs detected!",f"{ctx.author.mention} posted a shortened link(s) leading to: {desc}")))
-            if not removed and guild["automod"]["profanity"] and pf.is_profane(ctx.content):
-                await channel.send(embed=await RuleViolator(ctx,"tried to swear",True))
-            if not removed and guild["automod"]["caps"] > 0 and len(ctx.content) > 0 and guild["automod"]["caps"] < (sum(1 for x in ctx.content if str.isupper(x))/len(ctx.content))*100:
-                await channel.send(embed=await RuleViolator(ctx,"used too many CAPS",True))
-            if not removed and guild["automod"]["massMentions"] > 0 and len(ctx.raw_mentions) > guild["automod"]["massMentions"]:
-                await channel.send(embed=await RuleViolator(ctx,"pinged too many people",True))
+        # Try needed because if guild is in raid mode, a object is never inserted
+        try:
+            await db.remove("users",{"guild": member.guild.id, "user": member.id})
+        except Exception as e:
+            logger.error(e)
 
     @commands.Cog.listener()
     async def on_command(self,ctx):
-        if ctx.guild != None:
-            guild = await db.dbFind("guilds",{"id": ctx.guild.id})
-            channel = self.bot.get_channel(guild["channel"])
-            command_base = (ctx.message.content).split((await getPrefix(self.bot,ctx)))[1].split(" ")[0]
-            command_list = ["admin","logs","perms","developer","dev","automod","admin"]
-            if not command_base in command_list and guild["logs"]["misc"]:
-                try:
-                    await channel.send(embed=(await embeds.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
-                except:
-                    pass
+        # Misc command logging here, if we chose to keep it
+        if ctx.guild is not None:
+            pass
 
-    # @commands.Cog.listener()
-    # async def on_command_error(self,ctx,error):
-    #     prefix = await getPrefix(self.bot,ctx)
-    #     if isinstance(error,commands.MissingRequiredArgument):
-    #         await embeds.error(ctx,f"{error} - Use {prefix}help to find the required arguments")
-    #     elif isinstance(error,commands.CommandNotFound):
-    #         pass
-    #     elif isinstance(error,commands.CheckFailure):
-    #         await embeds.error(ctx,f"You do not have the valid permissions to run this command")
-    #     else:
-    #         await embeds.error(ctx,f"{error} - Report to developers")
+    @commands.Cog.listener()
+    async def on_voice_state_update(self,member,before,after):
+        logger.info(f"{after.channel.id}, {after.channel.id==665690058288005122}")
+        if before.channel == None and after.channel.id == 665690058288005122:
+            logger.info(member)
+
+    @commands.Cog.listener()
+    async def on_command_error(self,ctx,error):
+        prefix = await misc.getPrefix(self.bot,ctx)
+        # Is the error a required argument?
+        if isinstance(error,commands.MissingRequiredArgument):
+            await embed.error(ctx,f"{error} - Use {prefix}help to find the required arguments")
+        # Is the error that the command doesn't exist?
+        elif isinstance(error,commands.CommandNotFound):
+            pass
+        # Is the user missing the GD permission?
+        elif isinstance(error,checks.MissingGDPermissionError):
+            await embed.error(ctx,"You do not have the required GD permission to run this command")
+        # Is the user missing the required level?
+        elif isinstance(error,checks.LevelPermissionsError):
+            await embed.error(ctx,"You do not have the required level to run this command")
+        # Is there a bad argument that was called?
+        elif isinstance(error,commands.BadArgument):
+            await embed.error(ctx,"Bad argument! Make sure you are calling something valid!")
+        # Is the command not able to be ran in private messages?
+        elif isinstance(error,commands.NoPrivateMessage):
+            await embed.error(ctx,"This command cannot be ran in private messages.")
+        else:
+            await embed.error(ctx,f"{error} - Report sent to developer")
+            await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
+            capture_exception(error)
 
 def setup(bot):
-	bot.add_cog(events(bot))
+    bot.add_cog(Events(bot))

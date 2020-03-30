@@ -271,6 +271,8 @@ class AutoModSetup(commands.Cog):
                 else:
                     guildSettings["automod"]["massMentions"] = int(message.content)
 
+                await message.delete()
+
             # SHORT URLS
             await msg.clear_reactions()
             e = await embed.generate("AutoMod Setup", "Would you like to enable short URL detection?")

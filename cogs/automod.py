@@ -116,7 +116,9 @@ class AutoModSetup(commands.Cog):
             await msg.clear_reactions()
             return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
-        if str(reaction) == one:
+        if str(reaction) == cancel:
+            return await msg.delete()
+        elif str(reaction) == one:
             await msg.clear_reactions()
 
             guildSettings = {

@@ -90,6 +90,7 @@ class Core(commands.Cog):
         msg = await embed.generate(f"{user.name}#{user.discriminator}",f"{user.mention} - `{user.id}`")
         # Check the status, add an emoji representing icon
         # Possible future optimisations here?
+        # In DM's, returning a User instead of Member object
         if str(user.status) == "online":
             msg = await embed.add_field(msg,"Status","<:status_online:679095420605038617>",True)
         elif str(user.status) == "idle":

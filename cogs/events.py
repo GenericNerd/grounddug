@@ -136,6 +136,9 @@ class Events(commands.Cog):
         # Is there a bad argument that was called?
         elif isinstance(error,commands.BadArgument):
             await embed.error(ctx,"Bad argument! Make sure you are calling something valid!")
+        # Is the command not able to be ran in private messages?
+        elif isinstance(error,commands.NoPrivateMessage):
+            await embed.error(ctx,"This command cannot be ran in private messages.")
         else:
             await embed.error(ctx,f"{error} - Report sent to developer")
             await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))

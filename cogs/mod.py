@@ -21,7 +21,7 @@ async def log(ctx,bot):
 class Mod(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
-    
+
     @commands.group(name="mod",description="Guild moderation commands")
     @commands.guild_only()
     async def mod(self,ctx):
@@ -48,7 +48,7 @@ class Mod(commands.Cog):
             # Ban the user and send a message confirming the ban
             await member.ban(reason=f"Banned by {ctx.author.name}#{ctx.author.discriminator} for: {reason}")
             await ctx.send(embed=(await embed.generate(f"{member.name} has been banned",f"{member.name}#{member.discriminator} has been banned by {ctx.author.mention} for `{reason}`",0xff5555)))
-    
+
     @mod.command(name="hackban",description="<ID> [reason] | Bans a user by their ID from the guild without them needing them to be in the guild")
     @commands.guild_only()
     @checks.hasGDPermission("BAN_MEMBERS")
@@ -93,8 +93,8 @@ class Mod(commands.Cog):
         finally:
             await ctx.send(embed=(await embed.generate(f"{member.name} has been kicked",f"{member.name}#{member.discriminator} has been kicked by {ctx.author}",0xff5555)))
             await member.kick(reason=f"Kicked by {ctx.author.name}#{ctx.author.discriminator} for: {reason}")
-        
-    @mod.command(name="gag",alias=["vmute"],description="<member> [reason] | Stops a user from talking in all voice channels")
+
+    @mod.command(name="gag",aliases=["vmute"],description="<member> [reason] | Stops a user from talking in all voice channels")
     @commands.guild_only()
     @checks.hasGDPermission("MUTE_MEMBERS")
     async def gag(self,ctx,member:discord.Member,reason=None):
@@ -105,8 +105,8 @@ class Mod(commands.Cog):
             await channel.set_permissions(member,speak=False)
         # Send a message in the channel notifying of successful gag
         await ctx.send(embed=(await embed.generate(f"{member.name} has been gagged",f"{ctx.author.mention} gagged them for `{reason}`")))
-    
-    @mod.command(name="ungag",alias=["vunmute"],description="<member> [reason] | Allows a user to talk in all voice channels")
+
+    @mod.command(name="ungag",aliases=["vunmute"],description="<member> [reason] | Allows a user to talk in all voice channels")
     @commands.guild_only()
     @checks.hasGDPermission("MUTE_MEMBERS")
     async def ungag(self,ctx,member:discord.Member,reason=None):
@@ -127,7 +127,7 @@ class Mod(commands.Cog):
             await channel.set_permissions(member,send_messages=False)
         # Send a message in the channel notifying of successful mute
         await ctx.send(embed=(await embed.generate(f"{member.name} has been muted",f"{ctx.author.mention} muted this user for: `{reason}`")))
-    
+
     @mod.command(name="unmute",description="<member> [reason] | Allow a user to typing in all text channels again")
     @commands.guild_only()
     @checks.hasGDPermission("MUTE_MEMBERS")
@@ -183,7 +183,7 @@ class Mod(commands.Cog):
             # Send a message and update DB to reflect
             await ctx.send(embed=(await embed.generate(f"Case number #{strike} has been forgiven by {ctx.author.name}#{ctx.author.discriminator}",None)))
             await db.update("users",{"_id": userDB["_id"]},{"strikes": userDB["strikes"]})
-    
+
     @mod.command(name="history",description="[user] | Returns user history")
     @commands.guild_only()
     async def history(self,ctx,user:discord.Member=None):
@@ -248,14 +248,14 @@ class ModMisc(commands.Cog):
         await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod kick"),member,reason)
 
-    @commands.command(name="gag",alias=["vmute"],hidden=True)
+    @commands.command(name="gag",aliases=["vmute"],hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("MUTE_MEMBERS")
     async def _gag(self,ctx,member:discord.Member,reason=None):
         await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod gag"),member,reason)
 
-    @commands.command(name="ungag",alias=["vunmute"],hidden=True)
+    @commands.command(name="ungag",aliases=["vunmute"],hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("MUTE_MEMBERS")
     async def _ungag(self,ctx,member:discord.Member,reason=None):

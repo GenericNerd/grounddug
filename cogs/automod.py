@@ -12,6 +12,10 @@ import re
 import httpx
 from profanity_filter import ProfanityFilter
 
+# Variables required for automod to work in future
+pf = ProfanityFilter()
+httpxClient = httpx.AsyncClient()
+
 class AutoModListener(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

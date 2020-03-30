@@ -12,9 +12,6 @@ import cogs.utils.checks as checks
 import cogs.utils.cases as cases
 from sentry_sdk import capture_exception
 
-# Variables required for automod to work in future
-pf = ProfanityFilter()
-httpxClient = httpx.AsyncClient()
 # Channel to send logs to
 coreChannel = 664541295448031295
 
@@ -45,7 +42,7 @@ class Events(commands.Cog):
                 "mod": False,
                 "perms": False,
                 "automod": False,
-		        "admin": False,
+          "admin": False,
             },
             "raid_mode": False,
             "cases": 0,
@@ -55,10 +52,10 @@ class Events(commands.Cog):
                 "antiURL": False,
                 "profanity": False,
                 "massMentions": 0,
-		        "shortURL": False,
+          "shortURL": False,
                 "warnOnRemove": False,
             },
-	        "blacklistChannels": []}
+         "blacklistChannels": []}
         await db.insert("guilds",data)
         userObject = {"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}}
         # Run through every member, if they are an admin, change all perms to be True

@@ -108,7 +108,7 @@ class Core(commands.Cog):
         else:
             msg = await embed.add_field(msg,"Status","<:status_offline:679095420684730368>",True)
         # Try to get the server join date, may fail if command is ran in DMs
-        if ctx.guild is None:
+        if ctx.guild is not None:
             try:
                 msg = await embed.add_field(msg,"Server join date",f"{str(user.joined_at).split('.')[0]} - `{str(datetime.utcnow()-user.joined_at).split('.')[0]} ago`",True)
             except:

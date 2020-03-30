@@ -17,6 +17,7 @@ botSettings = db.nsyncFind("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e
 
 # Load sentry to receive tracebacks
 import sentry_sdk
+from sentry_sdk import capture_exception
 sentry_sdk.init("https://1503256c40d04d97a7752aff4305d469@sentry.io/5181048",release=botSettings["version"])
 
 # Cogs to load on bot ready
@@ -30,6 +31,7 @@ for module in startupExtensions:
     try:
         bot.load_extension(f"cogs.{module}")
     except Exception as e:
+        capture_exception(e)
         logger.error(f"Failed to load module {module} - {e}")
 
 # Check if channel is blacklisted before running command

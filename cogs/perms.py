@@ -55,6 +55,7 @@ class Perms(commands.Cog):
         self.bot = bot
     
     @commands.group(name="perms",description="Custom permissions")
+    @commands.guild_only()
     async def perms(self,ctx):
         # Send a help perms command if no subcommand invoked
         if ctx.invoked_subcommand is None:

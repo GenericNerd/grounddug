@@ -6,6 +6,7 @@ import asyncio
 import cogs.utils.embed as embed
 import cogs.utils.db as db
 import cogs.utils.cases as cases
+import cogs.utils.checks as checks
 
 class AutoModListener(commands.Cog):
     def __init__(self, bot):
@@ -82,7 +83,7 @@ class AutoModSetup(commands.Cog):
     async def setup(self, ctx):
         guild = await db.find("guilds", {"id": ctx.guild.id})
 
-        for _, key in guild["automod"].items():
+        for item, key in guild["automod"].items():
             pass
 
 def setup():

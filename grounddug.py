@@ -11,6 +11,13 @@ import cogs.utils.logger as logger
 # Find current environment
 environment = os.getenv("GD_ENV","beta")
 
+# Get the current bot settings
+botSettings = db.nsyncfind("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
+
+# Load sentry to receive tracebacks
+import sentry_sdk
+sentry_sdk.init("https://1503256c40d04d97a7752aff4305d469@sentry.io/5181048",release=botSettings["version"])
+
 # Cogs to load on bot ready
 startupExtensions = ["events","perms","core","admin","mod","developer","logs"]
 # Get prefix depending on message context
@@ -44,7 +51,7 @@ if environment == "beta":
     bot.run("NjY3MDgzMTM3OTMwNjI1MDI0.Xh9jpw.KygIs_cyCxF6n--bKkvOSATlsB4")
 elif environment == "production":
     logger.info("Running GroundDug")
-    bot.run(db.nsyncfind("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})["token"])
+    bot.run(botSettings["token"])
 else:
     logger.error("Invalid environment, aborting instance")
     exit()

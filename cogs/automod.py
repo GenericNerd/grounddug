@@ -114,7 +114,7 @@ class AutoModSetup(commands.Cog):
             reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
         except asyncio.TimeoutError:
             await msg.clear_reactions()
-            return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+            return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
         if str(reaction) == cancel:
             return await msg.delete()
@@ -146,7 +146,7 @@ class AutoModSetup(commands.Cog):
                 reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
             except asyncio.TimeoutError:
                 await msg.clear_reactions()
-                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+                return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
             await msg.remove_reaction(reaction, user)
 
@@ -169,7 +169,7 @@ class AutoModSetup(commands.Cog):
                     message = await self.bot.wait_for("message", timeout=60.0, check=check)
                 except asyncio.TimeoutError:
                     await msg.clear_reactions()
-                    return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+                    return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
                 if int(message.content) > 100:
                     guildSettings["automod"]["caps"] = 100
@@ -194,7 +194,7 @@ class AutoModSetup(commands.Cog):
                 reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
             except asyncio.TimeoutError:
                 await msg.clear_reactions()
-                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+                return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
             await msg.remove_reaction(reaction, user)
 
@@ -217,7 +217,7 @@ class AutoModSetup(commands.Cog):
                     message = await self.bot.wait_for("message", timeout=60.0, check=check)
                 except asyncio.TimeoutError:
                     await msg.clear_reactions()
-                    return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+                    return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
                 if int(message.content) < 0:
                     guildSettings["automod"]["massMentions"] = 0
@@ -239,7 +239,7 @@ class AutoModSetup(commands.Cog):
             try:
                 reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
             except asyncio.TimeoutError:
-                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+                return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
             await msg.remove_reaction(reaction, user)
 
@@ -257,7 +257,7 @@ class AutoModSetup(commands.Cog):
                 reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
             except asyncio.TimeoutError:
                 await msg.clear_reactions()
-                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+                return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
             await msg.remove_reaction(reaction, user)
 
@@ -274,7 +274,7 @@ class AutoModSetup(commands.Cog):
             try:
                 reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
             except asyncio.TimeoutError:
-                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+                return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
             await msg.remove_reaction(reaction, user)
 
@@ -292,7 +292,7 @@ class AutoModSetup(commands.Cog):
                 reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
             except asyncio.TimeoutError:
                 await msg.clear_reactions()
-                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+                return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
             await msg.remove_reaction(reaction, user)
 
@@ -310,7 +310,7 @@ class AutoModSetup(commands.Cog):
                 reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
             except asyncio.TimeoutError:
                 await msg.clear_reactions()
-                return await msg.edit(embed=(await embeds.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+                return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
 
             await msg.remove_reaction(reaction, user)
 
@@ -345,10 +345,7 @@ class AutoModSetup(commands.Cog):
             if guildSettings["automod"]["massMentions"] == 0:
                 e = await embed.add_field(e, "Mass-Mention Protection", cross)
             else:
-                e = await embed.add_field(
-                    e, "Mass-Mention Protection",
-                    f"{tick} - Activated at {guildSettings['automod']['massMentions']} mentions."
-                )
+                e = await embed.add_field(e, "Mass-Mention Protection", f"{tick} - Activated at {guildSettings['automod']['massMentions']} mentions.")
 
             e = await embed.add_field(e, "Anti-Invite", emoteReturn(guildSettings["automod"]["antiInvite"]))
             e = await embed.add_field(e, "Anti-URL", emoteReturn(guildSettings["automod"]["antiURL"]))

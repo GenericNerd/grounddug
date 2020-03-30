@@ -72,6 +72,18 @@ class AutoModSetup(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.group(name="automod",description="AutoMod commands")
+    async def automod(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.invoke(self.bot.get_command("help"),"automod")
+
+    @commands.guild_only()
+    @checks.hasGDPermission("ADMINISTRATOR")
+    async def setup(self, ctx):
+        guild = await db.find("guilds", {"id": ctx.guild.id})
+
+        for _, key in guild["automod"].items():
+            pass
 
 def setup():
     bot.add_cog(AutoModListener(bot))

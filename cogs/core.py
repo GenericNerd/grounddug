@@ -87,6 +87,12 @@ class Core(commands.Cog):
         # If no user passed, use the author
         if user is None:
             user = ctx.author
+        if ctx.guild is None:
+            for guild in self.bot.guilds:
+                try:
+                    user = guild.get_member(user.id)
+                except:
+                    pass
         msg = await embed.generate(f"{user.name}#{user.discriminator}",f"{user.mention} - `{user.id}`")
         # Check the status, add an emoji representing icon
         # Possible future optimisations here?
@@ -102,10 +108,11 @@ class Core(commands.Cog):
         else:
             msg = await embed.add_field(msg,"Status","<:status_offline:679095420684730368>",True)
         # Try to get the server join date, may fail if command is ran in DMs
-        try:
-            msg = await embed.add_field(msg,"Server join date",f"{str(user.joined_at).split('.')[0]} - `{str(datetime.utcnow()-user.joined_at).split('.')[0]} ago`",True)
-        except:
-            pass
+        if ctx.guild is None:
+            try:
+                msg = await embed.add_field(msg,"Server join date",f"{str(user.joined_at).split('.')[0]} - `{str(datetime.utcnow()-user.joined_at).split('.')[0]} ago`",True)
+            except:
+                pass
         msg = await embed.add_field(msg,"Account age",f"{str(user.created_at).split('.')[0]} - `{str(datetime.utcnow()-user.created_at).split('.')[0]} ago`",True)
         msg.set_thumbnail(url=user.avatar_url)
         # Iterate through user roles, if not @everyone, add it to the roles variable

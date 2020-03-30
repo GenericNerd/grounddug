@@ -175,8 +175,9 @@ class AutoModSetup(commands.Cog):
                 else:
                     guildSettings["automod"]["caps"] = int(message.content)
 
+                await message.delete()
+
             # ANTI INVITE
-            await msg.clear_reactions()
             e = await embed.generate("AutoMod Setup", "Would you like to enable Anti-Invite?")
             await msg.edit(embed=e)
 
@@ -194,13 +195,11 @@ class AutoModSetup(commands.Cog):
             if str(reaction) == tick:
                 guildSettings["automod"]["antiInvite"] = True
 
+            await msg.remove_reaction(reaction, user)
+
             # ANTI URL
-            await msg.clear_reactions()
             e = await embed.generate("AutoMod Setup", "Would you like to enable Anti-URL?")
             await msg.edit(embed=e)
-
-            await msg.add_reaction(tick)
-            await msg.add_reaction(cross)
 
             def check(reaction, user):
                 return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
@@ -215,12 +214,10 @@ class AutoModSetup(commands.Cog):
                 guildSettings["automod"]["antiURL"] = True
 
             # PROFANITY
-            await msg.clear_reactions()
             e = await embed.generate("AutoMod Setup", "Would you like to enable the profanity filter?")
             await msg.edit(embed=e)
 
-            await msg.add_reaction(tick)
-            await msg.add_reaction(cross)
+            await msg.remove_reaction(reaction, user)
 
             def check(reaction, user):
                 return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
@@ -234,12 +231,10 @@ class AutoModSetup(commands.Cog):
                 guildSettings["automod"]["profanity"] = True
 
             # MASS-MENTION PROTECTION
-            await msg.clear_reactions()
             e = await embed.generate("AutoMod Setup", "Would you like to enable mass-mention protection?")
             await msg.edit(embed=e)
 
-            await msg.add_reaction(tick)
-            await msg.add_reaction(cross)
+            await msg.remove_reaction(reaction, user)
 
             def check(reaction, user):
                 return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)

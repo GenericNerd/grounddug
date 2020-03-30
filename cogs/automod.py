@@ -94,7 +94,7 @@ class AutoModSetup(commands.Cog):
         e = await embed.generate("AutoMod Setup","**Welcome to the AutoMod Setup Wizard.**\n\nThe Setup Wizard will configure AutoMod on your Discord server. Click :one: to continue, :two: to review settings already in place, or :x: to exit the Setup Wizard.")
         msg = await ctx.send(embed=e)
 
-        cancel = ":x:"
+        cancel = "❌"
         one = "1\N{combining enclosing keycap}"
         two = "2\N{combining enclosing keycap}"
         three = "3\N{combining enclosing keycap}"

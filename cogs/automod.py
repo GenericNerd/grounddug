@@ -7,7 +7,7 @@ import cogs.utils.embed as embed
 import cogs.utils.db as db
 import cogs.utils.cases as cases
 
-class AutoMod(commands.Cog):
+class AutoModListener(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -67,5 +67,12 @@ class AutoMod(commands.Cog):
                 elif guild["automod"]["massMentions"] > 0 and len(ctx.raw_mentions) >= guild["automod"]["massMentions"]:
                     await logChannel.send(embed=(await RuleViolator(ctx,"pinged too many people",True)))
 
+
+class AutoModSetup(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+
 def setup():
-    bot.add_cog(AutoMod(bot))
+    bot.add_cog(AutoModListener(bot))
+    bot.add_cog(AutoModSetup(bot))

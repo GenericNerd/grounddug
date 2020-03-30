@@ -116,14 +116,15 @@ class Core(commands.Cog):
         msg = await embed.add_field(msg,"Account age",f"{str(user.created_at).split('.')[0]} - `{str(datetime.utcnow()-user.created_at).split('.')[0]} ago`",True)
         msg.set_thumbnail(url=user.avatar_url)
         # Iterate through user roles, if not @everyone, add it to the roles variable
-        roles = ""
-        for role in user.roles:
-            roles += f"- {role.name}"
-        # If roles is @everyone, user has no special roles, otherwise, send the roles
-        if roles is "@everyone":
-            msg = await embed.add_field(msg,"Roles","No significant roles")
-        else:
-            msg = await embed.add_field(msg,"Roles",roles)
+        if ctx.guild is not None:
+            roles = ""
+            for role in user.roles:
+                roles += f"- {role.name}"
+            # If roles is @everyone, user has no special roles, otherwise, send the roles
+            if roles is "@everyone":
+                msg = await embed.add_field(msg,"Roles","No significant roles")
+            else:
+                msg = await embed.add_field(msg,"Roles",roles)
         await ctx.send(embed=msg)
 
     @commands.command(name="botinfo",description="| Returns information about the bot, including guilds, users and shard latency information")

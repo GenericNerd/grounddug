@@ -6,6 +6,15 @@ import asyncio
 import cogs.utils.embed as embed
 import cogs.utils.db as db
 import cogs.utils.cases as cases
+import cogs.utils.checks as checks
+
+import re
+import httpx
+from profanity_filter import ProfanityFilter
+
+# Variables required for automod to work in future
+pf = ProfanityFilter()
+httpxClient = httpx.AsyncClient()
 
 class AutoModListener(commands.Cog):
     def __init__(self, bot):
@@ -72,7 +81,19 @@ class AutoModSetup(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.group(name="automod",description="AutoMod commands")
+    async def automod(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.invoke(self.bot.get_command("help"),"automod")
 
-def setup():
+    @commands.guild_only()
+    @checks.hasGDPermission("ADMINISTRATOR")
+    async def setup(self, ctx):
+        guild = await db.find("guilds", {"id": ctx.guild.id})
+
+        for item, key in guild["automod"].items():
+            pass
+
+def setup(bot):
     bot.add_cog(AutoModListener(bot))
     bot.add_cog(AutoModSetup(bot))

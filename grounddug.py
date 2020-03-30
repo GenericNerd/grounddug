@@ -7,6 +7,7 @@ import os
 import cogs.utils.misc as misc
 import cogs.utils.db as db
 import cogs.utils.logger as logger
+from bson.objectid import ObjectId
 
 # Find current environment
 environment = os.getenv("GD_ENV","beta")

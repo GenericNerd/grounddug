@@ -12,7 +12,7 @@ import cogs.utils.logger as logger
 environment = os.getenv("GD_ENV","beta")
 
 # Get the current bot settings
-botSettings = db.nsyncfind("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
+botSettings = db.nsyncFind("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
 
 # Load sentry to receive tracebacks
 import sentry_sdk

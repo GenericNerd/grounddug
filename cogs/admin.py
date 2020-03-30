@@ -12,6 +12,7 @@ class Admin(commands.Cog):
         self.bot = bot
     
     @commands.group(name="admin",description="Guild administrative commands")
+    @commands.guild_only()
     async def admin(self,ctx):
         # Send a help perms command if no subcommand invoked
         if ctx.invoked_subcommand is None:

@@ -108,7 +108,7 @@ class AutoModSetup(commands.Cog):
         await msg.add_reaction(two)
 
         def check(reaction, user):
-            return user == ctx.author and (str(reaction.emoji) == one or str(reaction.emoji) == two)
+            return user == ctx.author and (str(reaction.emoji) == one or str(reaction.emoji) == two or str(reaction.emoji) == cancel)
 
         try:
             reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
@@ -175,7 +175,7 @@ class AutoModSetup(commands.Cog):
                     guildSettings["automod"]["caps"] = int(message.content)
 
             # ANTI INVITE
-            e = await embeds.generate("AutoMod Setup", "Would you like to enable Anti-Invite?")
+            e = await embed.generate("AutoMod Setup", "Would you like to enable Anti-Invite?")
             await msg.edit(embed=e)
 
             await msg.add_reaction(tick)
@@ -212,7 +212,7 @@ class AutoModSetup(commands.Cog):
                 guildSettings["automod"]["antiURL"] = True
 
             # PROFANITY
-            e = await embeds.generate("AutoMod Setup", "Would you like to enable the profanity filter?")
+            e = await embed.generate("AutoMod Setup", "Would you like to enable the profanity filter?")
             await msg.edit(embed=e)
 
             await msg.add_reaction(tick)
@@ -230,7 +230,7 @@ class AutoModSetup(commands.Cog):
                 guildSettings["automod"]["profanity"] = True
 
             # MASS-MENTION PROTECTION
-            e = await embeds.generate("AutoMod Setup", "Would you like to enable mass-mention protection?")
+            e = await embed.generate("AutoMod Setup", "Would you like to enable mass-mention protection?")
             await msg.edit(embed=e)
 
             await msg.add_reaction(tick)

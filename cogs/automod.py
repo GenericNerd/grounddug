@@ -119,8 +119,6 @@ class AutoModSetup(commands.Cog):
         if str(reaction) == cancel:
             return await msg.delete()
         elif str(reaction) == one:
-            await msg.clear_reactions()
-
             guildSettings = {
                 "automod": {
                     "caps": 0,
@@ -133,6 +131,7 @@ class AutoModSetup(commands.Cog):
             }
 
             # CAPS LOCK SPAM DETECTION
+            await msg.clear_reactions()
             e = await embed.generate("AutoMod Setup", "Would you like to enable caps lock spam detection?")
             await msg.edit(embed=e)
 
@@ -177,6 +176,7 @@ class AutoModSetup(commands.Cog):
                     guildSettings["automod"]["caps"] = int(message.content)
 
             # ANTI INVITE
+            await msg.clear_reactions()
             e = await embed.generate("AutoMod Setup", "Would you like to enable Anti-Invite?")
             await msg.edit(embed=e)
 
@@ -195,6 +195,7 @@ class AutoModSetup(commands.Cog):
                 guildSettings["automod"]["antiInvite"] = True
 
             # ANTI URL
+            await msg.clear_reactions()
             e = await embed.generate("AutoMod Setup", "Would you like to enable Anti-URL?")
             await msg.edit(embed=e)
 
@@ -214,6 +215,7 @@ class AutoModSetup(commands.Cog):
                 guildSettings["automod"]["antiURL"] = True
 
             # PROFANITY
+            await msg.clear_reactions()
             e = await embed.generate("AutoMod Setup", "Would you like to enable the profanity filter?")
             await msg.edit(embed=e)
 
@@ -232,6 +234,7 @@ class AutoModSetup(commands.Cog):
                 guildSettings["automod"]["profanity"] = True
 
             # MASS-MENTION PROTECTION
+            await msg.clear_reactions()
             e = await embed.generate("AutoMod Setup", "Would you like to enable mass-mention protection?")
             await msg.edit(embed=e)
 
@@ -274,6 +277,7 @@ class AutoModSetup(commands.Cog):
                     guildSettings["automod"]["massMentions"] = int(message.content)
 
             # SHORT URLS
+            await msg.clear_reactions()
             e = await embed.generate("AutoMod Setup", "Would you like to enable short URL detection?")
             await msg.edit(embed=e)
 
@@ -294,10 +298,14 @@ class AutoModSetup(commands.Cog):
 
             await db.update("guilds",{"id": ctx.guild.id},{"automod": guildSettings["automod"]})
 
+            # FINISH
+            await msg.clear_reactions()
             e = await embed.generate("AutoMod Setup", "AutoMod has been configured successfully. The Setup Wizard has now ended.")
             await msg.edit(embed=e)
 
         elif str(reaction) == two:
+            await msg.clear_reactions()
+
             def emoteReturn(setting):
                 if setting == True:
                     return tick
@@ -324,7 +332,7 @@ class AutoModSetup(commands.Cog):
 
             e = await embed.add_field(e, "Short URL Detection", emoteReturn(guildSettings["automod"]["shortURL"]))
 
-            await ctx.send(embed=e)
+            await msg.edit(embed=e)
 
 
 def setup(bot):

@@ -86,6 +86,6 @@ class AutoModSetup(commands.Cog):
         for item, key in guild["automod"].items():
             pass
 
-def setup():
+def setup(bot):
     bot.add_cog(AutoModListener(bot))
     bot.add_cog(AutoModSetup(bot))

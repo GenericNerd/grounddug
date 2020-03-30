@@ -107,12 +107,6 @@ class Events(commands.Cog):
             pass
 
     @commands.Cog.listener()
-    async def on_voice_state_update(self,member,before,after):
-        logger.info(f"{after.channel.id}, {after.channel.id==665690058288005122}")
-        if before.channel == None and after.channel.id == 665690058288005122:
-            logger.info(member)
-
-    @commands.Cog.listener()
     async def on_command_error(self,ctx,error):
         prefix = await misc.getPrefix(self.bot,ctx)
         # Is the error a required argument?

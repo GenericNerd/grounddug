@@ -248,14 +248,14 @@ class ModMisc(commands.Cog):
         await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod kick"),member,reason)
 
-    @commands.command(name="gag",hidden=True)
+    @commands.command(name="gag",alias=["vmute"],hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("MUTE_MEMBERS")
     async def _gag(self,ctx,member:discord.Member,reason=None):
         await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod gag"),member,reason)
 
-    @commands.command(name="ungag",hidden=True)
+    @commands.command(name="ungag",alias=["vunmute"],hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("MUTE_MEMBERS")
     async def _ungag(self,ctx,member:discord.Member,reason=None):

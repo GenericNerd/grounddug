@@ -66,7 +66,7 @@ class Events(commands.Cog):
         userObject = {"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}}
         # Get the current user count and update the DB
         currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
-        currentUsers["userCount"] = int(currentUsers["userCount"])+guild.member_count
+        currentUsers["userCount"] = int(currentUsers["userCount"])+len(guild.members)
         await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": currentUsers}})
         # Run through every member, if they are an admin, change all perms to be True
         for member in guild.members:
@@ -86,7 +86,7 @@ class Events(commands.Cog):
         await self.bot.channel(coreChannel).send(embed=(await embed.generate(f"I have left {guild.name}",f"{guild.name} had {guild.member_count} members :c")))
         # Get the current user count and update the DB
         currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
-        currentUsers["userCount"] = int(currentUsers["userCount"])-guild.member_count
+        currentUsers["userCount"] = int(currentUsers["userCount"])-len(guild.members)
         await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": currentUsers}})
 
     @commands.Cog.listener()

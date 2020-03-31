@@ -66,7 +66,7 @@ class Events(commands.Cog):
         userObject = {"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}}
         # Get the current user count and update the DB
         currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
-        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": currentUsers["userCount"]+guild.member_count}})
+        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": int(currentUsers["userCount"])+guild.member_count}})
         # Run through every member, if they are an admin, change all perms to be True
         for member in guild.members:
             if member.guild_permissions.administrator:
@@ -85,7 +85,7 @@ class Events(commands.Cog):
         await self.bot.channel(coreChannel).send(embed=(await embed.generate(f"I have left {guild.name}",f"{guild.name} had {guild.member_count} members :c")))
         # Get the current user count and update the DB
         currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
-        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": currentUsers["userCount"]-guild.member_count}})
+        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": int(currentUsers["userCount"])-guild.member_count}})
 
     @commands.Cog.listener()
     async def on_member_join(self,member):
@@ -105,7 +105,7 @@ class Events(commands.Cog):
                 await member.kick(reason="Guild is in raid mode")
         # Get the current user count and update the DB
         currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
-        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": currentUsers["userCount"]-1}})
+        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": int(currentUsers["userCount"])-1}})
 
     @commands.Cog.listener()
     async def on_member_remove(self,member):
@@ -116,7 +116,7 @@ class Events(commands.Cog):
             logger.error(e)
         # Get the current user count and update the DB
         currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
-        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": currentUsers["userCount"]-1}})
+        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": int(currentUsers["userCount"])-1}})
 
     @commands.Cog.listener()
     async def on_command(self,ctx):

@@ -65,7 +65,7 @@ class Events(commands.Cog):
         await db.insert("guilds",data)
         userObject = {"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}}
         # Get the current user count and update the DB
-        currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
+        currentUsers = await db.find("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
         currentUsers["userCount"] = int(currentUsers["userCount"])+len(guild.members)
         await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers["userCount"]})
         # Run through every member, if they are an admin, change all perms to be True
@@ -85,7 +85,7 @@ class Events(commands.Cog):
         # Send a message to the core channel saying the bot left
         await self.bot.channel(coreChannel).send(embed=(await embed.generate(f"I have left {guild.name}",f"{guild.name} had {guild.member_count} members :c")))
         # Get the current user count and update the DB
-        currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
+        currentUsers = await db.find("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
         currentUsers["userCount"] = int(currentUsers["userCount"])-len(guild.members)
         await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers["userCount"]})
 
@@ -106,7 +106,7 @@ class Events(commands.Cog):
             finally:
                 await member.kick(reason="Guild is in raid mode")
         # Get the current user count and update the DB
-        currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
+        currentUsers = await db.find("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
         currentUsers["userCount"] = int(currentUsers["userCount"])+1
         await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers["userCount"]})
 
@@ -118,7 +118,7 @@ class Events(commands.Cog):
         except Exception as e:
             logger.error(e)
         # Get the current user count and update the DB
-        currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
+        currentUsers = await db.find("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
         currentUsers["userCount"] = int(currentUsers["userCount"])-1
         await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers["userCount"]})
 

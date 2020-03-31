@@ -67,7 +67,7 @@ class Events(commands.Cog):
         # Get the current user count and update the DB
         currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
         currentUsers["userCount"] = int(currentUsers["userCount"])+len(guild.members)
-        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers})
+        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers["userCount"]})
         # Run through every member, if they are an admin, change all perms to be True
         for member in guild.members:
             if member.guild_permissions.administrator:
@@ -87,7 +87,7 @@ class Events(commands.Cog):
         # Get the current user count and update the DB
         currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
         currentUsers["userCount"] = int(currentUsers["userCount"])-len(guild.members)
-        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers})
+        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers["userCount"]})
 
     @commands.Cog.listener()
     async def on_member_join(self,member):
@@ -108,7 +108,7 @@ class Events(commands.Cog):
         # Get the current user count and update the DB
         currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
         currentUsers["userCount"] = int(currentUsers["userCount"])+1
-        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers})
+        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers["userCount"]})
 
     @commands.Cog.listener()
     async def on_member_remove(self,member):
@@ -120,7 +120,7 @@ class Events(commands.Cog):
         # Get the current user count and update the DB
         currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
         currentUsers["userCount"] = int(currentUsers["userCount"])-1
-        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers})
+        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers["userCount"]})
 
     @commands.Cog.listener()
     async def on_command(self,ctx):

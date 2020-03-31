@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 import asyncio
 from datetime import datetime
+from bson.objectid import ObjectId
 import cogs.utils.embed as embed
 import cogs.utils.misc as misc
 import cogs.utils.db as db
@@ -28,6 +29,11 @@ class Events(commands.Cog):
         await self.bot.change_presence(status=discord.Status.online,activity=discord.Game(f"{prefix}help to get started"))
         # Send a message to the core channel
         await self.bot.get_channel(coreChannel).send(embed=(await embed.generate("I'm online",None)))
+        # Get the current users the bot has and update the DB
+        users = 0
+        for guild in self.bot.guilds:
+            users += guild.member_count
+        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": users})
 
     @commands.Cog.listener()
     async def on_guild_join(self,guild):
@@ -42,8 +48,8 @@ class Events(commands.Cog):
                 "mod": False,
                 "perms": False,
                 "automod": False,
-          "admin": False,
-            },
+                "admin": False,
+                },
             "raid_mode": False,
             "cases": 0,
             "automod": {
@@ -52,12 +58,15 @@ class Events(commands.Cog):
                 "antiURL": False,
                 "profanity": False,
                 "massMentions": 0,
-          "shortURL": False,
+                "shortURL": False,
                 "warnOnRemove": False,
             },
-         "blacklistChannels": []}
+            "blacklistChannels": []}
         await db.insert("guilds",data)
         userObject = {"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}}
+        # Get the current user count and update the DB
+        currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
+        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": currentUsers["userCount"]+guild.member_count}})
         # Run through every member, if they are an admin, change all perms to be True
         for member in guild.members:
             if member.guild_permissions.administrator:
@@ -74,6 +83,9 @@ class Events(commands.Cog):
         await db.remove("guilds",{"id": guild.id})
         # Send a message to the core channel saying the bot left
         await self.bot.channel(coreChannel).send(embed=(await embed.generate(f"I have left {guild.name}",f"{guild.name} had {guild.member_count} members :c")))
+        # Get the current user count and update the DB
+        currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
+        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": currentUsers["userCount"]-guild.member_count}})
 
     @commands.Cog.listener()
     async def on_member_join(self,member):
@@ -91,6 +103,9 @@ class Events(commands.Cog):
                 pass
             finally:
                 await member.kick(reason="Guild is in raid mode")
+        # Get the current user count and update the DB
+        currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
+        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": currentUsers["userCount"]-1}})
 
     @commands.Cog.listener()
     async def on_member_remove(self,member):
@@ -99,6 +114,9 @@ class Events(commands.Cog):
             await db.remove("users",{"guild": member.guild.id, "user": member.id})
         except Exception as e:
             logger.error(e)
+        # Get the current user count and update the DB
+        currentUsers = await db.find_one("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
+        await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e"),{"userCount": currentUsers["userCount"]-1}})
 
     @commands.Cog.listener()
     async def on_command(self,ctx):

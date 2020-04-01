@@ -83,7 +83,7 @@ class Events(commands.Cog):
         await db.removeMany("users",{"guild": guild.id})
         await db.remove("guilds",{"id": guild.id})
         # Send a message to the core channel saying the bot left
-        await self.bot.channel(coreChannel).send(embed=(await embed.generate(f"I have left {guild.name}",f"{guild.name} had {guild.member_count} members :c")))
+        await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"I have left {guild.name}",f"{guild.name} had {guild.member_count} members :c")))
         # Get the current user count and update the DB
         currentUsers = await db.find("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
         currentUsers["userCount"] = int(currentUsers["userCount"])-len(guild.members)

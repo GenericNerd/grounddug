@@ -65,7 +65,7 @@ class Perms(commands.Cog):
             guild = await db.find("guilds",{"id": ctx.guild.id})
             if guild["logs"]["perms"]:
                 # Get the logging channel for the guild
-                channel = self.bot.get_command(guild["channel"])
+                channel = self.bot.get_channel(guild["channel"])
                 try:
                     await channel.send(embed=(await embed.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in #{ctx.channel.name}")))
                 except:

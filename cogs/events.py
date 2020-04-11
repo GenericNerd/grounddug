@@ -73,8 +73,8 @@ class Events(commands.Cog):
             if member.guild_permissions.administrator:
                 for item, key in userObject["permissions"].items():
                     userObject["permissions"][item] = True
+            await db.insert("users",userObject)
         # Insert this to the database and send a message saying the bot joined
-        await db.insert("users",userObject)
         await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"I have joined {guild.name}",f"{guild.name} has {guild.member_count} members")))
 
     @commands.Cog.listener()
@@ -154,5 +154,10 @@ class Events(commands.Cog):
             await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
             capture_exception(error)
 
+    @commands.Cog.listener()
+    async def on_error(self,event):
+        await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
+        capture_exception(error)
+        
 def setup(bot):
     bot.add_cog(Events(bot))

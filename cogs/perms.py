@@ -38,7 +38,7 @@ async def changePermission(bot,ctx,user,permChangeTo,permission=None):
         permission = permission.upper()
         if permission == "ADMINISTRATOR":
             # Change all permissions to permChangeTo if the permission is administrator
-            for perm in permissions.copy():
+            for perm in userPermissions:
                 userPermissions[perm] = permChangeTo
             await db.update("users",{"guild": ctx.guild.id, "user": user.id},{"permissions": userPermissions})
         else:

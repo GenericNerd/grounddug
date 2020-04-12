@@ -91,6 +91,7 @@ class AutoModSetup(commands.Cog):
     @commands.guild_only()
     @checks.hasGDPermission("ADMINISTRATOR")
     async def setup(self, ctx):
+        await ctx.send(embed=(await embed.generate("Auto-Mod setup just got easier!","You can review your automod settings and change them easier through the dashboard, you can find it [here](https://grounddug.xyz/dashboard)")))
         e = await embed.generate("AutoMod Setup","**Welcome to the AutoMod Setup Wizard.**\n\nThe Setup Wizard will configure AutoMod on your Discord server. Click :one: to continue, :two: to review settings already in place, or :x: to exit the Setup Wizard.")
         msg = await ctx.send(embed=e)
 

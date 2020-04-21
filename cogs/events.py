@@ -163,7 +163,7 @@ class Events(commands.Cog):
     async def on_member_update(self,before,after):
         # If the roles are not the same, then check if the new role has Administrator
         if before.roles != after.roles:
-            newRole = set(before.roles) - set(after.roles)
+            newRole = set(after.roles) - set(before.roles)
             for role in newRole:
                 print(role)
 

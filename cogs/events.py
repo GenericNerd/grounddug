@@ -157,7 +157,16 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_error(self,event):
         await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
-        capture_exception(error)
+        capture_exception(event)
         
+    @commands.Cog.listener()
+    async def on_member_update(self,before,after):
+        # If the roles are not the same, then check if the new role has Administrator
+        if before.roles != after.roles:
+            newRole = set(before.roles) - set(after.roles)
+            for role in newRole:
+                if role.administrator == True:
+                    print(True)
+
 def setup(bot):
     bot.add_cog(Events(bot))

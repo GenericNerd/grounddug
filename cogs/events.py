@@ -164,9 +164,11 @@ class Events(commands.Cog):
         # If the roles are not the same, then check if the new role has Administrator
         if before.roles != after.roles:
             newRole = set(after.roles) - set(before.roles)
+            print(newRole)
             for role in newRole:
                 if role.permissions.administrator:
-                    print(role.name)
+                    await db.update("users",{"guild": before.guild.id, "user": before.id},{"MANAGE_MESSAGES": True, "WARN_MEMBERS": True, "MUTE_MEMBERS": True, "KICK_MEMBERS": True, "BAN_MEMBERS": True, "ADMINISTRATOR": True})
+
 
 def setup(bot):
     bot.add_cog(Events(bot))

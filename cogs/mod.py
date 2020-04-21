@@ -246,7 +246,7 @@ class ModMisc(commands.Cog):
     @checks.hasGDPermission("KICK_MEMBERS")
     async def _kick(self,ctx,member:discord.Member,*,reason=None):
         await log(ctx,self.bot)
-        await ctx.invoke(self.bot.get_command("mod kick"),member,reason)
+        await ctx.invoke(self.bot.get_command("mod kick"),member,None,reason)
 
     @commands.command(name="gag",aliases=["vmute"],hidden=True)
     @commands.guild_only()

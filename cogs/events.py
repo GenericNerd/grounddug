@@ -165,8 +165,7 @@ class Events(commands.Cog):
         if before.roles != after.roles:
             newRole = set(before.roles) - set(after.roles)
             for role in newRole:
-                if role.administrator == True:
-                    print(True)
+                print(role)
 
 def setup(bot):
     bot.add_cog(Events(bot))

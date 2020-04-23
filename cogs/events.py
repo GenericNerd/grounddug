@@ -170,7 +170,7 @@ class Events(commands.Cog):
         if before.roles != after.roles:
             if roles == set():
                 roles = set(after.roles) - set(before.roles)
-                       
+            print(roles)           
         pass
 
 def setup(bot):

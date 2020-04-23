@@ -165,10 +165,12 @@ class Events(commands.Cog):
         # If the new role is given, and has administrator, give GD_ADMINISTRATOR to user
         # If the removed role has the administrator permissions, check whether the user is still an admin
         # If the user is no longer an admin, remove all permissions
-        
-        #before and after are Member objects
+        # before and after are Member objects
+        roles = set(before.roles) - set(after.roles)
         if before.roles != after.roles:
-            print(set(before.roles) - set(after.roles))
+            if roles == set():
+                roles = set(after.roles) - set(before.roles)
+                       
         pass
 
 def setup(bot):

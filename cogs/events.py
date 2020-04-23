@@ -173,8 +173,9 @@ class Events(commands.Cog):
             if roles == set():
                 removed = True
                 roles = set(before.roles) - set(after.roles)
-            if roles.permissions.administrator:
-                print(roles,removed)       
+            for role in roles:
+                if role.permissions.administrator:
+                    print(role,removed)
         pass
 
 def setup(bot):

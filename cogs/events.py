@@ -168,7 +168,7 @@ class Events(commands.Cog):
         
         #before and after are Member objects
         if before.roles != after.roles:
-            print(before.roles - after.roles)
+            print(set(before.roles) - set(after.roles))
         pass
 
 def setup(bot):

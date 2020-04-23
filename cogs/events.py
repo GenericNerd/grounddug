@@ -161,14 +161,15 @@ class Events(commands.Cog):
         
     @commands.Cog.listener()
     async def on_member_update(self,before,after):
-        # If the roles are not the same, then check if the new role has Administrator
+        # If the roles are not the same, check whether a role has been added or removed
+        # If the new role is given, and has administrator, give GD_ADMINISTRATOR to user
+        # If the removed role has the administrator permissions, check whether the user is still an admin
+        # If the user is no longer an admin, remove all permissions
+        
+        #before and after are Member objects
         if before.roles != after.roles:
-            newRole = set(after.roles) - set(before.roles)
-            print(newRole)
-            for role in newRole:
-                if role.permissions.administrator:
-                    await db.update("users",{"guild": before.guild.id, "user": before.id},{"MANAGE_MESSAGES": True, "WARN_MEMBERS": True, "MUTE_MEMBERS": True, "KICK_MEMBERS": True, "BAN_MEMBERS": True, "ADMINISTRATOR": True})
-
+            print(before.roles - after.roles)
+        pass
 
 def setup(bot):
     bot.add_cog(Events(bot))

@@ -68,7 +68,7 @@ class AutoModListener(commands.Cog):
                             description = ""
                             for url in shortened_URLs:
                                 description += f"{url} "
-                            await ctx.send(embed=(await embed.generate("Shortened URLs detected!",f"{ctx.author.mention} posted a shortened link(s) leading to {desc}")))
+                            await ctx.channel.send(embed=(await embed.generate("Shortened URLs detected!",f"{ctx.author.mention} posted a shortened link(s) leading to {desc}")))
                     # If the message contains swearing, invoke RuleViolator
                     elif guild["automod"]["profanity"] and pf.is_profane(ctx.content):
                         await logChannel.send(embed=(await RuleViolator(ctx,"tried to swear",True)))

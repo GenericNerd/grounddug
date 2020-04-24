@@ -26,9 +26,7 @@ class AutoModListener(commands.Cog):
         if ctx.guild is not None:
             # Check whether the user has got bypass automod
             user = await db.find("users",{"guild": ctx.guild.id, "user": ctx.author.id})
-            print(user["permissions"]["BYPASS_AUTOMOD"])
             if not user["permissions"]["BYPASS_AUTOMOD"]:
-                print("here")
                 # Get current guild, logging channel and set removed to False
                 guild = await db.find("guilds",{"id": ctx.guild.id})
                 logChannel = self.bot.get_channel(guild["channel"])
@@ -58,7 +56,7 @@ class AutoModListener(commands.Cog):
                     elif guild["automod"]["shortURL"] and re.search(url_Regex,ctx.content):
                         shortened_URLs = []
                         # Find every URL in message
-                        for url in re.findall(url_Regex):
+                        for url in re.findall(url_Regex,ctx.content):
                             # Emulate a browser to allow redirects
                             browser = await httpxClient.head(url,allow_redirects=True)
                             # If the browser URL after redirects is not the URL it was given, append it to shortenedURLs

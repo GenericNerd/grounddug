@@ -161,9 +161,6 @@ class Events(commands.Cog):
         
     @commands.Cog.listener()
     async def on_member_update(self,before,after):
-        # If the user is no longer an admin, remove all permissions
-
-        # before and after are Member objects
         # If the roles are not the same, check whether a role has been added or removed
         if before.roles != after.roles:
             roles = set(after.roles) - set(before.roles)
@@ -171,15 +168,21 @@ class Events(commands.Cog):
             if roles == set():
                 removed = True
                 roles = set(before.roles) - set(after.roles)
+            # If the removed role has the administrator permissions, check whether the user is still an admin
+            if removed and after.guild_permissions.administrator:
+                return
             for role in roles:
-                # If the removed role has the administrator permissions, check whether the user is still an admin
-                print(after.guild_permissions)
-                # If the new role is given, and has administrator, give GD_ADMINISTRATOR to user
                 if role.permissions.administrator:
                     userObject = await db.find("users", {"guild": before.guild.id, "user": before.id})
                     for permission in userObject["permissions"]:
-                        continue
-        pass
+                        # If the new role is given, and has administrator, give GD_ADMINISTRATOR to user
+                        if not removed:
+                            userObject["permissions"][permission] = True
+                        # If the user is no longer an admin, remove all permissions
+                        else:
+                            userObject["permissions"][permission] = False
+                    # Update the database
+                    await db.update("users",{"_id": userObject["_id"]},{"permissions": userObject["permissions"]})
 
 def setup(bot):
     bot.add_cog(Events(bot))

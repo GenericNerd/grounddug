@@ -176,7 +176,7 @@ class Events(commands.Cog):
                 print(after.guild_permissions)
                 # If the new role is given, and has administrator, give GD_ADMINISTRATOR to user
                 if role.permissions.administrator:
-                    userObject = await db.find("users", {"guild": before.guild.id, "user": before.user.id})
+                    userObject = await db.find("users", {"guild": before.guild.id, "user": before.id})
                     for permission in userObject["permissions"]:
                         continue
         pass

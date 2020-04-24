@@ -66,9 +66,15 @@ class Developer(commands.Cog):
         for guild in self.bot.guilds:
             guildObject = await db.find("guilds",{"id": guild.id})
             # Update database here
-            guildObject["automod"]["warnOnRemove"] = False
+            for user in guild.members:
+                userObject = await db.find("users",{"guild": guild.id, "user": user.id})
+                if userObject["ADMINISTRATOR"]:
+                    userObject["permissions"]["BYPASS_AUTOMOD"] = True
+                else:
+                    userObject["permissions"]["BYPASS_AUTOMOD"] = True
             # Send database update
-            await db.update("guilds",{"_id": guildObject["_id"]},guildObject)
+            await db.update("users",{"_id": userObject["_id"]},userObject)
+            # await db.update("guilds",{"_id": guildObject["_id"]},guildObject)
 
 def setup(bot):
     bot.add_cog(Developer(bot))

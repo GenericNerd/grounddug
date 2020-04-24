@@ -68,10 +68,11 @@ class Developer(commands.Cog):
             # Update database here
             for user in guild.members:
                 userObject = await db.find("users",{"guild": guild.id, "user": user.id})
+                print(userObject["permissions"])
                 if userObject["permissions"]["ADMINISTRATOR"]:
                     userObject["permissions"]["BYPASS_AUTOMOD"] = True
                 else:
-                    userObject["permissions"]["BYPASS_AUTOMOD"] = True
+                    userObject["permissions"]["BYPASS_AUTOMOD"] = False
             # Send database update
             await db.update("users",{"_id": userObject["_id"]},userObject)
             # await db.update("guilds",{"_id": guildObject["_id"]},guildObject)

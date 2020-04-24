@@ -25,7 +25,7 @@ class AutoModListener(commands.Cog):
         # If message is not in a guild
         if ctx.guild is not None:
             # Check whether the user has got bypass automod
-            user = await db.find("users",{"guild": ctx.guild.id, "user": ctx.user.id})
+            user = await db.find("users",{"guild": ctx.guild.id, "user": ctx.author.id})
             if not user["BYPASS_AUTOMOD"]:
                 # Get current guild, logging channel and set removed to False
                 guild = await db.find("guilds",{"id": ctx.guild.id})

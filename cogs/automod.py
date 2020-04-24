@@ -26,7 +26,9 @@ class AutoModListener(commands.Cog):
         if ctx.guild is not None:
             # Check whether the user has got bypass automod
             user = await db.find("users",{"guild": ctx.guild.id, "user": ctx.author.id})
+            print(user["permissions"]["BYPASS_AUTOMOD"])
             if not user["permissions"]["BYPASS_AUTOMOD"]:
+                print("here")
                 # Get current guild, logging channel and set removed to False
                 guild = await db.find("guilds",{"id": ctx.guild.id})
                 logChannel = self.bot.get_channel(guild["channel"])

@@ -47,7 +47,7 @@ class AutoModListener(commands.Cog):
                     # This is the regex that will be used to check against messages for URLs
                     url_Regex = r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?"
                     # If anti-invite is on and message contains an invite, invoke RuleViolator
-                    if guild["automod"]["antiInvite"] and re.search("(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/.+[a-z]",ctx.content):
+                    if guild["automod"]["antiInvite"] and re.search("(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/.+",ctx.content):
                         await logChannel.send(embed=(await RuleViolator(ctx,"tried to advertise",True)))
                     # If anti-URL is on and the message contains a URL, invoke RuleViolator
                     elif guild["automod"]["antiURL"] and re.search(url_Regex,ctx.content):
@@ -63,7 +63,6 @@ class AutoModListener(commands.Cog):
                             if browser.url != url:
                                 shortened_URLs.append(str(browser.url))
                         if shortened_URLs is not []:
-                            print(shortened_URLs)
                             # Embed description
                             description = ""
                             for url in shortened_URLs:

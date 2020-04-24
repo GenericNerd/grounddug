@@ -73,8 +73,8 @@ class Developer(commands.Cog):
                     userObject["permissions"]["BYPASS_AUTOMOD"] = True
                 else:
                     userObject["permissions"]["BYPASS_AUTOMOD"] = False
-            # Send database update
-            await db.update("users",{"_id": userObject["_id"]},userObject)
+                # Send database update
+                await db.update("users",{"_id": userObject["_id"]},userObject)
             # await db.update("guilds",{"_id": guildObject["_id"]},guildObject)
 
 def setup(bot):

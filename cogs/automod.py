@@ -63,7 +63,7 @@ class AutoModListener(commands.Cog):
                             if browser.url != url:
                                 shortened_URLs.append(str(browser.url))
                         if shortened_URLs is not []:
-                            await ctx.delete()
+                            print(shortened_URLs)
                             # Embed description
                             description = ""
                             for url in shortened_URLs:

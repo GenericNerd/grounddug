@@ -153,11 +153,6 @@ class Events(commands.Cog):
             await embed.error(ctx,f"{error} - Report sent to developer")
             await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
             capture_exception(error)
-
-    @commands.Cog.listener()
-    async def on_error(self,event):
-        await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
-        capture_exception(event)
         
     @commands.Cog.listener()
     async def on_member_update(self,before,after):

@@ -55,7 +55,7 @@ async def on_error(event,*args,**kwargs):
     if isinstance(event,Exception):
         capture_exception(event)
     else:
-        logger.error(f"{event}, {*args}, {**kwargs}")
+        logger.error(f"{event}, {args}, {kwargs}")
 
 # Check current environment, and run appropriate instance
 if environment == "beta":

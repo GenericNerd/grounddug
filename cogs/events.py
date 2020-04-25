@@ -69,7 +69,7 @@ class Events(commands.Cog):
         await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers["userCount"]})
         # Run through every member, if they are an admin, change all perms to be True
         for member in guild.members:
-            userObject = {"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}}
+            userObject = {"guild": guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "BYPASS_AUTOMOD": False, "ADMINISTRATOR": False}, "strikes": {}}
             if member.guild_permissions.administrator:
                 for item, key in userObject["permissions"].items():
                     userObject["permissions"][item] = True
@@ -94,7 +94,7 @@ class Events(commands.Cog):
         # Check if raid mode is enabled
         if not (await db.find("guilds",{"id": member.guild.id}))["raid_mode"]:
             # Insert database object
-            await db.insert("users",{"guild": member.guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}})
+            await db.insert("users",{"guild": member.guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "BYPASS_AUTOMOD": False,"ADMINISTRATOR": False}, "strikes": {}})
         else:
             # Create an invite to send to the user
             invite = await member.guild.create_invite(max_uses=1,reason="Raid mode activated - Providing link to user")

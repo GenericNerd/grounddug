@@ -45,6 +45,7 @@ async def changePermission(bot,ctx,user,permChangeTo,permission=None):
             # Try to change the permission, if the key doesn't exist, raise an error
             if permission in userPermissions:
                 userPermissions[permission] = permChangeTo
+                await db.update("users",{"guild": ctx.guild.id, "user": user.id},{"permissions": userPermissions})
             else:
                 return await embed.error(ctx,f"Permission {permission} cannot be found")
             await db.update("users",{"guild": ctx.guild.id, "user": user.id},{"permissions": userPermissions})

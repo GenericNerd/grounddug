@@ -153,11 +153,31 @@ class Events(commands.Cog):
             await embed.error(ctx,f"{error} - Report sent to developer")
             await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
             capture_exception(error)
-
-    @commands.Cog.listener()
-    async def on_error(self,event):
-        await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
-        capture_exception(error)
         
+    @commands.Cog.listener()
+    async def on_member_update(self,before,after):
+        # If the roles are not the same, check whether a role has been added or removed
+        if before.roles != after.roles:
+            roles = set(after.roles) - set(before.roles)
+            removed = False
+            if roles == set():
+                removed = True
+                roles = set(before.roles) - set(after.roles)
+            # If the removed role has the administrator permissions, check whether the user is still an admin
+            if removed and after.guild_permissions.administrator:
+                return
+            for role in roles:
+                if role.permissions.administrator:
+                    userObject = await db.find("users", {"guild": before.guild.id, "user": before.id})
+                    for permission in userObject["permissions"]:
+                        # If the new role is given, and has administrator, give GD_ADMINISTRATOR to user
+                        if not removed:
+                            userObject["permissions"][permission] = True
+                        # If the user is no longer an admin, remove all permissions
+                        else:
+                            userObject["permissions"][permission] = False
+                    # Update the database
+                    await db.update("users",{"_id": userObject["_id"]},{"permissions": userObject["permissions"]})
+
 def setup(bot):
     bot.add_cog(Events(bot))

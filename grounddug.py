@@ -51,10 +51,11 @@ async def blacklistChannelCheck(ctx):
 
 @bot.event
 async def on_error(event,*args,**kwargs):
-    await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
     if isinstance(event,Exception):
+        await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
         capture_exception(event)
     else:
+        await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised! Logger error sent",None,0xff0000)))
         logger.error(f"{event}, {args}, {kwargs}")
 
 # Check current environment, and run appropriate instance

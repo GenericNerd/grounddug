@@ -134,6 +134,9 @@ class Events(commands.Cog):
         # Is the error a required argument?
         if isinstance(error,commands.MissingRequiredArgument):
             await embed.error(ctx,f"{error} - Use {prefix}help to find the required arguments")
+        # Is the action the bot is trying forbidden?
+        elif isinstance(error,discord.Forbidden):
+            pass
         # Is the error that the command doesn't exist?
         elif isinstance(error,commands.CommandNotFound):
             pass

@@ -131,14 +131,18 @@ class Core(commands.Cog):
     async def botinfo(self,ctx):
         guildCount = 0
         userCount = 0
+        users = []
         # Find the settings for GD, get the current version
         version = await db.find("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
         version = version["version"]
         for guild in self.bot.guilds:
             guildCount += 1
+            for user in guild.members:
+                if user.id not in users:
+                    users.append(user.id)
             userCount += len(guild.members)
         # User text file write would go here, better way of doing this?
-        msg = await embed.generate("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nDiscord.py Version: {discord.__version__}\n{self.bot.user.name} version: {version}")
+        msg = await embed.generate("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nUnique Users: **{len(users)}**\nDiscord.py Version: {discord.__version__}\n{self.bot.user.name} version: {version}")
         for shard in self.bot.latencies:
             # If the latency is less than 100ms
             if round(shard[1]*100) < 100:

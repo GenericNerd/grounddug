@@ -37,7 +37,6 @@ class AutoModListener(commands.Cog):
                 removed = False
                 async def RuleViolator(msg,text,delete):
                     global removed
-                    # Could possibly add a strike feature here
                     if delete:
                         # Delete the message and set removed to True
                         await msg.delete()

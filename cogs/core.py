@@ -142,7 +142,7 @@ class Core(commands.Cog):
                     users.append(user.id)
             userCount += len(guild.members)
         # User text file write would go here, better way of doing this?
-        msg = await embed.generate("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nUnique Users: **{users.length()}**\nDiscord.py Version: {discord.__version__}\n{self.bot.user.name} version: {version}")
+        msg = await embed.generate("Bot information",f"Guilds: **{guildCount}**\nUsers: **{userCount}**\nUnique Users: **{len(users)}**\nDiscord.py Version: {discord.__version__}\n{self.bot.user.name} version: {version}")
         for shard in self.bot.latencies:
             # If the latency is less than 100ms
             if round(shard[1]*100) < 100:

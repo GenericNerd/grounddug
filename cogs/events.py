@@ -75,7 +75,7 @@ class Events(commands.Cog):
                     userObject["permissions"][item] = True
             await db.insert("users",userObject)
         # Insert this to the database and send a message saying the bot joined
-        await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"I have joined {guild.name}",f"{guild.name} has {guild.member_count} members")))
+        await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"I have joined {guild.name}",f"{guild.name} has {guild.member_count} members [{guild.id}]")))
 
     @commands.Cog.listener()
     async def on_guild_remove(self,guild):

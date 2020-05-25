@@ -16,8 +16,9 @@ class Boundary(commands.Cog):
     @commands.command(name="test",description="This is a testing command")
     @checks.hasRequiredLevel(5)
     async def test(self,ctx):
-        await db.insert("boundary",{"uuid": uuid.uuid4(),"guild": ctx.guild.id, "user": ctx.author.id})
-        await ctx.send(db.find("boundary",{"guild": ctx.guild.id, "user": ctx.author.id}))
+        uuid = uuid.uuid4()
+        await db.insert("boundary",{"uuid": uuid,"guild": ctx.guild.id, "user": ctx.author.id})
+        await ctx.send(await db.find("boundary",{"guild": ctx.guild.id, "user": ctx.author.id}))
 
 def setup(bot):
     bot.add_cog(Boundary(bot))

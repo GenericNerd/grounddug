@@ -13,7 +13,7 @@ class Boundary(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
     
-    @bot.command(name="test",description="This is a testing command")
+    @commands.command(name="test",description="This is a testing command")
     @checks.hasRequiredLevel(5)
     async def test(self,ctx):
         await db.insert("boundary",{"uuid": uuid.uuid4(),"guild": ctx.guild.id, "user": ctx.author.id})

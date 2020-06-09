@@ -24,6 +24,7 @@ class Boundary(commands.Cog):
 
     @tasks.loop(seconds=60)
     async def boundary_check(self):
+        print(await db.find("boundary",{}))
         print(await db.findNoFilter("boundary"))
 
 def setup(bot):

@@ -13,7 +13,7 @@ import cogs.utils.checks as checks
 class Boundary(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
-        boundary_check.start()
+        self.boundary_check.start()
     
     @commands.command(name="test",description="This is a testing command")
     @checks.hasRequiredLevel(5)
@@ -25,6 +25,7 @@ class Boundary(commands.Cog):
     @tasks.loop(seconds=60)
     async def boundary_check(self):
         print(await db.find("boundary",{}))
+    
 
 def setup(bot):
     bot.add_cog(Boundary(bot))

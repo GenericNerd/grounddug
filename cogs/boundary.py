@@ -2,6 +2,7 @@
 
 import discord
 from discord.ext import commands
+from discord.ext import tasks
 import asyncio
 import uuid
 import cogs.utils.db as db
@@ -12,13 +13,18 @@ import cogs.utils.checks as checks
 class Boundary(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
+        boundary_check.start()
     
     @commands.command(name="test",description="This is a testing command")
     @checks.hasRequiredLevel(5)
     async def test(self,ctx):
         bid = uuid.uuid4()
-        await db.insert("boundary",{"uuid": str(bid), "guild": ctx.guild.id, "user": ctx.author.id})
+        await db.insert("boundary",{"uuid": str(bid), "guild": ctx.guild.id, "user": ctx.author.id, "verified": False})
         await ctx.send(await db.find("boundary",{"guild": ctx.guild.id, "user": ctx.author.id}))
+
+    @tasks.loop(seconds=60)
+    async def boundary_check(self):
+        print(await db.find("boundary",{}))
 
 def setup(bot):
     bot.add_cog(Boundary(bot))

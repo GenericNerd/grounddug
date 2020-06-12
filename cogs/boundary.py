@@ -36,7 +36,7 @@ class Boundary(commands.Cog):
             guild = self.bot.get_guild(document["guild"])
             user = guild.get_member(document["user"])
             guildDB = await db.find("guilds",{"id": document["guild"]})
-            if guildDB["boundaryRole"] == None and guildDB["logs"] != 0:
+            if guildDB["boundaryRole"] == None and guildDB["channel"] != 0:
                 return await self.bot.get_channel(guildDB["logs"]).send(embed=embed.generate("Boundary role not set!",f"You forgot to set a Boundary role! As users verify, the role is not given.\n\n**User**: {user.mention}"))
             else:
                 print("Boundary Role")

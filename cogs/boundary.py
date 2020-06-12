@@ -24,8 +24,8 @@ class Boundary(commands.Cog):
 
     @tasks.loop(seconds=60)
     async def boundary_check(self):
-        cursor = await db.returnCursor()
-        async for document in cursor.find({"verified": True}):
+        documents = await db.findAll("boundary",{"verified": True})
+        async for document in documents:
             print(document)
 
 def setup(bot):

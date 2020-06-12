@@ -16,7 +16,7 @@ class Boundary(commands.Cog):
         self.bot = bot
         self.boundary_check.start()
     
-    @comamnds.ground(name="boundary",description="Improve protection on your server")
+    @commands.ground(name="boundary",description="Improve protection on your server")
     @checks.hasRequiredLevel(5)
     async def boundary(self,ctx):
         if ctx.invoked_subcommand is None:

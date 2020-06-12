@@ -34,7 +34,7 @@ class Core(commands.Cog):
         if module is "":
             # Change embed description, add a field with each cog, return a message
             msg.description = "Please specify the modules you wish to look up"
-            msg = await embed.add_field(msg,f"💿 - Misc ({prefix}help misc)\n🔨 - Mod ({prefix}help mod)\n⚙ - Admin ({prefix}help admin)\n🔍 - Logs ({prefix}help logs)\n🔧 - Perms ({prefix}help perms)\n🤖 - Auto-Mod - ({prefix}help automod)")
+            msg = await embed.add_field(msg,f"💿 - Misc ({prefix}help misc)\n🔨 - Mod ({prefix}help mod)\n⚙ - Admin ({prefix}help admin)\n🔍 - Logs ({prefix}help logs)\n🔧 - Perms ({prefix}help perms)\n🤖 - Auto-Mod - ({prefix}help automod)\n")
             return await ctx.send(embed=msg)
         elif module is not "":
             # If the module is in fact a cog

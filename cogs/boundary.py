@@ -34,7 +34,7 @@ class Boundary(commands.Cog):
         async for document in documents:
             guild = self.bot.get_guild(int(document["guild"]))
             user = guild.get_member(document["user"])
-            guildDB = await db.find("guilds",{"id": guild})
+            guildDB = await db.find("guilds",{"id": int(document["guild"])})
             if guildDB["boundaryRole"] == None:
                 print("No Boundary Role")
                 try:

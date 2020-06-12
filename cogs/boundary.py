@@ -30,13 +30,12 @@ class Boundary(commands.Cog):
 
     @tasks.loop(seconds=60)
     async def boundary_check(self):
+        await self.bot.wait_until_ready()
         documents = await db.findAll("boundary",{"verified": True})
         async for document in documents:
-            print(int(document["guild"]))
-            guild = self.bot.get_guild(int(document["guild"]))
-            print(guild)
-            user = guild.get_member(int(document["user"]))
-            guildDB = await db.find("guilds",{"id": int(document["guild"])})
+            guild = self.bot.get_guild(document["guild"])
+            user = guild.get_member(document["user"])
+            guildDB = await db.find("guilds",{"id": document["guild"]})
             if guildDB["boundaryRole"] == None:
                 print("No Boundary Role")
                 try:

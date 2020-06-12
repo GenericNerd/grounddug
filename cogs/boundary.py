@@ -32,10 +32,12 @@ class Boundary(commands.Cog):
     async def boundary_check(self):
         documents = await db.findAll("boundary",{"verified": True})
         async for document in documents:
+            print(document)
             guild = self.bot.get_guild(document["guild"])
             user = guild.get_member(document["user"])
             guildDB = await db.find("guilds",{"id": guild})
             if guildDB["boundaryRole"] == None:
+                print("No Boundary Role")
                 try:
                     guildDB["logs"]
                 except:
@@ -43,6 +45,7 @@ class Boundary(commands.Cog):
                 else:
                     return await self.bot.get_channel(guildDB["logs"]).send(embed=embed.generate("Boundary role not set!",f"You forgot to set a Boundary role! As users verify, the role is not given.\n\n**User**: {user.mention}"))
             else:
+                print("Boundary Role")
                 await user.add_roles(id=guildDB["boundaryRole"])
                 await user.send(embed=embed.generate("You have been verified!",f"You are now a verified in {guild.name}!"))
             await db.remove("boundary",{"_id": document["_id"]})

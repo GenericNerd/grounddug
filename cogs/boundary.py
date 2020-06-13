@@ -9,6 +9,11 @@ import cogs.utils.db as db
 import cogs.utils.checks as checks
 import cogs.utils.embed as embed
 
+async def updateBoundary(ctx,state):
+    guildDB = await db.find("guilds",{"id": ctx.guild.id})
+    guildDB["boundary"]["enabled"] = state
+    await db.update("guilds",{"_id": guildDB["_id"]},{"boundary": guildDB["boundary"]})
+
 # Boundary Class
 
 class Boundary(commands.Cog):
@@ -21,6 +26,23 @@ class Boundary(commands.Cog):
     async def boundary(self,ctx):
         if ctx.invoked_subcommand is None:
             await ctx.invoke(self.bot.get_command("help"),"boundary")
+
+    @boundary.command(name="enable",description="| Enable Boundary with current settings")
+    @checks.hasGDPermission("ADMINISTRATOR")
+    async def enable(self,ctx):
+        await updateBoundary(ctx,True)
+
+    @boundary.command(name="disable",description="| Disable Boundary")
+    @checks.hasGDPermission("ADMINISTRATOR")
+    async def disable(self,ctx):
+        await updateBoundary(ctx,False)
+
+    @boundary.command(name="setrole",description="<role> | Set the role given to users who have verified")
+    @checks.hasGDPermission("ADMINISTRATOR")
+    async def setrole(self,ctx,role:discord.Role):
+        guildDB = await db.find("guild",{"id": ctx.guild.id})
+        guildDB["boundary"]["role"] = role.id
+        await db.update("guilds",{"_id": guildDB["_id"]},{"boundary": guildDB["boundary"]})
 
     @boundary.command(name="create",description="This is a testing command")
     async def test(self,ctx):

@@ -16,9 +16,6 @@ async def find(database,filter):
 async def findAll(database,filter):
     return asyncDB[database].find(filter)
 
-async def returnCursor():
-    return asyncDB
-
 async def insert(database,data):
     await asyncDB[database].insert_one(data)
 

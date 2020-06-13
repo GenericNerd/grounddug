@@ -11,6 +11,7 @@ import cogs.utils.db as db
 import cogs.utils.logger as logger
 import cogs.utils.checks as checks
 import cogs.utils.cases as cases
+import uuid
 from sentry_sdk import capture_exception
 
 # Channel to send logs to
@@ -61,7 +62,11 @@ class Events(commands.Cog):
                 "shortURL": False,
                 "warnOnRemove": False,
             },
-            "blacklistChannels": []}
+            "blacklistChannels": [],
+            "boundary":{
+                "enabled": False,
+                "role": None
+            }}
         await db.insert("guilds",data)
         # Get the current user count and update the DB
         currentUsers = await db.find("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
@@ -92,9 +97,16 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self,member):
         # Check if raid mode is enabled
-        if not (await db.find("guilds",{"id": member.guild.id}))["raid_mode"]:
+        guildDB = await db.find("guilds",{"id": member.guild.id})
+        if not guildDB["raid_mode"]:
             # Insert database object
             await db.insert("users",{"guild": member.guild.id, "user": member.id, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "BYPASS_AUTOMOD": False,"ADMINISTRATOR": False}, "strikes": {}})
+            # Check if Boundary is enabled, if so, message user with a link to verify
+            if guildDB["boundary"]["enabled"]:
+                boundaryID = uuid.uuid4()
+                await db.insert("boundary",{"uuid": str(boundaryID), "guild": member.guild.id, "user": member.id, "verified": False})
+                try:
+                    await member.send(embed=(await embed.generate("Verification needed!",f"Verify here: https://grounddug.xyz/boundary/{str(boundaryID)}")))
         else:
             # Create an invite to send to the user
             invite = await member.guild.create_invite(max_uses=1,reason="Raid mode activated - Providing link to user")

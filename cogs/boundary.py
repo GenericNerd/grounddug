@@ -37,13 +37,19 @@ class Boundary(commands.Cog):
     @checks.hasGDPermission("ADMINISTRATOR")
     async def enable(self,ctx):
         # Update Boundary to state of True
-        await ctx.send(embed=(await updateBoundary(ctx,True,"enabled")))
+        try:
+            await ctx.send(embed=(await updateBoundary(ctx,True,"enabled")))
+        except:
+            pass
 
     @boundary.command(name="disable",description="| Disable Boundary")
     @checks.hasGDPermission("ADMINISTRATOR")
     async def disable(self,ctx):
         # Update Boundary to state of False
-        await ctx.send(embed=(await updateBoundary(ctx,False,"disabled")))
+        try:
+            await ctx.send(embed=(await updateBoundary(ctx,False,"disabled")))
+        except:
+            pass
 
     @boundary.command(name="setrole",description="[role] | Set the role given to users who have verified")
     @checks.hasGDPermission("ADMINISTRATOR")

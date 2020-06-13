@@ -67,7 +67,10 @@ class Developer(commands.Cog):
             guildObject = await db.find("guilds",{"id": guild.id})
             # Update database here
             guildObject["boundary"] = {"enabled": False, "role": None}
-            del guildObject["logs"]["misc"]
+            try:
+                del guildObject["logs"]["misc"]
+            except:
+                pass
             # for user in guild.members:
             #     userObject = await db.find("users",{"guild": guild.id, "user": user.id})
             #     if userObject is None:

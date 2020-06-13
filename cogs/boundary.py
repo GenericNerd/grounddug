@@ -50,11 +50,11 @@ class Boundary(commands.Cog):
         # otherwise, set the given role to Boundary role
         guildDB = await db.find("guilds",{"id": ctx.guild.id})
         if role == None:
-            await ctx.send(embed=(await embed.generate("Boundary role",f"The current Boundary role is set to: <@{guildDB['boundary']['role']}>",0xffcc4d)))
+            await ctx.send(embed=(await embed.generate("Boundary role",f"The current Boundary role is set to: <@&{guildDB['boundary']['role']}>",0xffcc4d)))
         else:  
             guildDB["boundary"]["role"] = role.id
             await db.update("guilds",{"_id": guildDB["_id"]},{"boundary": guildDB["boundary"]})
-            await ctx.send(embed=(await embed.generate("Boundary role updated!",f"The new Boundary role has been set to <@{role.id}>",0xffcc4d)))
+            await ctx.send(embed=(await embed.generate("Boundary role updated!",f"The new Boundary role has been set to <@&{role.id}>",0xffcc4d)))
 
     @boundary.command(name="create",description="This is a testing command")
     @checks.hasRequiredLevel(5)

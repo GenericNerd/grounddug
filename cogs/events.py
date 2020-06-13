@@ -106,7 +106,7 @@ class Events(commands.Cog):
                 boundaryID = uuid.uuid4()
                 await db.insert("boundary",{"uuid": str(boundaryID), "guild": member.guild.id, "user": member.id, "verified": False})
                 try:
-                    await member.send(embed=(await embed.generate("Verification needed!",f"Verify here: https://grounddug.xyz/boundary/{str(boundaryID)}")))
+                    await member.send(embed=(await embed.generate("Verification needed!",f"Verify here: https://grounddug.xyz/boundary/{str(boundaryID)}",0xffcc4d)))
                 except:
                     pass
         else:

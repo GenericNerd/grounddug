@@ -15,6 +15,8 @@ async def updateBoundary(ctx,state,langState):
     # Set the parsed state (boolean)
     # Update the database and return an embed with the contents
     guildDB = await db.find("guilds",{"id": ctx.guild.id})
+    if state == guildDB["boundary"]["enabled"]:
+        return
     guildDB["boundary"]["enabled"] = state
     await db.update("guilds",{"_id": guildDB["_id"]},{"boundary": guildDB["boundary"]})
     return await embed.generate(f"Boundary is now {langState}!",None,0xffcc4d)
@@ -51,6 +53,8 @@ class Boundary(commands.Cog):
         guildDB = await db.find("guilds",{"id": ctx.guild.id})
         if role == None:
             await ctx.send(embed=(await embed.generate("Boundary role",f"The current Boundary role is set to: <@&{guildDB['boundary']['role']}>",0xffcc4d)))
+        elif guildDB["boundary"]["role"] == role.id:
+            return
         else:  
             guildDB["boundary"]["role"] = role.id
             await db.update("guilds",{"_id": guildDB["_id"]},{"boundary": guildDB["boundary"]})

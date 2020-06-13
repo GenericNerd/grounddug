@@ -134,7 +134,7 @@ class Mod(commands.Cog):
     async def unmute(self,ctx,member:discord.Member,*,reason=None):
         # For each channel, set typing permissions to True for each member
         for channel in ctx.guild.text_channels:
-            await channel.set_permissions(member,send_messages=True)
+            await channel.set_permissions(member,overwrite=None)
         # Send a message in the channel notifying of successful unmute
         await ctx.send(embed=(await embed.generate(f"{member.name} has been unmuted",f"{ctx.author.mention} unmuted this user for: `{reason}`")))
 

@@ -107,6 +107,8 @@ class Events(commands.Cog):
                 await db.insert("boundary",{"uuid": str(boundaryID), "guild": member.guild.id, "user": member.id, "verified": False})
                 try:
                     await member.send(embed=(await embed.generate("Verification needed!",f"Verify here: https://grounddug.xyz/boundary/{str(boundaryID)}")))
+                except:
+                    pass
         else:
             # Create an invite to send to the user
             invite = await member.guild.create_invite(max_uses=1,reason="Raid mode activated - Providing link to user")

@@ -45,6 +45,8 @@ class Boundary(commands.Cog):
                 await user.add_roles(id=guildDB["boundaryRole"])
                 try:
                     await user.send(embed=(await embed.generate("You have been verified!",f"You are now a verified in {guild.name}!")))
+                except:
+                    pass
             await db.remove("boundary",{"_id": document["_id"]})
 
 def setup(bot):

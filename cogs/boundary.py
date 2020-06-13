@@ -64,7 +64,7 @@ class Boundary(commands.Cog):
                 await guild.get_channel(guildDB["channel"]).send(embed=(await embed.generate("Boundary role not set!",f"You forgot to set a Boundary role! As users verify, the role is not given.\n\n**User**: {user.mention}")))
             else:
                 print("Boundary Role")
-                await user.add_roles(id=guildDB["boundary"]["role"])
+                await user.add_roles(guild.get_role(guildDB["boundary"]["role"]))
                 try:
                     await user.send(embed=(await embed.generate("You have been verified!",f"You are now a verified in {guild.name}!")))
                 except:

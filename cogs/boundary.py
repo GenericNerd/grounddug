@@ -40,7 +40,7 @@ class Boundary(commands.Cog):
     @boundary.command(name="setrole",description="<role> | Set the role given to users who have verified")
     @checks.hasGDPermission("ADMINISTRATOR")
     async def setrole(self,ctx,role:discord.Role):
-        guildDB = await db.find("guild",{"id": ctx.guild.id})
+        guildDB = await db.find("guilds",{"id": ctx.guild.id})
         guildDB["boundary"]["role"] = role.id
         await db.update("guilds",{"_id": guildDB["_id"]},{"boundary": guildDB["boundary"]})
 

@@ -56,7 +56,7 @@ class Boundary(commands.Cog):
             await db.update("guilds",{"_id": guildDB["_id"]},{"boundary": guildDB["boundary"]})
             await ctx.send(embed=(await embed.generate("Boundary role updated!",f"The new Boundary role has been set to <@&{role.id}>",0xffcc4d)))
 
-    @boundary.command(name="create",description="This is a testing command")
+    @boundary.command(name="create",description="This is a testing command",hidden=True)
     @checks.hasRequiredLevel(5)
     async def test(self,ctx):
         bid = uuid.uuid4()

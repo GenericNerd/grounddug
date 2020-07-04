@@ -37,7 +37,7 @@ async def logModuleChange(self,ctx,changeTo,module=None):
             await db.update("guilds",{"_id": guild["_id"]},guild)
             await ctx.send(embed=(await embed.generate("Updated logging settings",f"`{module.capitalize()}` event logging is now {stateChange}d")))
         else:
-            await embed.error(f"Module invalid, or already {stateChange}d")
+            await embed.error(ctx,f"Module invalid, or already {stateChange}d")
 
 class Logs(commands.Cog):
     def __init__(self,bot):

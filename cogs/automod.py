@@ -36,7 +36,6 @@ class AutoModListener(commands.Cog):
                 logChannel = self.bot.get_channel(guild["channel"])
                 removed = False
                 async def RuleViolator(msg,text,delete):
-                    global removed
                     if delete:
                         # Delete the message and set removed to True
                         await msg.delete()

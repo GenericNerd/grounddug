@@ -27,6 +27,7 @@ class DirectoryListings(commands.Cog):
         self.botsForDiscordAPI = "251b7801f049d5dc856ee9d308f2dfadd8870ea398651eb8266b00ba91270b99f06164a60768f80bfaf6a176899e762ef5a2d3f738e7c557406eb2bd5e06c656"
         self.discordBotListAPI = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0IjoxLCJpZCI6IjU1MzYwMjM1Mzk2MjU0OTI0OSIsImlhdCI6MTU5Mzg5MDMxNH0.23nL24HvIh_deQNwA-h222g9xoShKKK1PDU3mOjHE48"
         self.dblpy = dbl.Client(self.bot, self.topGGAPI)
+        self.updateStats.start()
 
     @tasks.loop(minutes=60)
     async def updateStats(self):

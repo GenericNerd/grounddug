@@ -151,9 +151,6 @@ class Events(commands.Cog):
         # Is the action the bot is trying forbidden?
         elif isinstance(error,discord.Forbidden):
             pass
-        # Is the action forbidden?
-        elif isinstance(error,discord.Forbidden):
-            pass
         # Is the error that the command doesn't exist?
         elif isinstance(error,commands.CommandNotFound):
             pass

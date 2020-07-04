@@ -67,7 +67,10 @@ class Developer(commands.Cog):
             guildObject = await db.find("guilds",{"id": guild.id})
             # Update database here
             guildObject["boundary"] = {"enabled": False, "role": None}
-            del guildObject["logs"]["misc"]
+            try:
+                del guildObject["logs"]["misc"]
+            except:
+                pass
             # for user in guild.members:
             #     userObject = await db.find("users",{"guild": guild.id, "user": user.id})
             #     if userObject is None:
@@ -81,6 +84,7 @@ class Developer(commands.Cog):
             await db.update("guilds",{"_id": guildObject["_id"]},guildObject)
         mainDB = await db.find("settings",{})
         mainDB["levels"] = {"1": [149252578125938690, 485472170760339477], "2": [], "3": [280584515045425152], "4": [], "5": [179292162037514241, 96269247411400704, 206309860038410240]}
+        await db.update("settings",{"_id": mainDB["_id"]}, mainDB)
         await ctx.send("Done")
 
 def setup(bot):

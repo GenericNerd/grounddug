@@ -64,12 +64,11 @@ class AutoModListener(commands.Cog):
                         shortened_URLs = []
                         # Find every URL in message
                         for url in re.findall(url_Regex,ctx.content):
-                            pass
                             # Emulate a browser to allow redirects
-                            # browser = await httpxClient.head(url,allow_redirects=True)
-                            # # If the browser URL after redirects is not the URL it was given, append it to shortenedURLs
-                            # if browser.url != url:
-                            #     shortened_URLs.append(str(browser.url))
+                            browser = await httpxClient.head(url,allow_redirects=True)
+                            # If the browser URL after redirects is not the URL it was given, append it to shortenedURLs
+                            if browser.url != url:
+                                shortened_URLs.append(str(browser.url))
                         if shortened_URLs is not []:
                             # Embed description
                             description = ""

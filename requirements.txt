@@ -11,3 +11,4 @@ dnspython
 sentry_sdk[flask]
 sentry_sdk[aiohttp]
 sentry_sdk[sanic]
+blinker

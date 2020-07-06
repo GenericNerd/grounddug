@@ -8,17 +8,28 @@ app = Sanic(__name__)
 
 @app.route('/')
 async def webhook(request):
-    pass
+    return json({ 'message': 'GroundDug webhook server' })
+
+@app.route('/topgg')
+async def topgg(request):
+    if 'Authorization' in request.headers:
+        if request.headers['Authorization'] == 'f1jwhEi935knOndspVht':
+            voteCount = 2 if request.json.isWeekend else 1
+            return json({ 'yay': True })
+        else:
+            return json({ 'yay': False })
+    else:
+        return json({ 'yay': False })
 
 def registerVoteServer(loop, port=42069):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind((socket.gethostname(), port))
+    sock.bind(('localhost', port))
     sock.listen(5)
 
     srv_coro = app.create_server(
         sock=sock,
         return_asyncio_server=True,
-        asyncio_server_kwards=dict(
+        asyncio_server_kwargs=dict(
             start_serving=False
         )
     )
@@ -28,4 +39,5 @@ def registerVoteServer(loop, port=42069):
     assert srv.is_serving() is False
     loop.run_until_complete(srv.start_serving())
     assert srv.is_serving() is True
-    loop.create_task(srv.serve_forever)
+    loop.create_task(srv.serve_forever())
+    print("Vote server registered")

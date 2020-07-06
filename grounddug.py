@@ -20,7 +20,7 @@ botSettings = db.nsyncFind("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e
 
 # Load sentry to receive tracebacks
 import sentry_sdk
-from sentry_sdk import capture_exception
+from sentry_sdk import capture_exception, capture_message
 sentry_sdk.init("https://1503256c40d04d97a7752aff4305d469@sentry.io/5181048",release=botSettings["version"])
 
 # Cogs to load on bot ready
@@ -56,7 +56,7 @@ async def on_error(event,*args,**kwargs):
     if isinstance(event,Exception):
         capture_exception(event)
     else:
-        capture_error(event)
+        capture_message(event)
 
     await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
 
@@ -70,7 +70,7 @@ if environment == "beta":
 elif environment == "production":
     logger.info("Running GroundDug")
     voteserver.registerVoteServer(loop)
-    loop.run_until_complete(botSettings["token"])
+    loop.run_until_complete(bot.start(botSettings["token"]))
 else:
     logger.error("Invalid environment, aborting instance")
     exit()

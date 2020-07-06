@@ -54,10 +54,11 @@ async def blacklistChannelCheck(ctx):
 @bot.event
 async def on_error(event,*args,**kwargs):
     if isinstance(event,Exception):
-        await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
         capture_exception(event)
     else:
-        await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised!",f"{event}, {args}, {kwargs}",0xff0000)))
+        capture_error(event)
+
+    await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
 
 loop = asyncio.get_event_loop()
 

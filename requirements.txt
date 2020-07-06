@@ -4,6 +4,5 @@ sentry_sdk
 dblpy
 httpx
 profanity_filter
-re
 colorama
 motor

@@ -21,7 +21,15 @@ botSettings = db.nsyncFind("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e
 # Load sentry to receive tracebacks
 import sentry_sdk
 from sentry_sdk import capture_exception, capture_message
-sentry_sdk.init("https://1503256c40d04d97a7752aff4305d469@sentry.io/5181048",release=botSettings["version"])
+from sentry_sdk.integrations.flask import FlaskIntegration
+from sentry_sdk.integrations.aiohttp import AioHttpIntegration
+from sentry_sdk.integrations.sanic import SanicIntegration
+sentry_sdk.init(
+    "https://1503256c40d04d97a7752aff4305d469@sentry.io/5181048",
+    release=botSettings["version"],
+    integrations=[FlaskIntegration(),
+                  AioHttpIntegration(),
+                  SanicIntegration()])
 
 # Cogs to load on bot ready
 startupExtensions = ["events","perms","core","admin","mod","developer","logs","automod","boundary","directoryAPI"]
@@ -56,7 +64,7 @@ async def on_error(event,*args,**kwargs):
     if isinstance(event,Exception):
         capture_exception(event)
     else:
-        capture_message(event)
+        capture_message(f"{event}: {args} passed, {kwargs} passed")
 
     await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
 

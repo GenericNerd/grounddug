@@ -8,3 +8,6 @@ colorama
 motor
 sanic
 dnspython
+sentry_sdk[flask]
+sentry_sdk[aiohttp]
+sentry_sdk[sanic]

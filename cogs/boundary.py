@@ -73,7 +73,7 @@ class Boundary(commands.Cog):
         await db.insert("boundary",{"uuid": str(bid), "guild": ctx.guild.id, "user": ctx.author.id, "verified": False})
         await ctx.send(await db.find("boundary",{"uuid": str(bid), "guild": ctx.guild.id, "user": ctx.author.id}))
 
-    @tasks.loop(seconds=60)
+    @tasks.loop(seconds=5)
     async def boundary_check(self):
         # Wait until the bot is ready (mainly to avoid errors on_ready)
         await self.bot.wait_until_ready()

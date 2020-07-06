@@ -9,12 +9,11 @@ import cogs.utils.cases as cases
 import cogs.utils.checks as checks
 
 import re
-import httpx
+import aiohttp
 from profanity_filter import ProfanityFilter
 
 # Variables required for automod to work in future
 pf = ProfanityFilter()
-httpxClient = httpx.AsyncClient()
 
 class AutoModListener(commands.Cog):
     def __init__(self, bot):
@@ -23,7 +22,7 @@ class AutoModListener(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self,ctx):
         # If message is not in a guild
-        if ctx.guild is not None or self.bot.get_user(ctx.author.id).bot is not False:
+        if ctx.guild is not None or self.bot.get_user(ctx.author.id).bot is False:
             # Check whether the user has got bypass automod
             user = await db.find("users",{"guild": ctx.guild.id, "user": ctx.author.id})
             print('db')
@@ -66,15 +65,17 @@ class AutoModListener(commands.Cog):
                         # Find every URL in message
                         for url in re.findall(url_Regex,ctx.content):
                             # Emulate a browser to allow redirects
-                            browser = await httpxClient.head(url,allow_redirects=True)
+                            async with aiohttp.ClientSession() as session:
+                                async with session.get(url, allow_redirects=True) as response:
+                                    redirect = str(response).split("Location': \'")[1].split("\'")[0]
                             # If the browser URL after redirects is not the URL it was given, append it to shortenedURLs
-                            if browser.url != url:
-                                shortened_URLs.append(str(browser.url))
+                            if redirect != url:
+                                shortened_URLs.append(redirect)
                         if shortened_URLs is not []:
                             # Embed description
                             description = ""
                             for url in shortened_URLs:
-                                description += f"{url} "
+                                description += f"{url}, "
                             await ctx.channel.send(embed=(await embed.generate("Shortened URLs detected!",f"{ctx.author.mention} posted a shortened link(s) leading to {description}")))
                     # If the message contains swearing, invoke RuleViolator
                     elif guild["automod"]["profanity"] and pf.is_profane(ctx.content):

@@ -2,7 +2,6 @@ discord.py
 asyncio
 sentry_sdk
 dblpy
-httpx
 profanity_filter
 colorama
 motor

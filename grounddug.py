@@ -66,7 +66,7 @@ async def on_error(event,*args,**kwargs):
     else:
         capture_message(f"{event}: {args} passed, {kwargs} passed")
 
-    await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
+    #await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
 
 loop = asyncio.get_event_loop()
 

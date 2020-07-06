@@ -26,6 +26,7 @@ class AutoModListener(commands.Cog):
         if ctx.guild is not None or self.bot.get_user(ctx.author.id).bot is not False:
             # Check whether the user has got bypass automod
             user = await db.find("users",{"guild": ctx.guild.id, "user": ctx.author.id})
+            print('db')
             try:
                 bypass = user["permissions"]["BYPASS_AUTOMOD"]
             except:

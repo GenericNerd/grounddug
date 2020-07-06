@@ -35,6 +35,7 @@ class Events(commands.Cog):
         for guild in self.bot.guilds:
             users += guild.member_count
         await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": users})
+        print('on_ready fine')
 
     @commands.Cog.listener()
     async def on_guild_join(self,guild):
@@ -170,7 +171,7 @@ class Events(commands.Cog):
             await embed.error(ctx,f"{error} - Report sent to developer")
             await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
             capture_exception(error)
-        
+
     @commands.Cog.listener()
     async def on_member_update(self,before,after):
         # If the roles are not the same, check whether a role has been added or removed

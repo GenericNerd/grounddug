@@ -6,3 +6,5 @@ httpx
 profanity_filter
 colorama
 motor
+sanic
+dnspython

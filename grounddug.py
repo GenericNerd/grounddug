@@ -10,6 +10,8 @@ import cogs.utils.logger as logger
 import cogs.utils.embed as embed
 from bson.objectid import ObjectId
 
+import voteserver
+
 # Find current environment
 environment = os.getenv("GD_ENV","beta")
 
@@ -57,13 +59,17 @@ async def on_error(event,*args,**kwargs):
     else:
         await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised!",f"{event}, {args}, {kwargs}",0xff0000)))
 
+loop = asyncio.get_event_loop()
+
 # Check current environment, and run appropriate instance
 if environment == "beta":
     logger.info("Running GroundDugBeta")
-    bot.run("NjY3MDgzMTM3OTMwNjI1MDI0.Xh9jpw.KygIs_cyCxF6n--bKkvOSATlsB4")
+    voteserver.registerVoteServer(loop, 42070)
+    loop.run_until_complete(bot.start("NjY3MDgzMTM3OTMwNjI1MDI0.Xh9jpw.KygIs_cyCxF6n--bKkvOSATlsB4"))
 elif environment == "production":
     logger.info("Running GroundDug")
-    bot.run(botSettings["token"])
+    voteserver.registerVoteServer(loop)
+    loop.run_until_complete(botSettings["token"])
 else:
     logger.error("Invalid environment, aborting instance")
     exit()

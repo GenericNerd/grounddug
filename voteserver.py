@@ -1,7 +1,7 @@
 import asyncio
 import socket
 
-from cogs.utils.db import db
+import cogs.utils.db as db
 
 from sanic import Sanic
 from sanic.response import json

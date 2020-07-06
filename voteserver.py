@@ -1,6 +1,8 @@
 import asyncio
 import socket
 
+from cogs.utils.db import db
+
 from sanic import Sanic
 from sanic.response import json
 
@@ -10,11 +12,16 @@ app = Sanic(__name__)
 async def webhook(request):
     return json({ 'message': 'GroundDug webhook server' })
 
-@app.route('/topgg')
+@app.post('/topgg')
 async def topgg(request):
     if 'Authorization' in request.headers:
         if request.headers['Authorization'] == 'f1jwhEi935knOndspVht':
-            voteCount = 2 if request.json.isWeekend else 1
+            voteCount = 2 if request.json['isWeekend'] else 1
+            userData = await db.getVoteUser(request.json.user)
+            if userData['linkedTo'] is not None:
+                userData = await db.getVoteUser(userData['linkedTo'])
+            userData['votes'] += voteCount
+            await db.update('voteUsers', {'user': userData['user']}, userData)
             return json({ 'yay': True })
         else:
             return json({ 'yay': False })

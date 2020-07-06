@@ -27,6 +27,14 @@ async def getUser(guild,user):
         await insert("users",userData)
         return userData
 
+async def getVoteUser(user):
+    try:
+        return await find("voteUsers", {"user": user})
+    except pymongo.errors.OperationFailure as e:
+        voteUserData = {"user": user, "votes": 0, "linkedTo": None}
+        await insert("voteUsers", voteUserData)
+        return voteUserData
+
 async def remove(database,filter):
     await asyncDB[database].delete_one(filter)
 

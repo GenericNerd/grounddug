@@ -1,4 +1,4 @@
-discord.py
+discord
 asyncio
 sentry_sdk
 dblpy

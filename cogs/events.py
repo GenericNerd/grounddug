@@ -35,7 +35,6 @@ class Events(commands.Cog):
         for guild in self.bot.guilds:
             users += guild.member_count
         await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": users})
-        print('on_ready fine')
 
     @commands.Cog.listener()
     async def on_guild_join(self,guild):

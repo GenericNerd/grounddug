@@ -23,7 +23,7 @@ from sentry_sdk import capture_exception
 sentry_sdk.init("https://1503256c40d04d97a7752aff4305d469@sentry.io/5181048",release=botSettings["version"])
 
 # Cogs to load on bot ready
-startupExtensions = ["events","perms","core","admin","mod","developer","logs","automod"]
+startupExtensions = ["events","perms","core","admin","mod","developer","logs","automod","boundary","directoryAPI"]
 # Get prefix depending on message context
 bot = commands.AutoShardedBot(command_prefix=misc.getPrefix)
 
@@ -56,8 +56,7 @@ async def on_error(event,*args,**kwargs):
         await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
         capture_exception(event)
     else:
-        await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised! Logger error sent",None,0xff0000)))
-        logger.error(f"{event}, {args}, {kwargs}")
+        await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised!",f"{event}, {args}, {kwargs}",0xff0000)))
 
 # Check current environment, and run appropriate instance
 if environment == "beta":

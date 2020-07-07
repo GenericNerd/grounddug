@@ -1,6 +1,6 @@
 import asyncio
 import socket
-
+import cogs.utils.logger as logger
 import cogs.utils.db as db
 
 from sanic import Sanic
@@ -47,4 +47,4 @@ def registerVoteServer(loop, port=42069):
     loop.run_until_complete(srv.start_serving())
     assert srv.is_serving() is True
     loop.create_task(srv.serve_forever())
-    print("Vote server registered")
+    logger.success("Vote server registered")

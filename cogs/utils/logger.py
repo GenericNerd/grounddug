@@ -9,5 +9,5 @@ def info(data):
 def error(data):
     print(f"\n{Fore.RED} ERROR - {datetime.utcnow().strftime('%d-%m-%Y %H:%M:%S')}{Fore.WHITE} | {data}")
 
-def work(data):
-    print(f"\n{Fore.GREEN} WORK - {datetime.utcnow().strftime('%d-%m-%Y %H:%M:%S')}{Fore.WHITE} | {data}")
+def success(data):
+    print(f"\n{Fore.GREEN} SUCCESS - {datetime.utcnow().strftime('%d-%m-%Y %H:%M:%S')}{Fore.WHITE} | {data}")

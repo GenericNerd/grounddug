@@ -11,7 +11,8 @@ import cogs.utils.embed as embed
 from bson.objectid import ObjectId
 
 # Find current environment
-environment = os.getenv("GD_ENV","beta")
+# environment = os.getenv("GD_ENV","beta")
+environment = "production"
 
 # Get the current bot settings
 botSettings = db.nsyncFind("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})

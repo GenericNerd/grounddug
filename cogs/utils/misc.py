@@ -4,8 +4,7 @@ import asyncio
 import cogs.utils.db as db
 import os
 
-#environment = os.getenv("GD_ENV", "beta")
-environment = "production"
+environment = os.getenv("GD_ENV", "beta")
 
 async def getPrefix(bot,message):
     # Return gb! prefix if files are in beta environment

@@ -9,6 +9,7 @@ import cogs.utils.cases as cases
 import cogs.utils.checks as checks
 from cogs.utils.misc import zalgoDetect
 from cogs.utils.misc import zalgoClean
+import cogs.utils.logger as logger
 
 import re
 import aiohttp
@@ -52,6 +53,7 @@ class AutoModListener(commands.Cog):
                     except:
                         pass
                 if not removed:
+                    logger.info(f"{guild['automod']['zalgo'] > 0} {zalgoDetect(ctx.content)>guild['automod']['zalgo']}")
                     # This is the regex that will be used to check against messages for URLs
                     url_Regex = r"(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))?"
                     # If anti-invite is on and message contains an invite, invoke RuleViolator
@@ -87,7 +89,7 @@ class AutoModListener(commands.Cog):
                     # If mass mentions are not disabled, and more than mass mentions were mentioned, invoke RuleViolator
                     elif guild["automod"]["massMentions"] > 0 and len(ctx.raw_mentions) >= guild["automod"]["massMentions"]:
                         await attemptSend(logChannel,await RuleViolator(ctx,"pinged too many people",True))
-                    # If Zalgo text detection is not disabled, and Zalgo is detected above the specified amount, invoke RuleViolator
+                    # If Zalgo text detection is not disabled, and Zalgo is detected above the specified amount, invoke RuleViolator4
                     elif guild["automod"]["zalgo"] > 0 and zalgoDetect(ctx.content)>guild["automod"]["zalgo"]:
                         await ctx.send(embed=await embed.generate(f"{ctx.author.name} posted Zalgo!",f"Here is what they actually meant to say:\n\n`{zalgoClean(ctx.content)}`"))
                         await attemptSend(logChannel,await RuleViolator(ctx,"used Zalgo text",False))

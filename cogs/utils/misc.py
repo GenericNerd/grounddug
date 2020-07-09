@@ -32,9 +32,10 @@ def zalgoDetect(message):
         score = sum([char.count(zalgo) for zalgo in zalgoCategory]) / len(word)
         words.append(score)
     finalScore = numpy.percentile(words, 75)
-    logger.info(f"{finalScore=}")
     return finalScore
 
 def zalgoClean(message):
     for line in message:
-        return "".join([character for character in unicodedata.normalize("NFD",line) if unicodedata.category(character) not in zalgoCategory])
+        cleanString = "".join([character for character in unicodedata.normalize("NFD",line) if unicodedata.category(character) not in zalgoCategory])
+        logger.info(f"{cleanString=}")
+        return cleanString

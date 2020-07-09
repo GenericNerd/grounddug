@@ -2,6 +2,7 @@
 
 import asyncio
 import cogs.utils.db as db
+import cogs.utils.logger as logger
 import os
 import unicodedata
 import numpy
@@ -31,6 +32,7 @@ async def zalgoDetect(message):
         score = sum([char.count(zalgo) for zalgo in zalgoCategory]) / len(word)
         words.append(score)
     finalScore = numpy.percentile(words, 75)
+    logger.info(f"{finalScore=}")
     return finalScore
 
 async def zalgoClean(message):

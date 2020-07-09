@@ -25,18 +25,26 @@ async def getPrefix(bot,message):
         guild = await db.find("guilds",{"id": message.guild.id})
         return guild["prefix"]
 
-def zalgoDetect(message):
+def zalgoDetect(message:str):
+    # Create an array called words
     words = []
+    # Split the message by its spaces, and iterate through each word
     for word in message.split():
+        # For each character in the word, get what category of unicode it is in
         char = [unicodedata.category(c) for c in word]
+        # Add how many of the characters are in the zalgoCategory var divided by the length of the word
         score = sum([char.count(zalgo) for zalgo in zalgoCategory]) / len(word)
         words.append(score)
+        # Append the zalgo score to the array called words
     finalScore = numpy.percentile(words, 75)
+    # Return the 75th percentile of the score of words
     return finalScore
 
-def zalgoClean(message):
-    for line in message:
-        logger.info("here")
-        cleanString = "".join([character for character in unicodedata.normalize("NFD",line) if unicodedata.category(character) not in zalgoCategory])
-        logger.info(f"{cleanString=}")
-        return cleanString
+def zalgoClean(message:str):
+    # Create an empty string
+    cleanString = ""
+    for char in unicodedata.normalize("NFD",message):
+        # For each normalised character in the message, add it to the string unless it is a zalgoCategory char
+        if unicodedata.category(char) not in zalgoCategory:
+            cleanString += char
+    return cleanString

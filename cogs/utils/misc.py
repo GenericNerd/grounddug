@@ -25,7 +25,7 @@ async def getPrefix(bot,message):
         guild = await db.find("guilds",{"id": message.guild.id})
         return guild["prefix"]
 
-def zalgoDetect(message:str):
+async def zalgoDetect(message:str):
     # Create an array called words
     words = []
     # Split the message by its spaces, and iterate through each word
@@ -40,7 +40,7 @@ def zalgoDetect(message:str):
     # Return the 75th percentile of the score of words
     return finalScore
 
-def zalgoClean(message:str):
+async def zalgoClean(message:str):
     # Create an empty string
     cleanString = ""
     for char in unicodedata.normalize("NFD",message):

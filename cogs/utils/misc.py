@@ -36,6 +36,7 @@ def zalgoDetect(message):
 
 def zalgoClean(message):
     for line in message:
+        logger.info("here")
         cleanString = "".join([character for character in unicodedata.normalize("NFD",line) if unicodedata.category(character) not in zalgoCategory])
         logger.info(f"{cleanString=}")
         return cleanString

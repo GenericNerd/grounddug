@@ -24,7 +24,7 @@ class Events(commands.Cog):
     # on_ready performs checks and sends logs to GD Discord
     @commands.Cog.listener()
     async def on_ready(self):
-        logger.info("Online")
+        logger.success("Online")
         prefix = await misc.getPrefix(self.bot,None)
         # Change bot status to online when bot is ready
         await self.bot.change_presence(status=discord.Status.online,activity=discord.Game(f"{prefix}help to get started"))

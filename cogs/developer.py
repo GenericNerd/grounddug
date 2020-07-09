@@ -67,6 +67,7 @@ class Developer(commands.Cog):
             guildObject = await db.find("guilds",{"id": guild.id})
             # Update database here
             guildObject["isPremium"] = False
+            guildObject["automod"]["zalgo"] = 0
             # try:
             #     del guildObject["logs"]["misc"]
             # except:

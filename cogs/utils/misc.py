@@ -3,8 +3,11 @@
 import asyncio
 import cogs.utils.db as db
 import os
+import unicodedata
+import numpy
 
 environment = os.getenv("GD_ENV", "beta")
+zalgoCategory = ["Mn", "Me"]
 
 async def getPrefix(bot,message):
     # Return gb! prefix if files are in beta environment
@@ -20,3 +23,16 @@ async def getPrefix(bot,message):
     else:
         guild = await db.find("guilds",{"id": message.guild.id})
         return guild["prefix"]
+
+async def zalgoDetect(message):
+    words = []
+    for word in message.split():
+        char = [unicodedata.category(c) for c in word]
+        score = sum([char.count(zalgo) for zalgo in zalgoCategory]) / len(word)
+        words.append(score)
+    finalScore = numpy.percentile(words, 75)
+    return finalScore
+
+async def zalgoClean(message):
+    for line in message:
+        return "".join([character for character in unicodedata.normalize("NFD",line) if unicodedata.category(character) not in zalgoCategory])

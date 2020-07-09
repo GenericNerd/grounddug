@@ -7,6 +7,8 @@ import cogs.utils.embed as embed
 import cogs.utils.db as db
 import cogs.utils.cases as cases
 import cogs.utils.checks as checks
+from cogs.utils.misc import zalgoDetect
+from cogs.utils.misc import zalgoClean
 
 import re
 import aiohttp
@@ -85,7 +87,11 @@ class AutoModListener(commands.Cog):
                     # If mass mentions are not disabled, and more than mass mentions were mentioned, invoke RuleViolator
                     elif guild["automod"]["massMentions"] > 0 and len(ctx.raw_mentions) >= guild["automod"]["massMentions"]:
                         await attemptSend(logChannel,await RuleViolator(ctx,"pinged too many people",True))
-
+                    # If Zalgo text detection is not disabled, and Zalgo is detected above the specified amount, invoke RuleViolator
+                    elif guild["automod"]["zalgo"]>0 and zalgoDetect(ctx.content)>guild["automod"]["zalgo"]:
+                        cleanMessage = await zalgoClean(ctx.content)
+                        await ctx.send(embed=await embed.generate(f"{ctx.author.name} posted Zalgo!",f"Here is what they actually meant to say:\n\n`{cleanMessage}`"))
+                        await attemptSend(logChannel,await RuleViolator(ctx,"used Zalgo text",False))
 
 class AutoModSetup(commands.Cog):
     def __init__(self, bot):
@@ -134,11 +140,12 @@ class AutoModSetup(commands.Cog):
                 "automod": {
                     "caps": 0,
                     "massMentions": 0,
+                    "zalgo": 0,
                     "antiInvite": False,
                     "antiURL": False,
                     "profanity": False,
                     "shortURL": False,
-                    "warnOnRemove": False
+                    "warnOnRemove": False,
                 }
             }
 
@@ -357,6 +364,11 @@ class AutoModSetup(commands.Cog):
                 e = await embed.add_field(e, "Mass-Mention Protection", cross)
             else:
                 e = await embed.add_field(e, "Mass-Mention Protection", f"{tick} - Activated at {guildSettings['automod']['massMentions']} mentions.")
+
+            if guildSettings["automod"]["zalgo"] == 0:
+                e = await embed.add_field(e, "Zalgo Text Detection", cross)
+            else:
+                e = await embed.add_field(e, "Zalgo Text Detection", f"{tick} - Activated at {guildSettings['automod']['massMentions']}% suspicion")
 
             e = await embed.add_field(e, "Anti-Invite", emoteReturn(guildSettings["automod"]["antiInvite"]))
             e = await embed.add_field(e, "Anti-URL", emoteReturn(guildSettings["automod"]["antiURL"]))

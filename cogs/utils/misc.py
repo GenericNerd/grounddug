@@ -25,7 +25,7 @@ async def getPrefix(bot,message):
         guild = await db.find("guilds",{"id": message.guild.id})
         return guild["prefix"]
 
-async def zalgoDetect(message):
+def zalgoDetect(message):
     words = []
     for word in message.split():
         char = [unicodedata.category(c) for c in word]
@@ -35,6 +35,6 @@ async def zalgoDetect(message):
     logger.info(f"{finalScore=}")
     return finalScore
 
-async def zalgoClean(message):
+def zalgoClean(message):
     for line in message:
         return "".join([character for character in unicodedata.normalize("NFD",line) if unicodedata.category(character) not in zalgoCategory])

@@ -37,6 +37,7 @@ class AutoModListener(commands.Cog):
                 guild = await db.find("guilds",{"id": ctx.guild.id})
                 logChannel = self.bot.get_channel(guild["channel"])
                 removed = False
+                await ctx.send(guild["automod"]["zalgo"] > 0 and (zalgoDetect(ctx.content)*100)>guild["automod"]["zalgo"])
                 async def RuleViolator(msg,text,delete):
                     if delete:
                         # Delete the message and set removed to True

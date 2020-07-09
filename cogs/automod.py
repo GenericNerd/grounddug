@@ -90,7 +90,9 @@ class AutoModListener(commands.Cog):
                         await attemptSend(logChannel,await RuleViolator(ctx,"pinged too many people",True))
                     # If Zalgo text detection is not disabled, and Zalgo is detected above the specified amount, invoke RuleViolator4
                     elif guild["automod"]["zalgo"] > 0 and (zalgoDetect(ctx.content)*100)>guild["automod"]["zalgo"]:
+                        await ctx.send("here")
                         cleanString = zalgoClean(ctx.content)
+                        await ctx.send("here2")
                         await ctx.send(embed=(await embed.generate(f"{ctx.author.name} used Zalgo text!",f"Here is what they actually meant to say:\n\n{cleanString}")))
                         await attemptSend(logChannel,await RuleViolator(ctx,"used Zalgo text",False))
 

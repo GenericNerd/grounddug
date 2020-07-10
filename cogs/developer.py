@@ -68,10 +68,10 @@ class Developer(commands.Cog):
             # Update database here
             guildObject["isPremium"] = False
             guildObject["automod"]["zalgo"] = 0
-            # try:
-            #     del guildObject["logs"]["misc"]
-            # except:
-            #     pass
+            try:
+                del guildObject["logs"]["misc"]
+            except:
+                pass
             # for user in guild.members:
             #     userObject = await db.find("users",{"guild": guild.id, "user": user.id})
             #     if userObject is None:

@@ -44,7 +44,6 @@ class Events(commands.Cog):
             "prefix": "g!",
             "channel": 0,
             "logs": {
-                "misc": False,
                 "logs": False,
                 "mod": False,
                 "perms": False,
@@ -55,10 +54,11 @@ class Events(commands.Cog):
             "cases": 0,
             "automod": {
                 "caps": 0,
+                "zalgo": 0,
+                "massMentions": 0,
                 "antiInvite": False,
                 "antiURL": False,
                 "profanity": False,
-                "massMentions": 0,
                 "shortURL": False,
                 "warnOnRemove": False,
             },
@@ -135,12 +135,6 @@ class Events(commands.Cog):
         currentUsers = await db.find("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
         currentUsers["userCount"] = int(currentUsers["userCount"])-1
         await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers["userCount"]})
-
-    @commands.Cog.listener()
-    async def on_command(self,ctx):
-        # Misc command logging here, if we chose to keep it
-        if ctx.guild is not None:
-            pass
 
     @commands.Cog.listener()
     async def on_command_error(self,ctx,error):

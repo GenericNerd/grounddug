@@ -59,6 +59,6 @@ async def sendLog(self,ctx,module):
         # Get the current log channel and send a message
         channel = self.bot.get_channel(guild["channel"])
         try:
-            await ctx.send(embed=(await embed.generate(f"{ctx.author.name} - #{ctx.channel.name}",f"Ran command {ctx.message.content}\n*UTC Timestamp:* {datetime.utcnow().strftime('%A %d %b %Y - %H:%M:%S')}",0xff8400)))
+            await channel.send(embed=(await embed.generate(f"{ctx.author.name} - #{ctx.channel.name}",f"Ran command {ctx.message.content}\n*UTC Timestamp:* {datetime.utcnow().strftime('%A %d %b %Y - %H:%M:%S')}",0xff8400)))
         except:
             pass

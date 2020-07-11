@@ -7,7 +7,6 @@ import cogs.utils.embed as embed
 import os
 import unicodedata
 import numpy
-from datetime import datetime
 
 environment = os.getenv("GD_ENV", "beta")
 zalgoCategory = ["Mn", "Me"]
@@ -59,6 +58,6 @@ async def sendLog(self,ctx,module):
         # Get the current log channel and send a message
         channel = self.bot.get_channel(guild["channel"])
         try:
-            await channel.send(embed=(await embed.generate(f"{ctx.author.name} - #{ctx.channel.name}",f"Ran command {ctx.message.content}\n*UTC Timestamp:* {datetime.utcnow().strftime('%A %d %b %Y - %H:%M:%S')}",0xff8400)))
+            await channel.send(embed=(await embed.generate(f"{ctx.author.name} - #{ctx.channel.name}",f"Ran command `{ctx.message.content}`",0xff8400)))
         except:
             pass

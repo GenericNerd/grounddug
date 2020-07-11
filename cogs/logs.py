@@ -50,15 +50,7 @@ class Logs(commands.Cog):
         if ctx.invoked_subcommand is None:
             await ctx.invoke(self.bot.get_command("help"),"logs")
         else:
-            # Check whether logging for perms is enabled
-            guild = await db.find("guilds",{"id": ctx.guild.id})
-            if guild["logs"]["logs"]:
-                # Get the logging channel for the guild
-                channel = self.bot.get_channel(guild["channel"])
-                try:
-                    await channel.send(embed=(await embed.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in #{ctx.channel.name}")))
-                except:
-                    pass
+            await misc.sendLog(self,ctx,"logs")
 
     @logs.command(name="enable",description="[module] | Enables logging of a specific module in the guild")
     @commands.guild_only()

@@ -3,9 +3,11 @@
 import asyncio
 import cogs.utils.db as db
 import cogs.utils.logger as logger
+import cogs.utils.embed as embed
 import os
 import unicodedata
 import numpy
+from datetime import datetime
 
 environment = os.getenv("GD_ENV", "beta")
 zalgoCategory = ["Mn", "Me"]
@@ -48,3 +50,15 @@ async def zalgoClean(message:str):
         if unicodedata.category(char) not in zalgoCategory:
             cleanString += char
     return cleanString
+
+async def sendLog(self,ctx,module):
+    """Sending a command invoke log to the channel
+    (use sendModLog for moderation commands)"""
+    guild = await db.find("guilds",{"id": ctx.guild.id})
+    if guild["logs"][module]:
+        # Get the current log channel and send a message
+        channel = self.bot.get_channel(guild["channel"])
+        try:
+            await ctx.send(embed=(await embed.generate(f"{ctx.author.name} - #{ctx.channel.name}",f"Ran command {ctx.message.content}\n*UTC Timestamp:* {datetime.utcnow().strftime('%A %d %b %Y - %H:%M:%S')}",0xff8400)))
+        except:
+            pass

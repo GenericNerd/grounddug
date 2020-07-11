@@ -378,7 +378,6 @@ class AutoModSetup(commands.Cog):
 
             await msg.edit(embed=e)
 
-
 def setup(bot):
     bot.add_cog(AutoModListener(bot))
     bot.add_cog(AutoModSetup(bot))

@@ -14,15 +14,15 @@ nsyncDB = nsyncDBClient["grounddug"]
 # asyncDB = asyncDBClient
 # nsyncDB = nsyncDBClient
 
-async def find(database,filter):
+async def find(database,fltr):
     documents = []
     async for document in asyncDB[database].find({}):
         documents.append(document)
     print(documents)
-    return await asyncDB[database].find_one(filter)
+    return await asyncDB[database].find_one(fltr)
 
-async def findAll(database,filter):
-    return asyncDB[database].find(filter)
+async def findAll(database,fltr):
+    return asyncDB[database].find(fltr)
 
 async def insert(database,data):
     await asyncDB[database].insert_one(data)
@@ -43,19 +43,19 @@ async def getVoteUser(user):
         await insert("voteUsers", voteUserData)
         return voteUserData
 
-async def remove(database,filter):
-    await asyncDB[database].delete_one(filter)
+async def remove(database,fltr):
+    await asyncDB[database].delete_one(fltr)
 
-async def removeMany(database,filter):
-    await asyncDB[database].delete_many(filter)
+async def removeMany(database,fltr):
+    await asyncDB[database].delete_many(fltr)
 
-async def update(database,filter,update):
-    await asyncDB[database].update_one(filter,{"$set": update})
+async def update(database,fltr,update):
+    await asyncDB[database].update_one(fltr,{"$set": update})
 
-def nsyncFind(database,filter):
-    print(nsyncDB[database].find_one(filter))
+def nsyncFind(database,fltr):
+    print(nsyncDB[database].find_one(fltr))
     print(nsyncDB.guilds.find_one({"id": 526427196072525836}))
-    return nsyncDB[database].find_one(filter)
+    return nsyncDB[database].find_one(fltr)
 
-def nsyncFindAll(database,filter):
-    return nsyncDB[database].find(filter)
+def nsyncFindAll(database,fltr):
+    return nsyncDB[database].find(fltr)

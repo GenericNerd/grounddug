@@ -28,7 +28,7 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.aiohttp import AioHttpIntegration
 from sentry_sdk.integrations.sanic import SanicIntegration
 sentry_sdk.init(
-    "https://1503256c40d04d97a7752aff4305d469@sentry.io/5181048",
+    "https://23777185a8e64fa3a7084b05ee68b2bd@sentry.grounddug.xyz/3",
     release=botSettings["version"],
     integrations=[FlaskIntegration(),
                   AioHttpIntegration(),
@@ -68,8 +68,7 @@ async def on_error(event,*args,**kwargs):
         capture_exception(event)
     else:
         capture_message(f"{event}: {args} passed, {kwargs} passed")
-
-    await bot.get_channel(664541295448031295).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
+    await bot.get_channel(664541295448031295).send(embed=(await embed.generate("Error raised! Sentry issue created",None,0xff0000)))
 
 loop = asyncio.get_event_loop()
 

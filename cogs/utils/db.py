@@ -8,8 +8,8 @@ connectionString = "mongodb://root:GQAbun9Tb44kTC1T3XYM8VI3v1DpCwEnQU0GntIdMbMID
 # connectionString = "mongodb+srv://GroundDug:qLuVr1KFT8rr29sU@grounddug-z0fef.mongodb.net/test?retryWrites=true&w=majority"
 asyncDBClient = motor_asyncio.AsyncIOMotorClient(connectionString, io_loop=asyncio.get_event_loop())
 nsyncDBClient = pymongo.MongoClient(connectionString)
-asyncDB = asyncDBClient.grounddug
-nsyncDB = nsyncDBClient.grounddug
+asyncDB = asyncDBClient["grounddug"]
+nsyncDB = nsyncDBClient["grounddug"]
 # asyncDB = asyncDBClient
 # nsyncDB = nsyncDBClient
 

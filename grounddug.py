@@ -28,7 +28,7 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.aiohttp import AioHttpIntegration
 from sentry_sdk.integrations.sanic import SanicIntegration
 sentry_sdk.init(
-    "https://1503256c40d04d97a7752aff4305d469@sentry.io/5181048",
+    "https://48ad034576804806b7f01487f5f30631@sentry.grounddug.xyz/2",
     release=botSettings["version"],
     integrations=[FlaskIntegration(),
                   AioHttpIntegration(),

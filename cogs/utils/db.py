@@ -2,6 +2,7 @@
 
 import asyncio
 import pymongo
+from bson.int64 import Int64
 from motor import motor_asyncio
 
 connectionString = "mongodb://root:GQAbun9Tb44kTC1T3XYM8VI3v1DpCwEnQU0GntIdMbMID5V6hI0MAcHKzFZF0f79@195.201.6.72:27017/?authSource=admin&retryWrites=true&w=majority"
@@ -53,7 +54,7 @@ async def update(database,filter,update):
 
 def nsyncFind(database,filter):
     print(nsyncDB[database].find_one(filter))
-    print(nsyncDB["guilds"].find_one({"id": 526427196072525836}))
+    print(nsyncDB["guilds"].find_one({"id": Int64(526427196072525836)}))
     return nsyncDB[database].find_one(filter)
 
 def nsyncFindAll(database,filter):

@@ -54,7 +54,7 @@ async def update(database,filter,update):
 
 def nsyncFind(database,filter):
     print(nsyncDB[database].find_one(filter))
-    print(nsyncDB["guilds"].find_one({"id": Int64(526427196072525836)}))
+    print(nsyncDB.guilds.find_one({"id": 526427196072525836}))
     return nsyncDB[database].find_one(filter)
 
 def nsyncFindAll(database,filter):

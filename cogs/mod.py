@@ -7,6 +7,7 @@ import cogs.utils.checks as checks
 import cogs.utils.embed as embed
 import cogs.utils.db as db
 import cogs.utils.cases as cases
+import cogs.utils.logger as logger
 
 async def log(ctx,bot):
     guild = await db.find("guilds",{"id": ctx.guild.id})
@@ -146,7 +147,7 @@ class Mod(commands.Cog):
         messages = []
         async for message in ctx.channel.history(limit=amount):#
             messages.append(message.content)
-        await ctx.send(messages)
+        logger.info(messages)
         def member_check(ctx):
             return not ctx.author.bot
         def bot_check(ctx):

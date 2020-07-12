@@ -15,10 +15,9 @@ nsyncDB = nsyncDBClient["grounddug"]
 
 async def find(database,filter):
     documents = []
-    for document in nsyncDB[database].find({}):
+    async for document in asyncDB[database].find({}):
         documents.append(document)
     print(documents)
-    print(await asyncDB[database].find_one(filter))
     return await asyncDB[database].find_one(filter)
 
 async def findAll(database,filter):

@@ -3,12 +3,14 @@
 import asyncio
 import pymongo
 from motor import motor_asyncio
+from cogs.utils.logger import logger
 
 connectionString = "mongodb://grounddug:eXJeX5e4yDPiocwg6mvw5kNDfBB0Bp7k@195.201.6.72:27017/grounddug?connectTimeoutMS=10000&authSource=grounddug&authMechanism=SCRAM-SHA-1"
 asyncDBClient = motor_asyncio.AsyncIOMotorClient(connectionString, io_loop=asyncio.get_event_loop())
 nsyncDBClient = pymongo.MongoClient(connectionString)
 # asyncDB = asyncDBClient.grounddug
 # nsyncDB = nsyncDBClient.grounddug
+logger.info(dir(asyncDBClient))
 asyncDB = asyncDBClient
 nsyncDB = nsyncDBClient
 

@@ -8,6 +8,18 @@ import cogs.utils.embed as embed
 import cogs.utils.db as db
 import cogs.utils.misc as misc
 
+async def sendLog(self,ctx,module):
+    guild = await db.find("guilds",{"id": ctx.guild.id})
+    if guild["logs"][module]:
+        # Get the current log channel and send a message
+        channel = self.bot.get_channel(guild["channel"])
+        try:
+            await channel.send(embed=(await embed.generate(f"{ctx.author.name} - #{ctx.channel.name}",f"Ran command `{ctx.message.content}`",0x002fff)))
+        except:
+            pass
+
+# async def sendHumanLog(self,ctx,)
+
 async def logModuleChange(self,ctx,changeTo,module=None):
     # Check whether log module is to enable or disable
     if changeTo is True:
@@ -50,7 +62,7 @@ class Logs(commands.Cog):
         if ctx.invoked_subcommand is None:
             await ctx.invoke(self.bot.get_command("help"),"logs")
         else:
-            await misc.sendLog(self,ctx,"logs")
+            await sendLog(self,ctx,"logs")
 
     @logs.command(name="enable",description="[module] | Enables logging of a specific module in the guild")
     @commands.guild_only()

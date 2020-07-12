@@ -6,7 +6,7 @@ import asyncio
 import cogs.utils.checks as checks
 import cogs.utils.embed as embed
 import cogs.utils.db as db
-from cogs.utils.misc import sendLog
+from cogs.logs import sendLog
 
 class Admin(commands.Cog):
     def __init__(self,bot):

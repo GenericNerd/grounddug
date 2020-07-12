@@ -7,7 +7,7 @@ import cogs.utils.checks as checks
 import cogs.utils.misc as misc
 import cogs.utils.embed as embed
 import cogs.utils.db as db
-from cogs.utils.misc import sendLog
+from cogs.logs import sendLog
 
 async def changePermission(bot,ctx,user,permChangeTo,permission=None):
     # Get the current user permissions

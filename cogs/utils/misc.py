@@ -50,14 +50,15 @@ async def zalgoClean(message:str):
             cleanString += char
     return cleanString
 
-async def sendLog(self,ctx,module):
-    """Sending a command invoke log to the channel
-    (use sendModLog for moderation commands)"""
+async def sendModLog(self,ctx,action,member=None):
+    #0xff8400 - human
     guild = await db.find("guilds",{"id": ctx.guild.id})
-    if guild["logs"][module]:
-        # Get the current log channel and send a message
+    if guild["logs"]["mod"]:
         channel = self.bot.get_channel(guild["channel"])
         try:
-            await channel.send(embed=(await embed.generate(f"{ctx.author.name} - #{ctx.channel.name}",f"Ran command `{ctx.message.content}`",0xff8400)))
-        except:
-            pass
+            await channel.send(embed=(await embed.generate(f"{ctx.author.name} {action}",f"{action} ")))
+    pass
+
+async def sendAutoModLog(self,guild,content,member=None):
+    #0xe64100 - auto
+    pass

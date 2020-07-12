@@ -136,34 +136,34 @@ class Events(commands.Cog):
         currentUsers["userCount"] = int(currentUsers["userCount"])-1
         await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers["userCount"]})
 
-    @commands.Cog.listener()
-    async def on_command_error(self,ctx,error):
-        prefix = await misc.getPrefix(self.bot,ctx)
-        # Is the error a required argument?
-        if isinstance(error,commands.MissingRequiredArgument):
-            await embed.error(ctx,f"{error} - Use {prefix}help to find the required arguments")
-        # Is the action the bot is trying forbidden?
-        elif isinstance(error,discord.Forbidden):
-            pass
-        # Is the error that the command doesn't exist?
-        elif isinstance(error,commands.CommandNotFound):
-            pass
-        # Is the user missing the GD permission?
-        elif isinstance(error,checks.MissingGDPermissionError):
-            await embed.error(ctx,"You do not have the required GD permission to run this command")
-        # Is the user missing the required level?
-        elif isinstance(error,checks.LevelPermissionsError):
-            await embed.error(ctx,"You do not have the required level to run this command")
-        # Is there a bad argument that was called?
-        elif isinstance(error,commands.BadArgument):
-            await embed.error(ctx,"Bad argument! Make sure you are calling something valid!")
-        # Is the command not able to be ran in private messages?
-        elif isinstance(error,commands.NoPrivateMessage):
-            await embed.error(ctx,"This command cannot be ran in private messages.")
-        else:
-            await embed.error(ctx,f"{error} - Report sent to developer")
-            await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
-            capture_exception(error)
+    # @commands.Cog.listener()
+    # async def on_command_error(self,ctx,error):
+    #     prefix = await misc.getPrefix(self.bot,ctx)
+    #     # Is the error a required argument?
+    #     if isinstance(error,commands.MissingRequiredArgument):
+    #         await embed.error(ctx,f"{error} - Use {prefix}help to find the required arguments")
+    #     # Is the action the bot is trying forbidden?
+    #     elif isinstance(error,discord.Forbidden):
+    #         pass
+    #     # Is the error that the command doesn't exist?
+    #     elif isinstance(error,commands.CommandNotFound):
+    #         pass
+    #     # Is the user missing the GD permission?
+    #     elif isinstance(error,checks.MissingGDPermissionError):
+    #         await embed.error(ctx,"You do not have the required GD permission to run this command")
+    #     # Is the user missing the required level?
+    #     elif isinstance(error,checks.LevelPermissionsError):
+    #         await embed.error(ctx,"You do not have the required level to run this command")
+    #     # Is there a bad argument that was called?
+    #     elif isinstance(error,commands.BadArgument):
+    #         await embed.error(ctx,"Bad argument! Make sure you are calling something valid!")
+    #     # Is the command not able to be ran in private messages?
+    #     elif isinstance(error,commands.NoPrivateMessage):
+    #         await embed.error(ctx,"This command cannot be ran in private messages.")
+    #     else:
+    #         await embed.error(ctx,f"{error} - Report sent to developer")
+    #         await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
+    #         capture_exception(error)
 
     @commands.Cog.listener()
     async def on_member_update(self,before,after):

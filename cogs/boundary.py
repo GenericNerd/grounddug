@@ -100,7 +100,7 @@ class Boundary(commands.Cog):
             try:
                 guild = self.bot.get_guild(document["guild"])
                 user = guild.get_member(document["user"])
-            else:
+            except:
                 return await db.remove("boundary",{"_id": document["_id"]})
             guildDB = await db.find("guilds",{"id": document["guild"]})
             # If the role is not set, but the logs channel is set, send a message alerting mods/admins that Boundary role is not set

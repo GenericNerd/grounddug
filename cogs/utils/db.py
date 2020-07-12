@@ -4,7 +4,7 @@ import asyncio
 import pymongo
 from motor import motor_asyncio
 
-connectionString = "mongodb://root:GQAbun9Tb44kTC1T3XYM8VI3v1DpCwEnQU0GntIdMbMID5V6hI0MAcHKzFZF0f79@195.201.6.72:27017/?authSource=grounddug&retryWrites=true&w=majority"
+connectionString = "mongodb://root:GQAbun9Tb44kTC1T3XYM8VI3v1DpCwEnQU0GntIdMbMID5V6hI0MAcHKzFZF0f79@195.201.6.72:27017/?authSource=admin&retryWrites=true&w=majority"
 # connectionString = "mongodb+srv://GroundDug:qLuVr1KFT8rr29sU@grounddug-z0fef.mongodb.net/test?retryWrites=true&w=majority"
 asyncDBClient = motor_asyncio.AsyncIOMotorClient(connectionString, io_loop=asyncio.get_event_loop())
 nsyncDBClient = pymongo.MongoClient(connectionString)

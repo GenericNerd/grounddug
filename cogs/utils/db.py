@@ -14,6 +14,7 @@ nsyncDB = nsyncDBClient.grounddug
 # nsyncDB = nsyncDBClient
 
 async def find(database,filter):
+    print(asyncDB[database].find_one(filter))
     return await asyncDB[database].find_one(filter)
 
 async def findAll(database,filter):
@@ -48,7 +49,6 @@ async def update(database,filter,update):
     await asyncDB[database].update_one(filter,{"$set": update})
 
 def nsyncFind(database,filter):
-    print(nsyncDB[database].find_one(filter))
     return nsyncDB[database].find_one(filter)
 
 def nsyncFindAll(database,filter):

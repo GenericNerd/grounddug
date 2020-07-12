@@ -145,7 +145,8 @@ class Mod(commands.Cog):
     async def purge(self,ctx,check="",amount=100):
         # Create checks for purge invoke later on
         messages = []
-        async for message in ctx.channel.history(limit=amount):#
+        async for message in ctx.channel.history(limit=amount):
+            logger.info(message.content)
             messages.append(message.content)
         logger.info(messages)
         def member_check(ctx):

@@ -4,13 +4,14 @@ import asyncio
 import pymongo
 from motor import motor_asyncio
 
-# connectionString = "mongodb://grounddug:eXJeX5e4yDPiocwg6mvw5kNDfBB0Bp7k@195.201.6.72:27017/grounddug?connectTimeoutMS=10000&authSource=grounddug&authMechanism=SCRAM-SHA-1"
-connectionString = "mongodb+srv://GroundDug:qLuVr1KFT8rr29sU@grounddug-z0fef.mongodb.net/test?retryWrites=true&w=majority"
+connectionString = "mongodb://grounddug:eXJeX5e4yDPiocwg6mvw5kNDfBB0Bp7k@195.201.6.72:27017/grounddug?authSource=grounddug&retryWrites=true&w=majority"
+# connectionString = "mongodb+srv://GroundDug:qLuVr1KFT8rr29sU@grounddug-z0fef.mongodb.net/test?retryWrites=true&w=majority"
 asyncDBClient = motor_asyncio.AsyncIOMotorClient(connectionString, io_loop=asyncio.get_event_loop())
 nsyncDBClient = pymongo.MongoClient(connectionString)
-asyncDB = asyncDBClient.grounddug
-nsyncDB = nsyncDBClient.grounddug
-print(dir(asyncDB))
+# asyncDB = asyncDBClient.grounddug
+# nsyncDB = nsyncDBClient.grounddug
+asyncDB = asyncDBClient
+nsyncDB = nsyncDBClient
 
 async def find(database,filter):
     return await asyncDB[database].find_one(filter)

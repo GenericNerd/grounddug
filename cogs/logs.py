@@ -86,7 +86,7 @@ class Logs(commands.Cog):
         # tell the user how to change the logs channel
         if channel is None:
             prefix = await misc.getPrefix(self.bot,ctx)
-            if guild["channel"] is 0:
+            if guild["channel"] == 0:
                 await ctx.send(embed=(await embed.generate("Logging channel",f"No current logging channel, set one by using `{prefix}logs setchannel <channel>`")))
             else:
                 await ctx.send(embed=(await embed.generate("Logging channel",f"<#{guild['channel']}> is the current logging channel")))

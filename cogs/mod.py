@@ -150,8 +150,7 @@ class Mod(commands.Cog):
             return ctx.author.bot
         # Check what check is called, the purge based on that check
         messages = await ctx.channel.history(limit=5).flatten()
-        logger.info(messages)
-        await ctx.send(messages)
+        print(messages)
         if check.lower() == "member":
             await ctx.channel.purge(limit=amount,check=member_check)
         elif check.lower() == "bot":

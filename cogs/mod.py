@@ -144,14 +144,14 @@ class Mod(commands.Cog):
     @checks.hasGDPermission("MANAGE_MESSAGES")
     async def purge(self,ctx,check="",amount=100):
         # Create checks for purge invoke later on
-        messages = await ctx.channel.history(limit=5).flatten()
-        logger.info(messages)
-        await ctx.send(messages)
         def member_check(ctx):
             return not ctx.author.bot
         def bot_check(ctx):
             return ctx.author.bot
         # Check what check is called, the purge based on that check
+        messages = await ctx.channel.history(limit=5).flatten()
+        logger.info(messages)
+        await ctx.send(messages)
         if check.lower() == "member":
             await ctx.channel.purge(limit=amount,check=member_check)
         elif check.lower() == "bot":

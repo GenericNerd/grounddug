@@ -150,7 +150,6 @@ class Mod(commands.Cog):
             return ctx.author.bot
         # Check what check is called, the purge based on that check
         messages = await ctx.channel.history(limit=5).flatten()
-        print(messages)
         if check.lower() == "member":
             await ctx.channel.purge(limit=amount,check=member_check)
         elif check.lower() == "bot":
@@ -159,6 +158,7 @@ class Mod(commands.Cog):
             await ctx.channel.purge(limit=amount)
         else:
             await embed.error(ctx,"Invalid purge check, view command usage")
+        await ctx.send(messages)
 
     @mod.command(name="strike",description="<user> [reason] | Warn a user for their behaviour")
     @commands.guild_only()

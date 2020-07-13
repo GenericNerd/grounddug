@@ -57,7 +57,6 @@ async def sendModLog(self,ctx,action,member=None):
         channel = self.bot.get_channel(guild["channel"])
         try:
             await channel.send(embed=(await embed.generate(f"{ctx.author.name} {action}",f"{action} ")))
-    pass
 
 async def sendAutoModLog(self,guild,content,member=None):
     #0xe64100 - auto

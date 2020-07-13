@@ -163,7 +163,8 @@ class Mod(commands.Cog):
             await ctx.channel.purge(limit=amount)
         else:
             await embed.error(ctx,"Invalid purge check, view command usage")
-        await ctx.send(file="test.txt")
+        await asyncio.sleep(2)
+        await ctx.send("Here:",file="test.txt")
         os.remove("test.txt")
 
     @mod.command(name="strike",description="<user> [reason] | Warn a user for their behaviour")

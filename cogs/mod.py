@@ -8,6 +8,7 @@ import cogs.utils.embed as embed
 import cogs.utils.db as db
 import cogs.utils.cases as cases
 import cogs.utils.logger as logger
+import os
 
 async def log(ctx,bot):
     guild = await db.find("guilds",{"id": ctx.guild.id})
@@ -150,6 +151,10 @@ class Mod(commands.Cog):
             return ctx.author.bot
         # Check what check is called, the purge based on that check
         messages = await ctx.channel.history(limit=5).flatten()
+        for message in messages:
+            with open("test.txt","a",encoding="UTF-8") as f:
+                f.write(message.content)
+                f.close()
         if check.lower() == "member":
             await ctx.channel.purge(limit=amount,check=member_check)
         elif check.lower() == "bot":
@@ -158,7 +163,8 @@ class Mod(commands.Cog):
             await ctx.channel.purge(limit=amount)
         else:
             await embed.error(ctx,"Invalid purge check, view command usage")
-        await ctx.send(messages)
+        await ctx.send(file="test.txt")
+        os.remove("test.txt")
 
     @mod.command(name="strike",description="<user> [reason] | Warn a user for their behaviour")
     @commands.guild_only()

@@ -88,5 +88,10 @@ class Developer(commands.Cog):
         await db.update("settings",{"_id": mainDB["_id"]}, mainDB)
         await ctx.send("Done")
 
+    @developer.command(name="test",hidden=True)
+    @checks.hasRequiredLevel(5)
+    async def test(self,ctx):
+        await ctx.send(ctx.channel.history(limit=1).flatten())
+
 def setup(bot):
     bot.add_cog(Developer(bot))

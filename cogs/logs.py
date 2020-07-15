@@ -103,16 +103,18 @@ class Logging(commands.Cog):
         guildDB = await db.find("guilds",{"id": before.guild.id})
         if "message" in guildDB["logging"]["events"]:
             msg = await embed.generate(f"{before.author.name} edited a message!",None,0xff9900)
-            msg = await embed.add_field(msg,"Channel",f"{before.channel.mention}\n[Jump to message]({before.message.jump_url})")
-            msg = await embed.add_field(msg,"Previous message",before.message.content)
-            msg = await embed.add_field(msg,"Message now",after.message.content)
+            msg = await embed.add_field(msg,"Channel",f"{before.channel.mention}\n[Jump to message]({before.jump_url})")
+            msg = await embed.add_field(msg,"Previous message",before.content)
+            msg = await embed.add_field(msg,"Message now",after.content)
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
     @commands.Cog.listener()
     async def on_message_delete(self,message):
+        if message.content == None:
+            return
         guildDB = await db.find("guilds",{"id": message.guild.id})
         if "message" in guildDB["logging"]["events"]:
-            msg = await embed.generate(f"{message.author.name} deleted a message",f"Message was deleted form {message.channel.mention}",0xf00000)
+            msg = await embed.generate(f"{message.author.name} deleted a message",f"Message was deleted from {message.channel.mention}",0xf00000)
             msg = await embed.add_field(msg,"Content",message.content)
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
@@ -121,9 +123,11 @@ class Logging(commands.Cog):
         guildDB = await db.find("guilds",{"id": before.guild.id})
         if before.roles != after.roles and "role" in guildDB["logging"]["events"]:
             if list(set(after.roles)-set(before.roles)) == []:
-                roleDif = list(set(after.roles)-set(before.roles)).append("added")
+                roleDif = list(set(after.roles)-set(before.roles))
+                roleDif.append("added")
             else:
-                roleDif = list(set(before.roles)-set(after.roles)).append("removed")
+                roleDif = list(set(before.roles)-set(after.roles))
+                roleDif.append("removed")
             msg = embed.generate(f"{before.name} was {roleDif[1]} a role!")
             msg = embed.add_field(msg,f"Role {roleDif[1]}",roleDif[0].mention)
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)

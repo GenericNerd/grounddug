@@ -98,6 +98,8 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_edit(self,before,after):
+        if before.content == after.content:
+            return
         guildDB = await db.find("guilds",{"id": before.guild.id})
         if "message" in guildDB["logging"]["events"]:
             embed = await embed.generate(f"{before.author.name} edited a message!",None,0xff9900)

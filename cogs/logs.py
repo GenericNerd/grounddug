@@ -86,13 +86,79 @@ class Logs(commands.Cog):
 class Logging(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
-    # {"logging": {"commands": ["perms", "boundary", "automod", "admin", "mod"], "events": ["message", "role", "channel", "user"]}}
+    # {"logging": {"commands": ["perms", "boundary", "automod", "admin", "mod"], "events": ["message", "role", "nicknames", "channel"]}}
+
     @commands.Cog.listener()
     async def on_command(self,ctx):
         guildDB = await db.find("guilds",{"id": ctx.guild.id})
-        print(str(ctx.command.parent) in guildDB["logging"]["commands"])
         if str(ctx.command.parent) in guildDB["logging"]["commands"]:
-            print("here")
+            # Pass context and send human log
+            pass
+
+    # Message specific events
+
+    @commands.Cog.listener()
+    async def on_message_edit(self,before,after):
+        guildDB = await db.find("guilds",{"id": before.guild.id})
+        if "message" in guildDB["logging"]["events"]:
+            # Pass before and after for message edit log
+            pass
+
+    @commands.Cog.listener()
+    async def on_message_delete(self,message):
+        guildDB = await db.find("guilds",{"id": message.guild.id})
+        if "message" in guildDB["logging"]["events"]:
+            # Pass message content for deleted message log
+            pass
+
+    @commands.Cog.listener()
+    async def on_member_update(self,before,after):
+        guildDB = await db.find("guilds",{"id": before.guild.id})
+        if before.author.roles != after.author.roles and "role" in guildDB["logging"]["events"]:
+            # Pass before and after roles
+            pass
+        elif before.author.display_name != after.author.display_name and "nicknames" in guildDB["logging"]["events"]:
+            # Pass before and after nicknames
+            pass
+
+    # Role specific events
+
+    @commands.Cog.listener()
+    async def on_guild_role_create(self,role):
+        guildDB = await db.find("guilds",{"id": role.guild.id})
+        if "role" in guildDB["logging"]["events"]:
+            # Pass the role
+            pass
+
+    @commands.Cog.listener()
+    async def on_guild_role_delete(self,role):
+        guildDB = await db.find("guilds",{"id": role.guild.id})
+        if "role" in guildDB["logging"]["events"]:
+            # Pass the role
+            pass
+
+    # Channel specific events
+
+    @commands.Cog.listener()
+    async def on_guild_channel_create(self,channel):
+        guildDB = await db.find("guilds",{"id": channel.guild.id})
+        if "channel" in guildDB["logging"]["events"]:
+            # Pass the channel
+            pass
+
+    @commands.Cog.listener()
+    async def on_guild_channel_delete(self,channel):
+        guildDB = await db.find("guilds",{"id": channel.guild.id})
+        if "channel" in guildDB["logging"]["events"]:
+            # Pass the channel
+            pass
+
+    @commands.Cog.listener()
+    async def on_guild_channel_update(self,before,after):
+        guildDB = await db.find("guilds",{"id": before.guild.id})
+        if "channel" in guildDB["logging"]["events"]:
+            # Pass the before and after channels
+            pass
 
 def setup(bot):
     bot.add_cog(Logs(bot))

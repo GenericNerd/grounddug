@@ -64,18 +64,6 @@ class Logs(commands.Cog):
         else:
             await sendLog(self,ctx,"logs")
 
-    @logs.command(name="enable",description="[module] | Enables logging of a specific module in the guild")
-    @commands.guild_only()
-    @checks.hasGDPermission("ADMINISTRATOR")
-    async def enable(self,ctx,module=None):
-        await logModuleChange(self,ctx,True,module)
-
-    @logs.command(name="disable",description="[module] | Disables logging of a specific module in the guild")
-    @commands.guild_only()
-    @checks.hasGDPermission("ADMINISTRATOR")
-    async def disable(self,ctx,module=None):
-        await logModuleChange(self,ctx,False,module)
-
     @logs.command(name="setchannel",description="[channel] | Set the channel to which all command logs will be sent to on the guild")
     @commands.guild_only()
     @checks.hasGDPermission("ADMINISTRATOR")
@@ -93,7 +81,18 @@ class Logs(commands.Cog):
         else:
             # Update the database and alert the user the change was successful
             await db.update("guilds",{"_id": guild["_id"]},{"channel": channel.id})
-            await ctx.send(embed=(await embed.generate("Logging channel changed",f"{channel.mention} is the new guild logging channel. All GD logs will be sent there")))
+            await ctx.send(embed=(await embed.generate("Logging channel changed",f"{channel.mention} is now the new guild logging channel.")))
+
+class Logging(commands.Cog):
+    def __init__(self,bot):
+        self.bot = bot
+    # {"logging": {"commands": ["perms", "boundary", "automod", "admin", "mod"], "events": ["message", "role", "channel", "user"]}}
+    @commands.Cog.listener()
+    async def on_command(self,ctx):
+        guildDB = await db.find("guilds",{"id": ctx.guild.id})
+        if ctx.command.parent in guildDB["logging"]["commands"]:
+            await ctx.send("lol")
 
 def setup(bot):
     bot.add_cog(Logs(bot))
+    bot.add_cog(Logging(bot))

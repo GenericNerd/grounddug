@@ -90,9 +90,8 @@ class Logging(commands.Cog):
     @commands.Cog.listener()
     async def on_command(self,ctx):
         guildDB = await db.find("guilds",{"id": ctx.guild.id})
-        print(guildDB["logging"]["commands"])
         if ctx.command.parent in guildDB["logging"]["commands"]:
-            await ctx.send("lol")
+            print("here")
 
 def setup(bot):
     bot.add_cog(Logs(bot))

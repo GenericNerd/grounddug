@@ -18,8 +18,6 @@ async def sendLog(self,ctx,module):
         except:
             pass
 
-# async def sendHumanLog(self,ctx,)
-
 async def logModuleChange(self,ctx,changeTo,module=None):
     # Check whether log module is to enable or disable
     if changeTo is True:
@@ -92,8 +90,9 @@ class Logging(commands.Cog):
     async def on_command(self,ctx):
         guildDB = await db.find("guilds",{"id": ctx.guild.id})
         if str(ctx.command.parent) in guildDB["logging"]["commands"]:
-            # Pass context and send human log
-            pass
+            if str(ctx.command.parent) == "mod":
+                return await self.bot.get_channel(guildDB["channel"]).send(f"🔨 - {ctx.author.name}: #{ctx.channel.name}",f"Ran moderator command `{ctx.message.content}`",0xff8400)
+            await self.bot.get_channel(guildDB["channel"]).send(embed=(await embed.generate(f"{ctx.author.name}: #{ctx.channel.name}",f"Ran command `{ctx.message.content}`")))
 
     # Message specific events
 
@@ -101,23 +100,32 @@ class Logging(commands.Cog):
     async def on_message_edit(self,before,after):
         guildDB = await db.find("guilds",{"id": before.guild.id})
         if "message" in guildDB["logging"]["events"]:
-            # Pass before and after for message edit log
-            pass
+            embed = await embed.generate(f"{before.author.name} edited a message!",None,0xff9900)
+            embed = await embed.add_field(embed,"Channel",f"{before.channel.mention}\n[Jump to message]({before.message.jump_url})")
+            embed = await embed.add_field(embed,"Previous message",before.message.content)
+            embed = await embed.add_field(embed,"Message now",after.message.content)
+            await self.bot.get_channel(guildDB["channel"]).send(embed=embed)
 
     @commands.Cog.listener()
     async def on_message_delete(self,message):
         guildDB = await db.find("guilds",{"id": message.guild.id})
         if "message" in guildDB["logging"]["events"]:
-            # Pass message content for deleted message log
-            pass
+            embed = await embed.generate(f"{message.author.name} deleted a message",f"Message was deleted form {message.channel.mention}",0xf00000)
+            embed = await embed.add_field(embed,"Content",message.content)
+            await self.bot.get_channel(guildDB["channel"]).send(embed=embed)
 
     @commands.Cog.listener()
     async def on_member_update(self,before,after):
         guildDB = await db.find("guilds",{"id": before.guild.id})
-        if before.author.roles != after.author.roles and "role" in guildDB["logging"]["events"]:
-            # Pass before and after roles
-            pass
-        elif before.author.display_name != after.author.display_name and "nicknames" in guildDB["logging"]["events"]:
+        if before.roles != after.roles and "role" in guildDB["logging"]["events"]:
+            if list(set(after.roles)-set(before.roles)) == []:
+                roleDif = list(set(after.roles)-set(before.roles)).append("added")
+            else:
+                roleDif = list(set(before.roles)-set(after.roles)).append("removed")
+            embed = embed.generate(f"{before.name} was {roleDif[1]} a role!")
+            embed = embed.add_field(embed,f"Role {roleDif[1]}",roleDif[0].mention)
+            await self.bot.get_channel(guildDB["channel"]).send(embed=embed)
+        elif before.display_name != after.display_name and "nicknames" in guildDB["logging"]["events"]:
             # Pass before and after nicknames
             pass
 

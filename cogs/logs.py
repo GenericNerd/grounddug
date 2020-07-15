@@ -90,6 +90,7 @@ class Logging(commands.Cog):
     @commands.Cog.listener()
     async def on_command(self,ctx):
         guildDB = await db.find("guilds",{"id": ctx.guild.id})
+        print(str(ctx.command.parent) in guildDB["logging"]["commands"])
         if str(ctx.command.parent) in guildDB["logging"]["commands"]:
             print("here")
 

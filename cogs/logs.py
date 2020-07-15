@@ -129,8 +129,8 @@ class Logging(commands.Cog):
             else:
                 roleDif = list(set(after.roles)-set(before.roles))
                 roleDif.append("removed")
-            msg = embed.generate(f"{before.name} was {roleDif[1]} a role!",None)
-            msg = embed.add_field(msg,f"Role {roleDif[1]}",roleDif[0].mention)
+            msg = await embed.generate(f"{before.name} was {roleDif[1]} a role!",None)
+            msg = await embed.add_field(msg,f"Role {roleDif[1]}",roleDif[0].mention)
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
         elif before.display_name != after.display_name and "nicknames" in guildDB["logging"]["events"]:
             # Pass before and after nicknames

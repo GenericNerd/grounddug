@@ -166,14 +166,9 @@ class Logging(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_role_update(self,before,after):
         guildDB = await db.find("guilds",{"id": before.guild.id})
+        print(f"{before=} {after=}")
         if "role" in guildDB["logging"]["events"]:
-            if list(set(after)-set(before)) == []:
-                roleDif = list(set(before)-set(after))
-                roleDif.append("removed")
-            else:
-                roleDif = list(set(after)-set(before))
-                roleDif.append("added")
-            print(f"{roleDif=}")
+            pass
 
     # Channel specific events
 

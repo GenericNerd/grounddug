@@ -177,7 +177,7 @@ class Logging(commands.Cog):
                     changes[permission[0]] = permission[1]
                 permsString = str()
                 for permission, key in changes.items():
-                    if key:
+                    if not key:
                         permsString += str(permission).replace('_',' ').title() + " - <:check:679095420202516480>\n"
                     else:
                         permsString += str(permission).replace('_',' ').title() + " - <:cross:679095420319694898>\n"

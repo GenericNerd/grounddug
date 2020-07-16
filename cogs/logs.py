@@ -145,7 +145,11 @@ class Logging(commands.Cog):
         guildDB = await db.find("guilds",{"id": role.guild.id})
         if "role" in guildDB["logging"]["events"]:
             msg = await embed.generate(f"Role {role.name} was created!",None,0x0b9e00)
-            msg = await embed.add_field(msg,"Role permissions",[permission for permission in role.permissions])
+            permissions = {}
+            for permission in role.permissions:
+                if permission[1]:
+                    permissions[permission[0]] = permission[1]
+            msg = await embed.add_field(msg,"Role permissions",[permission for permission, key in permissions])
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
     @commands.Cog.listener()

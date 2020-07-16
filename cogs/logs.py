@@ -152,6 +152,7 @@ class Logging(commands.Cog):
                     permissions[permission[0]] = permission[1]
             for permission, key in permissions.items():
                 permsString + " " + str(permission).replace('_',' ').title()
+            print(permissions,permsString)
             msg = await embed.add_field(msg, "Role permissions",permsString)
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 

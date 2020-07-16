@@ -173,18 +173,15 @@ class Logging(commands.Cog):
                 msg = await embed.add_field(msg,"Name before",before.name)
                 msg = await embed.add_field(msg,"Name now",after.name)
             if before.permissions != after.permissions:
-                removed = []
-                added = []
+                changes = {}
                 for permission in list(set(before.permissions)-set(after.permissions)):
-                    removed.append(permission[0])
-                for permission in list(set(after.permissions)-set(before.permissions)):
-                    added.append(permission[0])
+                    changes[permission[0]] = permission[1]
                 permsString = str()
-                for permission in removed:
-                    # 0x9e0000 if roleDif[1] == "removed" else 0x0b9e00
-                    permsString += str(permission).replace('_',' ').title() + " - <:cross:679095420319694898>\n"
-                for permission in added:
-                    permsString += str(permission).replace('_',' ').title() + " - <:check:679095420202516480>\n"
+                for permission in changes:
+                    if permission[1]:
+                        permsString += str(permission).replace('_',' ').title() + " - <:check:679095420202516480>\n"
+                    else:
+                        permsString += str(permission).replace('_',' ').title() + " - <:cross:679095420319694898>\n"
                 msg = await embed.add_field(msg,f"Permissions changed",permsString)
             if before.hoist != after.hoist or before.color != after.color:
                 msg = await embed.add_field(msg,"Special Attributes",f"**Hoisted**\nBefore: {'<:check:679095420202516480>' if before.hoist else '<:cross:679095420319694898>'}\nNow: {'<:check:679095420202516480>' if after.hoist else '<:cross:679095420319694898>'}\n\n**Color**\nBefore: {before.color}\nNow: {after.color}")

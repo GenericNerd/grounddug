@@ -166,7 +166,6 @@ class Logging(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_role_update(self,before,after):
         guildDB = await db.find("guilds",{"id": before.guild.id})
-        print(f"{before=} {after=}")
         if "role" in guildDB["logging"]["events"]:
             msg = await embed.generate(f"Role {before.name} was updated!",None,0xff9900)
             if before.name != after.name:

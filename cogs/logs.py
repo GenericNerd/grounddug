@@ -133,8 +133,10 @@ class Logging(commands.Cog):
             msg = await embed.add_field(msg,f"Role {roleDif[1]}",roleDif[0].mention)
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
         elif before.display_name != after.display_name and "nicknames" in guildDB["logging"]["events"]:
-            # Pass before and after nicknames
-            pass
+            msg = await embed.generate(f"{before.name} changed their name!",None,0x10009e)
+            msg = await embed.add_field(msg,"Name before",before.display_name)
+            msg = await embed.add_field(msg,"Name now",after.display_name)
+            await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
     # Role specific events
 
@@ -142,8 +144,9 @@ class Logging(commands.Cog):
     async def on_guild_role_create(self,role):
         guildDB = await db.find("guilds",{"id": role.guild.id})
         if "role" in guildDB["logging"]["events"]:
-            # Pass the role
-            pass
+            msg = await embed.generate(f"Role {role.name} was created!",None,0x0b9e00)
+            msg = await embed.add_field(msg,"Role permissions",[permission for permission in role.permissions])
+            await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
     @commands.Cog.listener()
     async def on_guild_role_delete(self,role):

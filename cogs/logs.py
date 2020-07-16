@@ -146,12 +146,12 @@ class Logging(commands.Cog):
         if "role" in guildDB["logging"]["events"]:
             msg = await embed.generate(f"Role {role.name} was created!",None,0x0b9e00)
             permissions = dict()
-            permsString = ""
+            permsString = str()
             for permission in role.permissions:
                 if permission[1]:
                     permissions[permission[0]] = permission[1]
             for permission, key in permissions.items():
-                permsString += " " + str(permission).replace('_',' ').title() + " - <:check:679095420202516480>\n"
+                permsString += str(permission).replace('_',' ').title() + " - <:check:679095420202516480>\n"
             permsString = permsString[:-1]
             msg = await embed.add_field(msg, "Role permissions",permsString)
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
@@ -168,7 +168,27 @@ class Logging(commands.Cog):
         guildDB = await db.find("guilds",{"id": before.guild.id})
         print(f"{before=} {after=}")
         if "role" in guildDB["logging"]["events"]:
-            pass
+            msg = await embed.generate(f"Role {before.name} was updated!",None,0xff9900)
+            if before.name != after.name:
+                msg = await embed.add_field(msg,"Name before",before.name)
+                msg = await embed.add_field(msg,"Name now",after.name)
+            if before.permissions != after.permissions:
+                removed = []
+                added = []
+                for permission in list(set(before.permissions)-set(after.permissions)):
+                    removed.append(permission[0])
+                for permission in list(set(after.permissions)-set(before.permissions)):
+                    added.append(permission[0])
+                permsString = str()
+                for permission in removed:
+                    # 0x9e0000 if roleDif[1] == "removed" else 0x0b9e00
+                    permsString += str(permission).replace('_',' ').title() + " - <:cross:679095420319694898>\n"
+                for permission in added:
+                    permsString += str(permission).replace('_',' ').title() + " - <:check:679095420202516480>\n"
+                msg = await embed.add_field(msg,f"Permissions changed",permsString)
+            if before.hoist != after.hoist or before.color != after.color:
+                msg = await embed.add_field(msg,"Special Attributes",f"**Hoisted**\nBefore: {'<:check:679095420202516480>' if before.hoist else '<:cross:679095420319694898>'}\nNow: {'<:check:679095420202516480>' if after.hoist else '<:cross:679095420319694898>'}\n\n**Color**\nBefore: {before.color}\nNow: {after.color}")
+            await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
     # Channel specific events
 

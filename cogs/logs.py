@@ -152,6 +152,7 @@ class Logging(commands.Cog):
                     permissions[permission[0]] = permission[1]
             for permission, key in permissions.items():
                 permsString += " " + str(permission).replace('_',' ').title() + ","
+            permsString = permsString[:-1]
             msg = await embed.add_field(msg, "Role permissions",permsString)
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
@@ -159,9 +160,20 @@ class Logging(commands.Cog):
     async def on_guild_role_delete(self,role):
         guildDB = await db.find("guilds",{"id": role.guild.id})
         if "role" in guildDB["logging"]["events"]:
-            # Pass the role
-            pass
+            msg = await embed.generate(f"Role {role.name} was deleted!",None,0x9e0000)
+            await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
+    @commands.Cog.listener()
+    async def on_guild_role_update(self,before,after):
+        guildDB = await db.find("guilds",{"id": before.guild.id})
+        if "role" in guildDB["logging"]["events"]:
+            if list(set(after.roles)-set(before.roles)) == []:
+                roleDif = list(set(before.roles)-set(after.roles))
+                roleDif.append("removed")
+            else:
+                roleDif = list(set(after.roles)-set(before.roles))
+                roleDif.append("added")
+            print(f"{roleDif=}")
     # Channel specific events
 
     @commands.Cog.listener()

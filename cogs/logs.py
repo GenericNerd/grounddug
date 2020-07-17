@@ -123,6 +123,8 @@ class Logging(commands.Cog):
     async def on_member_update(self,before,after):
         guildDB = await db.find("guilds",{"id": before.guild.id})
         if before.roles != after.roles and "role" in guildDB["logging"]["events"]:
+            async for entry in before.guild.audit_logs(limit=1,action=discord.AuditLogAction.member_role_update):
+                auditLogEntry = entry
             if list(set(after.roles)-set(before.roles)) == []:
                 roleDif = list(set(before.roles)-set(after.roles))
                 roleDif.append("removed")
@@ -131,11 +133,15 @@ class Logging(commands.Cog):
                 roleDif.append("added")
             msg = await embed.generate(f"{before.name} was {roleDif[1]} a role!",None,0x9e0000 if roleDif[1] == "removed" else 0x0b9e00)
             msg = await embed.add_field(msg,f"Role {roleDif[1]}",roleDif[0].mention)
+            msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator}",icon_url=auditLogEntry.user.avatar_url)
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
         elif before.display_name != after.display_name and "nicknames" in guildDB["logging"]["events"]:
+            async for entry in before.guild.audit_logs(limit=1):
+                auditLogEntry = entry
             msg = await embed.generate(f"{before.name} changed their name!",None,0x10009e)
             msg = await embed.add_field(msg,"Name before",before.display_name)
             msg = await embed.add_field(msg,"Name now",after.display_name)
+            msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator}",icon_url=auditLogEntry.user.avatar_url)
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
     # Role specific events
@@ -144,6 +150,8 @@ class Logging(commands.Cog):
     async def on_guild_role_create(self,role):
         guildDB = await db.find("guilds",{"id": role.guild.id})
         if "role" in guildDB["logging"]["events"]:
+            async for entry in role.guild.audit_logs(limit=1, action=discord.AuditLogAction.role_create):
+                auditLogEntry = entry
             msg = await embed.generate(f"Role {role.name} was created!",None,0x0b9e00)
             permissions = dict()
             permsString = str()
@@ -154,13 +162,17 @@ class Logging(commands.Cog):
                 permsString += str(permission).replace('_',' ').title() + " - <:check:679095420202516480>\n"
             permsString = permsString[:-1]
             msg = await embed.add_field(msg, "Role permissions",permsString)
+            msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator}",icon_url=auditLogEntry.user.avatar_url)
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
     @commands.Cog.listener()
     async def on_guild_role_delete(self,role):
         guildDB = await db.find("guilds",{"id": role.guild.id})
         if "role" in guildDB["logging"]["events"]:
+            async for entry in role.guild.audit_logs(limit=1, action=discord.AuditLogAction.role_delete):
+                auditLogEntry = entry
             msg = await embed.generate(f"Role {role.name} was deleted!",None,0x9e0000)
+            msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator}",icon_url=auditLogEntry.user.avatar_url)
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
     @commands.Cog.listener()
@@ -195,8 +207,13 @@ class Logging(commands.Cog):
     async def on_guild_channel_create(self,channel):
         guildDB = await db.find("guilds",{"id": channel.guild.id})
         if "channel" in guildDB["logging"]["events"]:
-            # Pass the channel
-            pass
+            msg = await embed.generate(f"{str(channel.type).title()} channel {channel.name} was created!",0x0b9e00)
+            async for entry in channel.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_create):
+                auditLogEntry = entry
+            msg = await embed.add_field(msg,"Under category",channel.category)
+            print(channel.overwrites)
+            # msg = await embed.add_field(msg,)
+            
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self,channel):

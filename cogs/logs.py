@@ -212,7 +212,11 @@ class Logging(commands.Cog):
                 auditLogEntry = entry
             msg = await embed.add_field(msg,"Under category",channel.category)
             for permission, value in channel.overwrites.items():
-                print(permission,value.pair())
+                permissionPair = value.pair()
+                # value[0] = Allowed Permissions
+                # value[1] = Denied Permissions
+                # When permissions value = 0, it is set to nothing
+                print(f"{permission}: Allow :: {permissionPair[0]}\nDeny :: {permissionPair[1]}")
             # msg = await embed.add_field(msg,)
             
 

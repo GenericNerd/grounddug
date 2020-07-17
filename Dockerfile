@@ -12,4 +12,4 @@ RUN python3 -m spacy download en
 COPY . /
 COPY ./cogs /cogs
 
-CMD [ "python3", "./grounddug.py" ]
+CMD [ "python3", "-W ignore", "./grounddug.py" ]

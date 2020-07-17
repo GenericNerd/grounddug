@@ -216,7 +216,7 @@ class Logging(commands.Cog):
                 # value[0] = Allowed Permissions
                 # value[1] = Denied Permissions
                 # When permissions value = 0, it is set to nothing
-                print(f"{permission}: Allow :: {permissionPair[0]}\nDeny :: {permissionPair[1]}")
+                print(f"{permission}: Allow :: {iter(permissionPair[0])}\nDeny :: {iter(permissionPair[1])}")
             # msg = await embed.add_field(msg,)
             
 

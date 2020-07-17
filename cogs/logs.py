@@ -184,7 +184,7 @@ class Logging(commands.Cog):
                 msg = await embed.add_field(msg,f"Permissions changed",permsString)
             if before.hoist != after.hoist or before.color != after.color:
                 msg = await embed.add_field(msg,"Special Attributes",f"**Hoisted**\nBefore: {'<:check:679095420202516480>' if before.hoist else '<:cross:679095420319694898>'}\nNow: {'<:check:679095420202516480>' if after.hoist else '<:cross:679095420319694898>'}\n\n**Color**\nBefore: {before.color}\nNow: {after.color}")
-            auditLogEntry = await before.guild.audit_logs(limit=1, action=discord.AuditLogAction.role_update)
+            auditLogEntry = before.guild.audit_logs(limit=1, action=discord.AuditLogAction.role_update)
             msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator}",icon_url=auditLogEntry.user.avatar_url)
             await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 

@@ -207,10 +207,10 @@ class Logging(commands.Cog):
     async def on_guild_channel_create(self,channel):
         guildDB = await db.find("guilds",{"id": channel.guild.id})
         if "channel" in guildDB["logging"]["events"]:
-            msg = await embed.generate(f"{str(channel.type).title()} channel {channel.name} was created!",None,0x0b9e00)
+            msg = await embed.generate(f"{str(channel.type).title()} channel #{channel.name} was created!",None,0x0b9e00)
             async for entry in channel.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_create):
                 auditLogEntry = entry
-            msg = await embed.add_field(msg,"Under category",channel.category)
+            msg = await embed.add_field(msg,"Under category",channel.category if not None else "No category")
             for role, value in channel.overwrites.items():
                 permissionPair = value.pair()
                 overwriteString = ""
@@ -231,14 +231,18 @@ class Logging(commands.Cog):
     async def on_guild_channel_delete(self,channel):
         guildDB = await db.find("guilds",{"id": channel.guild.id})
         if "channel" in guildDB["logging"]["events"]:
-            # Pass the channel
-            pass
+            msg = await embed.generate(f"{str(channel.type).title()} channel #{channel.name} was created!",None,0x9e0000)
+            async for entry in channel.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_delete):
+                auditLogEntry = entry
+            msg = await embed.add_field(msg,"Under category",channel.category if not None else "No category")
+            msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
+            await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
     @commands.Cog.listener()
     async def on_guild_channel_update(self,before,after):
         guildDB = await db.find("guilds",{"id": before.guild.id})
         if "channel" in guildDB["logging"]["events"]:
-            # Pass the before and after channels
+            print(f"{before=} {after=}")
             pass
 
 def setup(bot):

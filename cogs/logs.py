@@ -211,16 +211,21 @@ class Logging(commands.Cog):
             async for entry in channel.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_create):
                 auditLogEntry = entry
             msg = await embed.add_field(msg,"Under category",channel.category)
-            for permission, value in channel.overwrites.items():
+            for role, value in channel.overwrites.items():
                 permissionPair = value.pair()
+                overwriteString = ""
                 # value[0] = Allowed Permissions
                 # value[1] = Denied Permissions
                 # When permissions value = 0, it is set to nothing
-                for i, j in iter(permissionPair[0]):
-                    print(i, j)
-                print(f"{permission}: Allow :: {iter(permissionPair[0])}\nDeny :: {iter(permissionPair[1])}")
-            # msg = await embed.add_field(msg,)
-            
+                for permission, val in iter(permissionPair[0]):
+                    if val:
+                        overwriteString += f"{permission.replace('_',' ').title()} - <:check:679095420202516480>\n"
+                for permission, val in iter(permissionPair[1]):
+                    if val:
+                        overwriteString += f"{permission.replace('_',' ').title()} - <:cross:679095420319694898>\n"
+                msg = await embed.add_field(msg,role.name,overwriteString)
+            msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator}",icon_url=auditLogEntry.user.avatar_url)
+            await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self,channel):

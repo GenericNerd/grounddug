@@ -207,7 +207,7 @@ class Logging(commands.Cog):
     async def on_guild_channel_create(self,channel):
         guildDB = await db.find("guilds",{"id": channel.guild.id})
         if "channel" in guildDB["logging"]["events"]:
-            msg = await embed.generate(f"{str(channel.type).title()} channel {channel.name} was created!",0x0b9e00)
+            msg = await embed.generate(f"{str(channel.type).title()} channel {channel.name} was created!",None,0x0b9e00)
             async for entry in channel.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_create):
                 auditLogEntry = entry
             msg = await embed.add_field(msg,"Under category",channel.category)

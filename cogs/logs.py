@@ -211,8 +211,8 @@ class Logging(commands.Cog):
             async for entry in channel.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_create):
                 auditLogEntry = entry
             msg = await embed.add_field(msg,"Under category",channel.category)
-            for permission, value in channel.overwrites.pair():
-                print(permission,value)
+            for permission, value in channel.overwrites.items():
+                print(permission,value.pair())
             # msg = await embed.add_field(msg,)
             
 

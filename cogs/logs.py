@@ -215,7 +215,7 @@ class Logging(commands.Cog):
             msg = await embed.generate(f"{str(channel.type).title()} channel #{channel.name} was created!",None,0x0b9e00)
             async for entry in channel.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_create):
                 auditLogEntry = entry
-            msg = await embed.add_field(msg,"Under category",channel.category if not None else "No category")
+            msg = await embed.add_field(msg,"Under category",channel.category if channel.category != None else "No category")
             for role, value in channel.overwrites.items():
                 permissionPair = value.pair()
                 overwriteString = ""
@@ -240,7 +240,7 @@ class Logging(commands.Cog):
             msg = await embed.generate(f"{str(channel.type).title()} channel #{channel.name} was created!",None,0x9e0000)
             async for entry in channel.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_delete):
                 auditLogEntry = entry
-            msg = await embed.add_field(msg,"Under category",channel.category if not None else "No category")
+            msg = await embed.add_field(msg,"Under category",channel.category if channel.category != None else "No category")
             msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
@@ -254,8 +254,8 @@ class Logging(commands.Cog):
                 auditLogEntry = entry
             if before.name != after.name:
                 msg = await embed.add_field(msg,"Name changed",f"**Was:** {before.name}\n**Now:** {after.name}")
-            if before.description != after.description:
-                msg = await embed.add_field(msg,"Description changed",f"**Was:** {before.description}\n**Now:**: {after.description}")
+            if before.topic != after.topic:
+                msg = await embed.add_field(msg,"Description changed",f"**Was:** {before.topic if before.topic != None else 'No description'}\n**Now:**: {after.topic if after.topic != None else 'No description'}")
             if before.type != after.type:
                 msg = await embed.add_field(msg,"Type changed!",f"**Was:** {str(before.type).title()} channel\n**Now:**: {str(after.type).title()}")
             if before.overwrites != after.overwrites:

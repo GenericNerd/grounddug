@@ -18,36 +18,36 @@ async def sendLog(self,ctx,module):
         except:
             pass
 
-async def logModuleChange(self,ctx,changeTo,module=None):
-    # Check whether log module is to enable or disable
-    if changeTo is True:
-        stateChange = "enable"
-    else:
-        stateChange = "disable"
-    if module is not None:
-        module = module.lower()
-    # Get the current guild settings
-    guild = await db.find("guilds", {"id": ctx.guild.id})
-    # If no module was passed, step through all the modules that can be changed
-    # to the state changeTo and list them in an embed field
-    if module is None:
-        prefix = await misc.getPrefix(self.bot,ctx)
-        msg = await embed.generate(f"Modules to {stateChange}",None)
-        # Check every item in logs, if the key is not changeTo, add an embed field
-        for item,key in guild["logs"].items():
-            if key is not changeTo:
-                msg = await embed.add_field(msg,item.capitalize(),f"Run `{prefix}logs {stateChange} {item}` to change")
-        await ctx.send(embed=msg)
-    else:
-        # If a module is passed, check if the module is actually valid, whether
-        # it can be changed and change it. Raise an error either is not true
-        if module in guild["logs"] and guild["logs"][module] is not changeTo:
-            guild["logs"][module] = changeTo
-            # Update the database and send a message confirming change
-            await db.update("guilds",{"_id": guild["_id"]},guild)
-            await ctx.send(embed=(await embed.generate("Updated logging settings",f"`{module.capitalize()}` event logging is now {stateChange}d")))
-        else:
-            await embed.error(ctx,f"Module invalid, or already {stateChange}d")
+# async def logModuleChange(self,ctx,changeTo,module=None):
+#     # Check whether log module is to enable or disable
+#     if changeTo is True:
+#         stateChange = "enable"
+#     else:
+#         stateChange = "disable"
+#     if module is not None:
+#         module = module.lower()
+#     # Get the current guild settings
+#     guild = await db.find("guilds", {"id": ctx.guild.id})
+#     # If no module was passed, step through all the modules that can be changed
+#     # to the state changeTo and list them in an embed field
+#     if module is None:
+#         prefix = await misc.getPrefix(self.bot,ctx)
+#         msg = await embed.generate(f"Modules to {stateChange}",None)
+#         # Check every item in logs, if the key is not changeTo, add an embed field
+#         for item,key in guild["logs"].items():
+#             if key is not changeTo:
+#                 msg = await embed.add_field(msg,item.capitalize(),f"Run `{prefix}logs {stateChange} {item}` to change")
+#         await ctx.send(embed=msg)
+#     else:
+#         # If a module is passed, check if the module is actually valid, whether
+#         # it can be changed and change it. Raise an error either is not true
+#         if module in guild["logs"] and guild["logs"][module] is not changeTo:
+#             guild["logs"][module] = changeTo
+#             # Update the database and send a message confirming change
+#             await db.update("guilds",{"_id": guild["_id"]},guild)
+#             await ctx.send(embed=(await embed.generate("Updated logging settings",f"`{module.capitalize()}` event logging is now {stateChange}d")))
+#         else:
+#             await embed.error(ctx,f"Module invalid, or already {stateChange}d")
 
 class Logs(commands.Cog):
     def __init__(self,bot):
@@ -259,18 +259,18 @@ class Logging(commands.Cog):
             if before.type != after.type:
                 msg = await embed.add_field(msg,"Type changed!",f"**Was:** {str(before.type).title()} channel\n**Now:**: {str(after.type).title()}")
             if before.overwrites != after.overwrites:
-                print(set(before.overwrites)-set(after.overwrites))
-                print(set(after.overwrites)-set(before.overwrites))
-                for obj, value in list(set(before.overwrites)-set(after.overwrites)):
-                    permissionPair = value.pair()
-                    permissionsString = ""
-                    for permission, val in iter(permissionPair[0]):
-                        if val:
-                            permissionsString += f"{permission.replace('_',' ').title()} - <:check:679095420202516480>\n"
-                    for permission, val in iter(permissionPair[1]):
-                        if val:
-                            permissionsString += f"{permission.replace('_',' ').title()} - <:cross:679095420319694898>\n"
-                    msg = await embed.add_field(msg,f"Permissions for {obj.name}",permissionsString)
+                for item, value in before.overwrites.items():
+                    print(f"{item=} {value=}")
+                # for obj, value in list(set(before.overwrites)-set(after.overwrites)):
+                #     permissionPair = value.pair()
+                #     permissionsString = ""
+                #     for permission, val in iter(permissionPair[0]):
+                #         if val:
+                #             permissionsString += f"{permission.replace('_',' ').title()} - <:check:679095420202516480>\n"
+                #     for permission, val in iter(permissionPair[1]):
+                #         if val:
+                #             permissionsString += f"{permission.replace('_',' ').title()} - <:cross:679095420319694898>\n"
+                #     msg = await embed.add_field(msg,f"Permissions for {obj.name}",permissionsString)
             msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)

@@ -228,7 +228,7 @@ class Logging(commands.Cog):
                 for permission, val in iter(permissionPair[1]):
                     if val:
                         overwriteString += f"{permission.replace('_',' ').title()} - <:cross:679095420319694898>\n"
-                msg = await embed.add_field(msg,role.name,overwriteString)
+                msg = await embed.add_field(msg,f"Permissions for {role.name}",overwriteString)
             msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
@@ -259,7 +259,16 @@ class Logging(commands.Cog):
             if before.type != after.type:
                 msg = await embed.add_field(msg,"Type changed!",f"**Was:** {str(before.type).title()} channel\n**Now:**: {str(after.type).title()}")
             if before.overwrites != after.overwrites:
-                print(list(set(after.overwrites)-set(before.overwrites)))
+                for obj, value in list(set(before.overwrites)-set(after.overwrites)).items():
+                    permissionPair = value.pair()
+                    permissionsString = ""
+                    for permission, val in iter(permissionPair[0]):
+                        if val:
+                            permissionsString += f"{permission.replace('_',' ').title()} - <:check:679095420202516480>\n"
+                    for permission, val in iter(permissionPair[1]):
+                        if val:
+                            permissionsString += f"{permission.replace('_',' ').title()} - <:cross:679095420319694898>\n"
+                    msg = await embed.add_field(msg,f"Permissions for {obj.name}",permissionsString)
             msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)

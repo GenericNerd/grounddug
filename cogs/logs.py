@@ -277,6 +277,8 @@ class Logging(commands.Cog):
                     for permission, value in iter(afterPairs[1]):
                         if value:
                             afterOverwrites[permission] = False
+                print(set(afterOverwrites.items())-set(beforeOverwrites.items()))
+                print(set(beforeOverwrites.items())-set(afterOverwrites.items()))
                 for item in set(afterOverwrites.items())-set(beforeOverwrites.items()):
                     print(item)
                     # print(set(afterOverwrites ^ beforeOverwrites))

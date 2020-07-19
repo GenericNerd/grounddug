@@ -265,24 +265,24 @@ class Logging(commands.Cog):
                     beforePairs = permission.pair()
                     for permission, value in iter(beforePairs[0]):
                         if value:
-                            beforeOverwrites[permission] = True
+                            beforeOverwrites[obj][permission] = True
                     for permission, value in iter(beforePairs[1]):
                         if value:
-                            beforeOverwrites[permission] = False
+                            beforeOverwrites[obj][permission] = False
                 for obj, permission in after.overwrites.items():
                     afterPairs = permission.pair()
                     for permission, value in iter(afterPairs[0]):
                         if value:
-                            afterOverwrites[permission] = True
+                            afterOverwrites[obj][permission] = True
                     for permission, value in iter(afterPairs[1]):
                         if value:
-                            afterOverwrites[permission] = False
+                            afterOverwrites[obj][permission] = False
                 print(f"{beforeOverwrites=} {afterOverwrites=}")
                 print(set(afterOverwrites.items())-set(beforeOverwrites.items()))
                 print(set(beforeOverwrites.items())-set(afterOverwrites.items()))
                 for item in set(afterOverwrites.items())-set(beforeOverwrites.items()):
                     print(item)
-                    # print(set(afterOverwrites ^ beforeOverwrites))
+                # print(set(afterOverwrites ^ beforeOverwrites))
                 # for obj, value in list(set(before.overwrites)-set(after.overwrites)):
                 #     permissionPair = value.pair()
                 #     permissionsString = ""

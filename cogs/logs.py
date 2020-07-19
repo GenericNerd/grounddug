@@ -262,7 +262,7 @@ class Logging(commands.Cog):
                 for key in before.overwrites.keys():
                     beforeOverwrites = {}
                     for value in before.overwrites.values():
-                        beforePairs = permission.pair()
+                        beforePairs = value.pair()
                         for permission, value in iter(beforePairs[0]):
                             if value:
                                 beforeOverwrites[obj][permission] = True
@@ -273,7 +273,7 @@ class Logging(commands.Cog):
                 for key in after.overwrites.keys():
                     afterOverwrites = {}
                     for value in after.overwrites.values():
-                        afterPairs = permission.pair()
+                        afterPairs = value.pair()
                         for permission, value in iter(afterPairs[0]):
                             if value:
                                 afterOverwrites[obj][permission] = True

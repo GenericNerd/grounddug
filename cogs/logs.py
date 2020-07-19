@@ -259,28 +259,26 @@ class Logging(commands.Cog):
             if before.type != after.type:
                 msg = await embed.add_field(msg,"Type changed!",f"**Was:** {str(before.type).title()} channel\n**Now:**: {str(after.type).title()}")
             if before.overwrites != after.overwrites:
-                for key in before.overwrites.keys():
-                    beforeOverwrites = {}
-                    for value in before.overwrites.values():
-                        beforePairs = value.pair()
-                        for permission, value in iter(beforePairs[0]):
-                            if value:
-                                beforeOverwrites[permission] = True
-                        for permission, value in iter(beforePairs[1]):
-                            if value:
-                                beforeOverwrites[permission] = False
-                    print(f"{key.name}: {beforeOverwrites=}")
-                for key in after.overwrites.keys():
-                    afterOverwrites = {}
-                    for value in after.overwrites.values():
-                        afterPairs = value.pair()
-                        for permission, value in iter(afterPairs[0]):
-                            if value:
-                                afterOverwrites[permission] = True
-                        for permission, value in iter(afterPairs[1]):
-                            if value:
-                                afterOverwrites[permission] = False
-                    print(f"{key.name}: {afterOverwrites=}")
+                for obj, value in before.overwrites.items():
+                    beforePair = value.pair()
+                    beforeOverwriteString = ""
+                    for permission, val in iter(beforePair[0]):
+                        if val:
+                            beforeOverwriteString += f"{permission.replace('_',' ').title()} - <:check:679095420202516480>\n"
+                    for permission, val in iter(beforePair[1]):
+                        if val:
+                            beforeOverwriteString += f"{permission.replace('_',' ').title()} - <:cross:679095420319694898>\n"
+                    msg = await embed.add_field(msg,f"{obj.name}'s permissions before",beforeOverwriteString)
+                for obj, value in after.overwrites.items():
+                    afterPair = value.pair()
+                    afterOverwriteString = ""
+                    for permission, val in iter(afterPair[0]):
+                        if val:
+                            afterOverwriteString += f"{permission.replace('_',' ').title()} - <:check:679095420202516480>\n"
+                    for permission, val in iter(afterPair[1]):
+                        if val:
+                            afterOverwriteString += f"{permission.replace('_',' ').title()} - <:cross:679095420319694898>\n"
+                    msg = await embed.add_field(msg,f"{obj.name}'s permissions now",afterOverwriteString)
                 # print(set(beforeOverwrites.items())-set(afterOverwrites.items()))
                 # for item in set(afterOverwrites.items())-set(beforeOverwrites.items()):
                 #     print(item)

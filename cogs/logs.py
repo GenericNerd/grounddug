@@ -259,29 +259,32 @@ class Logging(commands.Cog):
             if before.type != after.type:
                 msg = await embed.add_field(msg,"Type changed!",f"**Was:** {str(before.type).title()} channel\n**Now:**: {str(after.type).title()}")
             if before.overwrites != after.overwrites:
-                beforeOverwrites = {}
-                afterOverwrites = {}
-                for obj, permission in before.overwrites.items():
-                    beforePairs = permission.pair()
-                    for permission, value in iter(beforePairs[0]):
-                        if value:
-                            beforeOverwrites[obj][permission] = True
-                    for permission, value in iter(beforePairs[1]):
-                        if value:
-                            beforeOverwrites[obj][permission] = False
-                for obj, permission in after.overwrites.items():
-                    afterPairs = permission.pair()
-                    for permission, value in iter(afterPairs[0]):
-                        if value:
-                            afterOverwrites[obj][permission] = True
-                    for permission, value in iter(afterPairs[1]):
-                        if value:
-                            afterOverwrites[obj][permission] = False
-                print(f"{beforeOverwrites=} {afterOverwrites=}")
-                print(set(afterOverwrites.items())-set(beforeOverwrites.items()))
-                print(set(beforeOverwrites.items())-set(afterOverwrites.items()))
-                for item in set(afterOverwrites.items())-set(beforeOverwrites.items()):
-                    print(item)
+                for key in before.overwrites.keys():
+                    beforeOverwrites = {}
+                    for value in before.overwrites.values():
+                        beforePairs = permission.pair()
+                        for permission, value in iter(beforePairs[0]):
+                            if value:
+                                beforeOverwrites[obj][permission] = True
+                        for permission, value in iter(beforePairs[1]):
+                            if value:
+                                beforeOverwrites[obj][permission] = False
+                    print(f"{beforeOverwrites=}")
+                for key in after.overwrites.keys():
+                    afterOverwrites = {}
+                    for value in after.overwrites.values():
+                        afterPairs = permission.pair()
+                        for permission, value in iter(afterPairs[0]):
+                            if value:
+                                afterOverwrites[obj][permission] = True
+                        for permission, value in iter(afterPairs[1]):
+                            if value:
+                                afterOverwrites[obj][permission] = False
+                    print(f"{afterOverwrites=}")
+                # print(set(beforeOverwrites.items())-set(afterOverwrites.items()))
+                # for item in set(afterOverwrites.items())-set(beforeOverwrites.items()):
+                #     print(item)
+
                 # print(set(afterOverwrites ^ beforeOverwrites))
                 # for obj, value in list(set(before.overwrites)-set(after.overwrites)):
                 #     permissionPair = value.pair()

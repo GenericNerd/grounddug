@@ -259,17 +259,25 @@ class Logging(commands.Cog):
             if before.type != after.type:
                 msg = await embed.add_field(msg,"Type changed!",f"**Was:** {str(before.type).title()} channel\n**Now:**: {str(after.type).title()}")
             if before.overwrites != after.overwrites:
+                beforeOverwrites = {}
+                afterOverwrites = {}
                 for obj, permission in before.overwrites.items():
-                    beforeAllowOverwrites = {}
-                    beforeDenyOverwrites = {}
                     beforePairs = permission.pair()
                     for permission, value in iter(beforePairs[0]):
                         if value:
-                            beforeAllowOverwrites[permission] = value
+                            beforeOverwrites[permission] = True
                     for permission, value in iter(beforePairs[1]):
                         if value:
-                            beforeDenyOverwrites[permission] = value
-                    print(f"{obj.name=} {beforeAllowOverwrites=} {beforeDenyOverwrites=}")
+                            beforeOverwrites[permission] = False
+                for obj, permission in after.overwrites.items():
+                    afterPairs = permission.pair()
+                    for permission, value in iter(afterPairs[0]):
+                        if value:
+                            beforeOverwrites[permission] = True
+                    for permission, value in iter(afterPairs[1]):
+                        if value:
+                            beforeOverwrites[permission] = False
+                print(f"{beforeOverwrites ^ afterOverwrites=}")
                     # print(set(afterOverwrites ^ beforeOverwrites))
                 # for obj, value in list(set(before.overwrites)-set(after.overwrites)):
                 #     permissionPair = value.pair()

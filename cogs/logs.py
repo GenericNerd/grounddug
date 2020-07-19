@@ -269,7 +269,7 @@ class Logging(commands.Cog):
                         for permission, value in iter(beforePairs[1]):
                             if value:
                                 beforeOverwrites[permission] = False
-                    print(f"{beforeOverwrites=}")
+                    print(f"{key.name}: {beforeOverwrites=}")
                 for key in after.overwrites.keys():
                     afterOverwrites = {}
                     for value in after.overwrites.values():
@@ -280,7 +280,7 @@ class Logging(commands.Cog):
                         for permission, value in iter(afterPairs[1]):
                             if value:
                                 afterOverwrites[permission] = False
-                    print(f"{afterOverwrites=}")
+                    print(f"{key.name}: {afterOverwrites=}")
                 # print(set(beforeOverwrites.items())-set(afterOverwrites.items()))
                 # for item in set(afterOverwrites.items())-set(beforeOverwrites.items()):
                 #     print(item)

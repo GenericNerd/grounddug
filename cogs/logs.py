@@ -269,7 +269,7 @@ class Logging(commands.Cog):
                     for permission, val in iter(beforePair[1]):
                         if val:
                             beforeOverwriteString += f"{permission.replace('_',' ').title()} - <:cross:679095420319694898>\n"
-                    overwriteString += f"**{obj.name}'s permissions before**\n{beforeOverwriteString}\n"
+                    overwriteString += f"**{obj.mention}'s permissions before**\n{beforeOverwriteString}\n"
                 overwriteString += "\n"
                 for obj, value in after.overwrites.items():
                     afterPair = value.pair()
@@ -280,7 +280,7 @@ class Logging(commands.Cog):
                     for permission, val in iter(afterPair[1]):
                         if val:
                             afterOverwriteString += f"{permission.replace('_',' ').title()} - <:cross:679095420319694898>\n"
-                    overwriteString += f"**{obj.name}'s permissions now**\n{afterOverwriteString}\n"
+                    overwriteString += f"**{obj.mention}'s permissions now**\n{afterOverwriteString}\n"
                 msg = await embed.add_field(msg,"Permissions changed",overwriteString)
             msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:

@@ -8,6 +8,8 @@ import cogs.utils.embed as embed
 import cogs.utils.db as db
 import cogs.utils.misc as misc
 
+loggingModules = {"logging": {"commands": ["perms", "boundary", "automod", "admin", "mod"], "events": ["message", "role", "channel", "member", "nicknames"]}}
+
 async def sendLog(self,ctx,module):
     guild = await db.find("guilds",{"id": ctx.guild.id})
     if guild["logs"][module]:
@@ -62,6 +64,52 @@ class Logs(commands.Cog):
         else:
             await sendLog(self,ctx,"logs")
 
+    @logs.command(name="enable",description="[module] | Enable logging features to be enabled")
+    @commands.guild_only()
+    @checks.hasGDPermission("ADMINISTRATOR")
+    async def enable(self,ctx,module=None):
+        if module == None:
+            # Show modules that can be enabled here
+            pass
+        # Check if module is a valid module
+        elif module not in loggingModules["commands"] and module not in loggingModules["events"]:
+            return
+        # Check if the module is not enabled
+        else:
+            guildDB = await db.find("guilds",{"id": ctx.guild.id})
+            if module in loggingModules["commands"] and module not in guildDB["logging"]["commands"]:
+                pass
+                # Enable it and send a message
+            elif module in loggingModules["events"] and module not in guildDB["logging"]["events"]:
+                pass
+                # Enable it and send a message
+            else:
+                pass
+                # Module is disabled and we can provide an error for such
+
+    @logs.command(name="disable",description="[module] | Disable logging features to be enabled")
+    @commands.guild_only()
+    @checks.hasGDPermission("ADMINISTRATOR")
+    async def disable(self,ctx,module=None):
+        if module == None:
+            # Show modules that can be disabled here
+            pass
+        # Check if module is a valid module
+        elif module not in loggingModules["commands"] and module not in loggingModules["events"]:
+            return
+        # Check if the module is not disabled
+        else:
+            guildDB = await db.find("guilds",{"id": ctx.guild.id})
+            if module in loggingModules["commands"] and module not in guildDB["logging"]["commands"]:
+                pass
+                # Disable it and send a message
+            elif module in loggingModules["events"] and module not in guildDB["logging"]["events"]:
+                pass
+                # Disable it and send a message
+            else:
+                pass
+                # Module is disabled and we can provide an error for such
+
     @logs.command(name="setchannel",description="[channel] | Set the channel to which all command logs will be sent to on the guild")
     @commands.guild_only()
     @checks.hasGDPermission("ADMINISTRATOR")
@@ -84,7 +132,6 @@ class Logs(commands.Cog):
 class Logging(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
-    # {"logging": {"commands": ["perms", "boundary", "automod", "admin", "mod"], "events": ["message", "role", "nicknames", "channel"]}}
 
     @commands.Cog.listener()
     async def on_command(self,ctx):
@@ -119,6 +166,8 @@ class Logging(commands.Cog):
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
             except:
                 pass
+
+    # Member specific events
 
     @commands.Cog.listener()
     async def on_member_update(self,before,after):
@@ -285,10 +334,6 @@ class Logging(commands.Cog):
             msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
-
-    @commands.Cog.listener()
-    async def on_member_ban(self,guild,user):
-        pass
 
 def setup(bot):
     bot.add_cog(Logs(bot))

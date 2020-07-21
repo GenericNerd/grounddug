@@ -8,7 +8,7 @@ import cogs.utils.embed as embed
 import cogs.utils.db as db
 import cogs.utils.misc as misc
 
-loggingModules = {"logging": {"commands": ["perms", "boundary", "automod", "admin", "mod"], "events": ["message", "role", "channel", "member", "nicknames"]}}
+loggingModules = {"commands": ["perms", "boundary", "automod", "admin", "mod"], "events": ["message", "role", "channel", "member", "nicknames"]}
 
 async def sendLog(self,ctx,module):
     guild = await db.find("guilds",{"id": ctx.guild.id})

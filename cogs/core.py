@@ -121,7 +121,7 @@ class Core(commands.Cog):
             for role in user.roles:
                 roles += f"- {role.name}"
             # If roles is @everyone, user has no special roles, otherwise, send the roles
-            if roles == "@everyone":
+            if roles == ["@everyone"]:
                 msg = await embed.add_field(msg,"Roles","No significant roles")
             else:
                 msg = await embed.add_field(msg,"Roles",roles)

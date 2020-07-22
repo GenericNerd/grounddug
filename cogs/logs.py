@@ -50,7 +50,7 @@ class Logs(commands.Cog):
                     msg = await embed.add_field(msg,f"Event module - {modules}",f"Enable with `{prefix}logs enable {modules}`")
             return await ctx.send(embed=msg)
         elif module not in loggingModules["commands"] and module not in loggingModules["events"]:
-            return await ctx.invoke(self.bot.get_command("logs"),"enable")
+            return await ctx.invoke(self.bot.get_command("logs enable"))
         else:
             guildDB = await db.find("guilds",{"id": ctx.guild.id})
             if module in loggingModules["commands"] and module not in loggingModules["events"] and module not in guildDB["logging"]["commands"]:
@@ -80,17 +80,15 @@ class Logs(commands.Cog):
                     msg = await embed.add_field(msg,f"Event module - {modules}",f"Disable with `{prefix}logs disable {modules}`")
             return await ctx.send(embed=msg)
         elif module not in loggingModules["commands"] and module not in loggingModules["events"]:
-            return await ctx.invoke(self.bot.get_command("logs"),"disable")
+            return await ctx.invoke(self.bot.get_command("logs disable"))
         else:
             guildDB = await db.find("guilds",{"id": ctx.guild.id})
             if module in loggingModules["commands"] and module not in loggingModules["events"] and module in guildDB["logging"]["commands"]:
                 guildDB["logging"]["events"].remove(module)
-                print(guildDB)
                 await db.update("guilds",{"id": ctx.guild.id},{"logging": guildDB["logging"]})
                 return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" disabled",None)))
             elif module in loggingModules["events"] and module not in loggingModules["commands"] and module in guildDB["logging"]["events"]:
                 guildDB["logging"]["events"].remove(module)
-                print(guildDB)
                 await db.update("guilds",{"id": ctx.guild.id},{"logging": guildDB["logging"]})
                 return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" disabled",None)))
             else:

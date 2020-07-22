@@ -13,16 +13,15 @@ loggingModules = {"commands": ["perms", "boundary", "automod", "admin", "mod", "
 
 async def sendLog(self,ctx,module):
     guild = await db.find("guilds",{"id": ctx.guild.id})
-    try:
-        guild["logging"]["commands"][module]
-    except:
+    if module in guild["logging"]["commands"]:
+        channel = self.bot.get_channel(guild["channel"])
+        try:
+            await channel.send(embed=(await embed.generate(f"{ctx.author.name} - #{ctx.channel.name}",f"Ran command `{ctx.message.content}`",0x002fff)))
+        except:
+            return
+    else:
         return
     # Get the current log channel and send a message
-    channel = self.bot.get_channel(guild["channel"])
-    try:
-        await channel.send(embed=(await embed.generate(f"{ctx.author.name} - #{ctx.channel.name}",f"Ran command `{ctx.message.content}`",0x002fff)))
-    except:
-        pass
 
 class Logs(commands.Cog):
     def __init__(self,bot):

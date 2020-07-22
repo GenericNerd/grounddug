@@ -9,7 +9,7 @@ import cogs.utils.db as db
 import cogs.utils.misc as misc
 import numpy as np
 
-loggingModules = {"commands": ["perms", "boundary", "automod", "admin", "mod"], "events": ["message", "role", "channel", "member", "nicknames"]}
+loggingModules = {"commands": ["perms", "boundary", "automod", "admin", "mod", "logs"], "events": ["message", "role", "channel", "member", "nicknames"]}
 
 async def sendLog(self,ctx,module):
     guild = await db.find("guilds",{"id": ctx.guild.id})
@@ -41,7 +41,7 @@ class Logs(commands.Cog):
         if module == None:
             guildDB = await db.find("guilds",{"id": ctx.guild.id})
             prefix = await misc.getPrefix(self.bot,ctx)
-            msg = await embed.generate("Disabled Logging Modules","Here are the logging modules that you can current disabled")
+            msg = await embed.generate("Disabled Logging Modules","Here are the logging modules that you can enable")
             for modules in loggingModules["commands"]:
                 if modules not in guildDB["logging"]["commands"]:
                     msg = await embed.add_field(msg,f"Command module - {modules}",f"Enable with `{prefix}logs enable {modules}`")
@@ -71,7 +71,7 @@ class Logs(commands.Cog):
         if module == None:
             guildDB = await db.find("guilds",{"id": ctx.guild.id})
             prefix = await misc.getPrefix(self.bot,ctx)
-            msg = await embed.generate("Enabled Logging Modules","Here are the logging modules that you can current enabled")
+            msg = await embed.generate("Enabled Logging Modules","Here are the logging modules that you can disable")
             for modules in loggingModules["commands"]:
                 if modules in guildDB["logging"]["commands"]:
                     msg = await embed.add_field(msg,f"Command module - {modules}",f"Disable with `{prefix}logs disable {modules}`")

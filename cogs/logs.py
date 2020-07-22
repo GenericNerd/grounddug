@@ -7,6 +7,7 @@ import cogs.utils.checks as checks
 import cogs.utils.embed as embed
 import cogs.utils.db as db
 import cogs.utils.misc as misc
+import numpy as np
 
 loggingModules = {"commands": ["perms", "boundary", "automod", "admin", "mod"], "events": ["message", "role", "channel", "member", "nicknames"]}
 
@@ -19,37 +20,6 @@ async def sendLog(self,ctx,module):
             await channel.send(embed=(await embed.generate(f"{ctx.author.name} - #{ctx.channel.name}",f"Ran command `{ctx.message.content}`",0x002fff)))
         except:
             pass
-
-# async def logModuleChange(self,ctx,changeTo,module=None):
-#     # Check whether log module is to enable or disable
-#     if changeTo is True:
-#         stateChange = "enable"
-#     else:
-#         stateChange = "disable"
-#     if module is not None:
-#         module = module.lower()
-#     # Get the current guild settings
-#     guild = await db.find("guilds", {"id": ctx.guild.id})
-#     # If no module was passed, step through all the modules that can be changed
-#     # to the state changeTo and list them in an embed field
-#     if module is None:
-#         prefix = await misc.getPrefix(self.bot,ctx)
-#         msg = await embed.generate(f"Modules to {stateChange}",None)
-#         # Check every item in logs, if the key is not changeTo, add an embed field
-#         for item,key in guild["logs"].items():
-#             if key is not changeTo:
-#                 msg = await embed.add_field(msg,item.capitalize(),f"Run `{prefix}logs {stateChange} {item}` to change")
-#         await ctx.send(embed=msg)
-#     else:
-#         # If a module is passed, check if the module is actually valid, whether
-#         # it can be changed and change it. Raise an error either is not true
-#         if module in guild["logs"] and guild["logs"][module] is not changeTo:
-#             guild["logs"][module] = changeTo
-#             # Update the database and send a message confirming change
-#             await db.update("guilds",{"_id": guild["_id"]},guild)
-#             await ctx.send(embed=(await embed.generate("Updated logging settings",f"`{module.capitalize()}` event logging is now {stateChange}d")))
-#         else:
-#             await embed.error(ctx,f"Module invalid, or already {stateChange}d")
 
 class Logs(commands.Cog):
     def __init__(self,bot):
@@ -114,11 +84,21 @@ class Logs(commands.Cog):
         else:
             guildDB = await db.find("guilds",{"id": ctx.guild.id})
             if module in loggingModules["commands"] and module not in loggingModules["events"] and module in guildDB["logging"]["commands"]:
-                del guildDB["logging"]["commands"][module]
+                index = 0
+                for modules in guildDB["logging"]["commands"]:
+                    index += 1
+                    if modules == module:
+                        continue
+                del guildDB["logging"]["commands"][index]
                 await db.update("guilds",{"id": ctx.guild.id},guildDB["logging"])
                 return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" disabled",None)))
             elif module in loggingModules["events"] and module not in loggingModules["commands"] and module in guildDB["logging"]["events"]:
-                del guildDB["logging"]["events"][module]
+                index = 0
+                for modules in guildDB["logging"]["commands"]:
+                    index += 1
+                    if modules == module:
+                        continue
+                del guildDB["logging"]["events"][index]
                 await db.update("guilds",{"id": ctx.guild.id},guildDB["logging"])
                 return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" disabled",None)))
             else:

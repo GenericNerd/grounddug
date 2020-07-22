@@ -55,11 +55,11 @@ class Logs(commands.Cog):
             guildDB = await db.find("guilds",{"id": ctx.guild.id})
             if module in loggingModules["commands"] and module not in loggingModules["events"] and module not in guildDB["logging"]["commands"]:
                 guildDB["logging"]["commands"].append(module)
-                await db.update("guilds",{"id": ctx.guild.id},{"logging": {"commands": guildDB["logging"]["commands"]}})
+                await db.update("guilds",{"id": ctx.guild.id},{"logging": {"commands": guildDB["logging"]}})
                 return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" enabled",None)))
             elif module in loggingModules["events"] and module not in loggingModules["commands"] and module not in guildDB["logging"]["events"]:
                 guildDB["logging"]["events"].append(module)
-                await db.update("guilds",{"id": ctx.guild.id},{"logging": {"commands": guildDB["logging"]["events"]}})
+                await db.update("guilds",{"id": ctx.guild.id},{"logging": {"commands": guildDB["logging"]}})
                 return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" enabled",None)))
             else:
                 return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" is already enabled!",None)))
@@ -86,12 +86,12 @@ class Logs(commands.Cog):
             if module in loggingModules["commands"] and module not in loggingModules["events"] and module in guildDB["logging"]["commands"]:
                 guildDB["logging"]["events"].remove(module)
                 print(guildDB)
-                await db.update("guilds",{"id": ctx.guild.id},{"logging": {"commands": guildDB["logging"]["commands"]}})
+                await db.update("guilds",{"id": ctx.guild.id},{"logging": {"commands": guildDB["logging"]}})
                 return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" disabled",None)))
             elif module in loggingModules["events"] and module not in loggingModules["commands"] and module in guildDB["logging"]["events"]:
                 guildDB["logging"]["events"].remove(module)
                 print(guildDB)
-                await db.update("guilds",{"id": ctx.guild.id},{"logging": {"commands": guildDB["logging"]["events"]}})
+                await db.update("guilds",{"id": ctx.guild.id},{"logging": {"commands": guildDB["logging"]}})
                 return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" disabled",None)))
             else:
                 return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" is already disabled!",None)))

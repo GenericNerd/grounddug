@@ -68,6 +68,7 @@ class Developer(commands.Cog):
             # Update database here
             guildObject["isPremium"] = False
             guildObject["automod"]["zalgo"] = 0
+            guildObject["logging"] = {"commands": ["perms", "boundary", "automod", "admin", "mod"], "events": ["message", "role", "channel", "member", "nicknames"]}
             try:
                 del guildObject["logs"]["misc"]
             except:

@@ -47,7 +47,7 @@ class AutoModListener(commands.Cog):
                             # Create a case for automod violation if the guild decides to warn on remove
                             await cases.createCase(ctx.guild,ctx.author,ctx.guild.me,"deleted message",text.capitalize())
                         # Return an embed with the text variable
-                    return await embed.generate(f"{ctx.author.name}#{ctx.author.discriminator} {text} in #{ctx.channel.name}",f"`{ctx.content}`")
+                    return await embed.generate(f"{ctx.author.name}#{ctx.author.discriminator} {text} in #{ctx.channel.name}",f"`{ctx.content}`",0x8a0000)
                 async def attemptSend(channel, embed):
                     try:
                         webhook = await ctx.channel.create_webhook(name="GroundDug Auto-Moderator")

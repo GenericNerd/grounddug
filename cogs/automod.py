@@ -10,6 +10,7 @@ import cogs.utils.checks as checks
 from cogs.utils.misc import zalgoDetect
 from cogs.utils.misc import zalgoClean
 import cogs.utils.logger as logger
+from cogs.logs import sendLog
 
 import re
 import aiohttp
@@ -102,6 +103,8 @@ class AutoModSetup(commands.Cog):
     async def automod(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.invoke(self.bot.get_command("help"),"automod")
+        else:
+            await sendLog(self,ctx,"automod")
 
     @automod.command(name="setup",description="| AutoMod Setup Wizard")
     @commands.guild_only()

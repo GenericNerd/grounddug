@@ -8,6 +8,7 @@ import uuid
 import cogs.utils.db as db
 import cogs.utils.checks as checks
 import cogs.utils.embed as embed
+from cogs.logs import sendLog
 
 # Create function to enable and disable Boundary db state
 async def updateBoundary(ctx,state,langState):
@@ -32,6 +33,8 @@ class Boundary(commands.Cog):
     async def boundary(self,ctx):
         if ctx.invoked_subcommand is None:
             await ctx.invoke(self.bot.get_command("help"),"boundary")
+        else:
+            await sendLog(self,ctx,"boundary")
 
     @boundary.command(name="enable",description="| Enable Boundary with current settings")
     @commands.guild_only()

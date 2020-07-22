@@ -10,15 +10,15 @@ import cogs.utils.cases as cases
 import cogs.utils.logger as logger
 import os
 
-async def log(ctx,bot):
-    guild = await db.find("guilds",{"id": ctx.guild.id})
-    if guild["logs"]["mod"]:
-        # Get the logging channel for the guild
-        channel = bot.get_channel(guild["channel"])
-        try:
-            await channel.send(embed=(await embed.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in #{ctx.channel.name}")))
-        except:
-            pass
+async def modLog(self,ctx,title,desc):
+    guildDB = await db.find("guilds",{"id": ctx.guild.id})
+    if "mod" in guildDB["logging"]["commands"]:
+        msg = await embed.generate(title,desc,0xd90000)
+        msg.set_footer(text=f"{ctx.author.name}#{ctx.author.discriminator} (ID: {ctx.author.id})",icon_url=ctx.author.avatar_url)
+        if guildDB["channel"] != 0:
+            await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
+    else:
+        return
 
 class Mod(commands.Cog):
     def __init__(self,bot):
@@ -32,7 +32,8 @@ class Mod(commands.Cog):
             await ctx.invoke(self.bot.get_command("help"),"mod")
         else:
             # Check whether logging for perms is enabled
-            await log(ctx,self.bot)
+            # await log(ctx,self.bot)
+            pass
 
     @mod.command(name="ban",description="<member> [reason] | Bans a member from the guild")
     @commands.guild_only()
@@ -48,6 +49,7 @@ class Mod(commands.Cog):
             await embed.error(ctx,f"{member.name} could not be notified")
         finally:
             # Ban the user and send a message confirming the ban
+            await modLog(self,ctx,f"{member.name} was banned",f"Banned for: `{reason}`")
             await member.ban(reason=f"Banned by {ctx.author.name}#{ctx.author.discriminator} for: {reason}")
             await ctx.send(embed=(await embed.generate(f"{member.name} has been banned",f"{member.name}#{member.discriminator} has been banned by {ctx.author.mention} for `{reason}`",0xff5555)))
 
@@ -61,6 +63,7 @@ class Mod(commands.Cog):
         except:
             return await embed.error(ctx,"Invalid user ID")
         # Send a message confirming the ban
+        await modLog(self,ctx,f"{id} was banned",f"Banned for: `{reason}`")
         await ctx.send(embed=(await embed.generate(f"{id} has been banned",f"{ctx.author.mention} has banned this ID for `{reason}`",0xff5555)))
 
     @mod.command(name="softban",description="<member> [reason] | Bans a member and immediately unbans them from the guild, removing their messages")
@@ -77,6 +80,7 @@ class Mod(commands.Cog):
             await embed.error(ctx,f"{member.name} could not be notified")
         finally:
             # Ban the member and immediately unban them
+            await modLog(self,ctx,f"{member.name} was soft-banned",f"Banned for: `{reason}`")
             await member.ban(reason=f"Soft-banned by {ctx.author.name}#{ctx.author.discriminator} for: {reason}")
             await member.unban()
             await ctx.send(embed=(await embed.generate(f"{member.name} has been soft-banned",f"{member.name}#{member.discriminator} has been soft-banned by {ctx.author.mention} for `{reason}`",0xff5555)))
@@ -93,6 +97,7 @@ class Mod(commands.Cog):
             # Alert moderator that they do not know of their kick
             await embed.error(ctx,f"{member.name} could not be notified")
         finally:
+            await modLog(self,ctx,f"{member.name} was kicked!",f"Kicked for: `{reason}`")
             await ctx.send(embed=(await embed.generate(f"{member.name} has been kicked",f"{member.name}#{member.discriminator} has been kicked by {ctx.author}",0xff5555)))
             await member.kick(reason=f"Kicked by {ctx.author.name}#{ctx.author.discriminator} for: {reason}")
 
@@ -106,6 +111,7 @@ class Mod(commands.Cog):
         for channel in ctx.guild.voice_channels:
             await channel.set_permissions(member,speak=False)
         # Send a message in the channel notifying of successful gag
+        await modLog(self,ctx,f"{member.name} was gagged!",f"Gagged for: `{reason}`")
         await ctx.send(embed=(await embed.generate(f"{member.name} has been gagged",f"{ctx.author.mention} gagged them for `{reason}`")))
 
     @mod.command(name="ungag",aliases=["vunmute"],description="<member> [reason] | Allows a user to talk in all voice channels")
@@ -114,8 +120,9 @@ class Mod(commands.Cog):
     async def ungag(self,ctx,member:discord.Member,*,reason=None):
         # For each channel, set speak permissions to True for the member
         for channel in ctx.guild.voice_channels:
-            await channel.set_permissions(member,speak=True)
+            await channel.set_permissions(member,overwrite=None)
         # Send a message in the channel notifying of successful ungag
+        await modLog(self,ctx,f"{member.name} was ungagged",None)
         await ctx.send(embed=(await embed.generate(f"{member.name} has been ungagged",f"{ctx.author.mention} ungagged them for `{reason}`")))
 
     @mod.command(name="mute",description="<member> [reason] | Stop a user from typing in all text channels")
@@ -128,6 +135,7 @@ class Mod(commands.Cog):
         for channel in ctx.guild.text_channels:
             await channel.set_permissions(member,send_messages=False)
         # Send a message in the channel notifying of successful mute
+        await modLog(self,ctx,f"{member.name} was muted!",f"Muted for `{reason}`")
         await ctx.send(embed=(await embed.generate(f"{member.name} has been muted",f"{ctx.author.mention} muted this user for: `{reason}`")))
 
     @mod.command(name="unmute",description="<member> [reason] | Allow a user to typing in all text channels again")
@@ -138,6 +146,7 @@ class Mod(commands.Cog):
         for channel in ctx.guild.text_channels:
             await channel.set_permissions(member,overwrite=None)
         # Send a message in the channel notifying of successful unmute
+        await modLog(self,ctx,f"{member.name} was unmuted",None)
         await ctx.send(embed=(await embed.generate(f"{member.name} has been unmuted",f"{ctx.author.mention} unmuted this user for: `{reason}`")))
 
     @mod.command(name="purge",description="[member/bot/all] [amount (100 default)] | Deletes multiple messages at once from the text channel the command was ran in, depending on check")
@@ -158,6 +167,7 @@ class Mod(commands.Cog):
             await ctx.channel.purge(limit=amount)
         else:
             await embed.error(ctx,"Invalid purge check, view command usage")
+        await modLog(self,ctx,f"#{channel.name} was purged!",f"{check.title()} {amount} were purged!")
 
     @mod.command(name="strike",description="<user> [reason] | Warn a user for their behaviour")
     @commands.guild_only()
@@ -167,6 +177,7 @@ class Mod(commands.Cog):
         guildCase = await db.find("guilds",{"id": ctx.guild.id})
         await cases.createCase(ctx.guild,user,ctx.author,"warned",reason)
         # Send a message with the case number in footer
+        await modLog(self,ctx,f"{user.name} was warned!",f"Warned for: `{reason}`")
         await ctx.send(embed=(await embed.generate(f"{user.name}#{user.discriminator} was warned!",f"{ctx.author.mention} striked {user.mention} for `{reason}`",0xff5555)).set_footer(text=f"Case number #{guildCase['cases']}"))
 
     @mod.command(name="forgive",description="<user> <case #> | Forgives a users specific strike from their history")
@@ -183,6 +194,7 @@ class Mod(commands.Cog):
             # Add forgiven to end of strike
             userDB["strikes"][str(strike)]["reason"] += " (Forgiven)"
             # Send a message and update DB to reflect
+            await modLog(self,ctx,f"{user.name} was forgiven!",f"Strike {strike} was forgiven off record")
             await ctx.send(embed=(await embed.generate(f"Case number #{strike} has been forgiven by {ctx.author.name}#{ctx.author.discriminator}",None)))
             await db.update("users",{"_id": userDB["_id"]},{"strikes": userDB["strikes"]})
 
@@ -226,89 +238,76 @@ class ModMisc(commands.Cog):
     @commands.guild_only()
     @checks.hasGDPermission("BAN_MEMBERS")
     async def _ban(self,ctx,member:discord.Member,*,reason=None):
-        await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod ban"),member=member,reason=reason)
 
     @commands.command(name="hackban",hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("BAN_MEMBERS")
     async def _hackban(self,ctx,id:int,*,reason=None):
-        await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod hackban"),id=id,reason=reason)
 
     @commands.command(name="softban",hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("BAN_MEMBERS")
     async def _softban(self,ctx,member:discord.Member,*,reason=None):
-        await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod softban"),member=member,reason=reason)
 
     @commands.command(name="kick",hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("KICK_MEMBERS")
     async def _kick(self,ctx,member:discord.Member,*,reason=None):
-        await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod kick"),member=member,reason=reason)
 
     @commands.command(name="gag",aliases=["vmute"],hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("MUTE_MEMBERS")
     async def _gag(self,ctx,member:discord.Member,*,reason=None):
-        await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod gag"),member=member,reason=reason)
 
     @commands.command(name="ungag",aliases=["vunmute"],hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("MUTE_MEMBERS")
     async def _ungag(self,ctx,member:discord.Member,*,reason=None):
-        await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod ungag"),member=member,reason=reason)
 
     @commands.command(name="mute",hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("MUTE_MEMBERS")
     async def _mute(self,ctx,member:discord.Member,*,reason=None):
-        await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod mute"),member=member,reason=reason)
 
     @commands.command(name="unmute",hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("MUTE_MEMBERS")
     async def _unmute(self,ctx,member:discord.Member,*,reason=None):
-        await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod unmute"),member=member,reason=reason)
 
     @commands.command(name="purge",hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("MANAGE_MESSAGES")
     async def _purge(self,ctx,check="",amount=100):
-        await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod purge"),check=check,amount=amount)
 
     @commands.command(name="strike",hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("WARN_MEMBERS")
     async def _strike(self,ctx,user:discord.Member,*,reason=None):
-        await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod strike"),user=user,reason=reason)
 
     @commands.command(name="forgive",hidden=True)
     @commands.guild_only()
     @checks.hasGDPermission("WARN_MEMBERS")
     async def _forgive(self,ctx,user:discord.Member,strike:int):
-        await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod forgive"),user=user,strike=strike)
 
     @commands.command(name="history",hidden=True)
     @commands.guild_only()
     async def _history(self,ctx,user:discord.Member=None):
-        await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod history"),user=user)
 
     @commands.command(name="case",hidden=True)
     @commands.guild_only()
     async def _case(self,ctx,case:int):
-        await log(ctx,self.bot)
         await ctx.invoke(self.bot.get_command("mod case"),case=case)
 
 def setup(bot):

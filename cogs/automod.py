@@ -26,7 +26,7 @@ class AutoModListener(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self,ctx):
         # If message is not in a guild
-        if ctx.guild is not None and self.bot.get_user(ctx.author.id).bot is False:
+        if ctx.guild != None and self.bot.get_user(ctx.author.id).bot is False:
             # Check whether the user has got bypass automod
             user = await db.find("users",{"guild": ctx.guild.id, "user": ctx.author.id})
             try:
@@ -50,6 +50,9 @@ class AutoModListener(commands.Cog):
                     return await embed.generate(f"{ctx.author.name}#{ctx.author.discriminator} {text} in #{ctx.channel.name}",f"`{ctx.content}`")
                 async def attemptSend(channel, embed):
                     try:
+                        webhook = await ctx.channel.create_webhook(name="GroundDug Auto-Moderator")
+                        await webhook.send(content="[Messaged removed by GroundDug Automod]",username=f"{ctx.author.name}#{ctx.author.discriminator}",avatar_url=ctx.author.avatar_url)
+                        await webhook.delete()
                         await channel.send(embed=embed)
                     except:
                         pass

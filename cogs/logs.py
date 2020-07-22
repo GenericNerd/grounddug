@@ -84,21 +84,11 @@ class Logs(commands.Cog):
         else:
             guildDB = await db.find("guilds",{"id": ctx.guild.id})
             if module in loggingModules["commands"] and module not in loggingModules["events"] and module in guildDB["logging"]["commands"]:
-                index = 0
-                for modules in guildDB["logging"]["commands"]:
-                    index += 1
-                    if modules == module:
-                        continue
-                del guildDB["logging"]["commands"][index]
+                guildDB["logging"]["events"].remove(module)
                 await db.update("guilds",{"id": ctx.guild.id},guildDB["logging"])
                 return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" disabled",None)))
             elif module in loggingModules["events"] and module not in loggingModules["commands"] and module in guildDB["logging"]["events"]:
-                index = 0
-                for modules in guildDB["logging"]["commands"]:
-                    index += 1
-                    if modules == module:
-                        continue
-                del guildDB["logging"]["events"][index]
+                guildDB["logging"]["events"].remove(module)
                 await db.update("guilds",{"id": ctx.guild.id},guildDB["logging"])
                 return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" disabled",None)))
             else:

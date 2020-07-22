@@ -13,7 +13,7 @@ loggingModules = {"commands": ["perms", "boundary", "automod", "admin", "mod", "
 
 async def sendLog(self,ctx,module):
     guild = await db.find("guilds",{"id": ctx.guild.id})
-    if guild["logs"][module]:
+    if guild["logging"][module]:
         # Get the current log channel and send a message
         channel = self.bot.get_channel(guild["channel"])
         try:

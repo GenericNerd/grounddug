@@ -69,12 +69,15 @@ class Logs(commands.Cog):
     @checks.hasGDPermission("ADMINISTRATOR")
     async def enable(self,ctx,module=None):
         if module == None:
+            guildDB = await db.find("guilds",{"id": ctx.guild.id})
             prefix = await misc.getPrefix(self.bot,ctx)
             msg = await embed.generate("Disabled Logging Modules","Here are the logging modules that you can current disabled")
             for modules in loggingModules["commands"]:
-                msg = await embed.add_field(msg,f"Command module - {modules}",f"Enable with `{prefix}logs enable {modules}`")
+                if modules not in guildDB["logging"]["commands"]:
+                    msg = await embed.add_field(msg,f"Command module - {modules}",f"Enable with `{prefix}logs enable {modules}`")
             for modules in loggingModules["events"]:
-                msg = await embed.add_field(msg,f"Event module - {modules}",f"Enable with `{prefix}logs enable {modules}`")
+                if modules not in guildDB["logging"]["events"]:
+                    msg = await embed.add_field(msg,f"Event module - {modules}",f"Enable with `{prefix}logs enable {modules}`")
             return await ctx.send(embed=msg)
         elif module not in loggingModules["commands"] and module not in loggingModules["events"]:
             return await ctx.invoke(self.bot.get_command("logs"),"enable")
@@ -83,36 +86,43 @@ class Logs(commands.Cog):
             if module in loggingModules["commands"] and module not in loggingModules["events"] and module not in guildDB["logging"]["commands"]:
                 guildDB["logging"]["commands"].append(module)
                 await db.update("guilds",{"id": ctx.guild.id},guildDB["logging"])
-                return await ctx.send(embed=(await embed.generate(f"Logging module {module} enabled",None)))
+                return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" enabled",None)))
             elif module in loggingModules["events"] and module not in loggingModules["commands"] and module not in guildDB["logging"]["events"]:
                 guildDB["logging"]["events"].append(module)
                 await db.update("guilds",{"id": ctx.guild.id},guildDB["logging"])
-                return await ctx.send(embed=(await embed.generate(f"Logging module {module} enabled",None)))
+                return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" enabled",None)))
             else:
-                return await ctx.send(embed=(await embed.generate(f"Logging module {module} is already enabled!",None)))
+                return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" is already enabled!",None)))
 
     @logs.command(name="disable",description="[module] | Disable logging features to be enabled")
     @commands.guild_only()
     @checks.hasGDPermission("ADMINISTRATOR")
     async def disable(self,ctx,module=None):
         if module == None:
-            # Show modules that can be disabled here
-            pass
-        # Check if module is a valid module
+            guildDB = await db.find("guilds",{"id": ctx.guild.id})
+            prefix = await misc.getPrefix(self.bot,ctx)
+            msg = await embed.generate("Enabled Logging Modules","Here are the logging modules that you can current enabled")
+            for modules in loggingModules["commands"]:
+                if modules in guildDB["logging"]["commands"]:
+                    msg = await embed.add_field(msg,f"Command module - {modules}",f"Disable with `{prefix}logs disable {modules}`")
+            for modules in loggingModules["events"]:
+                if modules in guildDB["logging"]["events"]:
+                    msg = await embed.add_field(msg,f"Event module - {modules}",f"Disable with `{prefix}logs disable {modules}`")
+            return await ctx.send(embed=msg)
         elif module not in loggingModules["commands"] and module not in loggingModules["events"]:
-            return
-        # Check if the module is not disabled
+            return await ctx.invoke(self.bot.get_command("logs"),"disable")
         else:
             guildDB = await db.find("guilds",{"id": ctx.guild.id})
-            if module in loggingModules["commands"] and module in guildDB["logging"]["commands"]:
-                pass
-                # Disable it and send a message
-            elif module in loggingModules["events"] and module in guildDB["logging"]["events"]:
-                pass
-                # Disable it and send a message
+            if module in loggingModules["commands"] and module not in loggingModules["events"] and module in guildDB["logging"]["commands"]:
+                del guildDB["logging"]["commands"][module]
+                await db.update("guilds",{"id": ctx.guild.id},guildDB["logging"])
+                return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" disabled",None)))
+            elif module in loggingModules["events"] and module not in loggingModules["commands"] and module in guildDB["logging"]["events"]:
+                del guildDB["logging"]["modules"][module]
+                await db.update("guilds",{"id": ctx.guild.id},guildDB["logging"])
+                return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" disabled",None)))
             else:
-                pass
-                # Module is disabled and we can provide an error for such
+                return await ctx.send(embed=(await embed.generate(f"Logging module \"{module}\" is already disabled!",None)))
 
     @logs.command(name="setchannel",description="[channel] | Set the channel to which all command logs will be sent to on the guild")
     @commands.guild_only()

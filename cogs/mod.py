@@ -161,7 +161,7 @@ class Mod(commands.Cog):
         #     await ctx.channel.purge(limit=amount)
         # else:
         #     await embed.error(ctx,"Invalid purge check, view command usage")
-        await modLog(self,ctx,f"#{channel.name} was purged!",f"{check.title()} {amount} were purged!")
+        await modLog(self,ctx,f"#{ctx.channel.name} was purged!",f"{check.title()} {amount} were purged!")
 
     @mod.command(name="strike",description="<user> [reason] | Warn a user for their behaviour")
     @commands.guild_only()

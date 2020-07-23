@@ -11,7 +11,7 @@ environment = jinja2.Environment(
 
 async def purgeTemplate(title,messages):
     template = environment.get_template("purge.html")
-    stream = io.BufferedWriter()
+    stream = io.BufferedWriter(io.RawIOBase)
     template = await template.render_async(title=title,messages=messages)
     stream.write(bytes(template,encoding="UTF-8"))
     return discord.File(stream.flush(),"file.html")

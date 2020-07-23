@@ -26,7 +26,7 @@ class AutoModListener(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self,ctx):
         # If message is not in a guild
-        if ctx.guild != None and self.bot.get_user(ctx.author.id).bot is False:
+        if ctx.guild != None and ctx.author.bot is False:
             # Check whether the user has got bypass automod
             user = await db.find("users",{"guild": ctx.guild.id, "user": ctx.author.id})
             try:

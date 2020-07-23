@@ -150,15 +150,17 @@ class Mod(commands.Cog):
             return not ctx.author.bot
         def bot_check(ctx):
             return ctx.author.bot
+        async for message in ctx.channel.history(limit=amount):
+            print(message.content)
         # Check what check is called, the purge based on that check
-        if check.lower() == "member":
-            await ctx.channel.purge(limit=amount,check=member_check)
-        elif check.lower() == "bot":
-            await ctx.channel.purge(limit=amount,check=bot_check)
-        elif check.lower() == "all" or check == "":
-            await ctx.channel.purge(limit=amount)
-        else:
-            await embed.error(ctx,"Invalid purge check, view command usage")
+        # if check.lower() == "member":
+        #     await ctx.channel.purge(limit=amount,check=member_check)
+        # elif check.lower() == "bot":
+        #     await ctx.channel.purge(limit=amount,check=bot_check)
+        # elif check.lower() == "all" or check == "":
+        #     await ctx.channel.purge(limit=amount)
+        # else:
+        #     await embed.error(ctx,"Invalid purge check, view command usage")
         await modLog(self,ctx,f"#{channel.name} was purged!",f"{check.title()} {amount} were purged!")
 
     @mod.command(name="strike",description="<user> [reason] | Warn a user for their behaviour")

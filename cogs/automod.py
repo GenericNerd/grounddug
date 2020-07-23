@@ -53,7 +53,7 @@ class AutoModListener(commands.Cog):
                 async def attemptSend(channel, embed):
                     try:
                         webhook = await ctx.channel.create_webhook(name="GroundDug Auto-Moderator")
-                        await webhook.send(content="[Messaged removed by GroundDug Automod]",username=f"{ctx.author.name}#{ctx.author.discriminator}",avatar_url=ctx.author.avatar_url)
+                        await webhook.send(content="[Messaged removed by GroundDug Auto-Moderator]",username=f"{ctx.author.name}#{ctx.author.discriminator}",avatar_url=ctx.author.avatar_url)
                         await webhook.delete()
                         await channel.send(embed=embed)
                     except:

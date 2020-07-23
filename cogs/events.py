@@ -108,7 +108,8 @@ class Events(commands.Cog):
                 try:
                     await member.send(embed=(await embed.generate("Verification needed!",f"Verify here: https://grounddug.xyz/boundary/{str(boundaryID)}",0xffcc4d)))
                 except:
-                    pass
+                    if guildDB["channel"] != 0:
+                        await self.bot.get_channel(guildDB["channel"]).send(embed=(await embed.generate(f"{member.name} was not sent a link!",f"Some manual verification may be required, but here is the link for them to verify:\nhttps://grounddug.xyz/boundary/{str(boundaryID)}")))
         else:
             # Create an invite to send to the user
             invite = await member.guild.create_invite(max_uses=1,reason="Raid mode activated - Providing link to user")

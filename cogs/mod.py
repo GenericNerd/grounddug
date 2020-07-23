@@ -155,7 +155,6 @@ class Mod(commands.Cog):
         async for message in ctx.channel.history(limit=amount):
             messages.append(message)
         log = await templates.purgeTemplate("Purge Test",messages)
-        print(log)
         await ctx.send("Here",file=log)
         # Check what check is called, the purge based on that check
         # if check.lower() == "member":

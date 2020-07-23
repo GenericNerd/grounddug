@@ -8,6 +8,7 @@ import cogs.utils.embed as embed
 import cogs.utils.db as db
 import cogs.utils.cases as cases
 import cogs.utils.logger as logger
+import cogs.utils.templates as templates
 import os
 
 async def modLog(self,ctx,title,desc):
@@ -150,8 +151,10 @@ class Mod(commands.Cog):
             return not ctx.author.bot
         def bot_check(ctx):
             return ctx.author.bot
+        messages = []
         async for message in ctx.channel.history(limit=amount):
-            print(message.content)
+            messages.append(message)
+        await ctx.send(file=(await templates.purgeTemplate("Purge Test",messages)))
         # Check what check is called, the purge based on that check
         # if check.lower() == "member":
         #     await ctx.channel.purge(limit=amount,check=member_check)

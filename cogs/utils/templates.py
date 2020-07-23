@@ -15,5 +15,5 @@ async def purgeTemplate(title,messages):
     template = await template.render_async(title=title,messages=messages)
     print(template)
     stream.write(template)
-    print(stream)
+    print(stream.getvalue())
     return discord.File(stream,"file.html")

@@ -49,11 +49,3 @@ async def zalgoClean(message:str):
         if unicodedata.category(char) not in zalgoCategory:
             cleanString += char
     return cleanString
-
-async def sendModLog(self,ctx,action,member=None):
-    #0xff8400 - human
-    pass
-
-async def sendAutoModLog(self,guild,content,member=None):
-    #0xe64100 - auto
-    pass

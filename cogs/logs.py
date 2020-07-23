@@ -181,6 +181,11 @@ class Logging(commands.Cog):
             msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
+        elif before.avatar_url != after.avatar_url and "member" in guildDB["logging"]["events"]:
+            msg = await embed.generate(f"{before.name} changed their avatar!",None,0x10009e)
+            msg.set_image(url=after.avatar_url)
+            if guildDB["channel"] != 0:
+                await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
     # Role specific events
 

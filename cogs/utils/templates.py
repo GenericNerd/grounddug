@@ -1,7 +1,8 @@
 import discord
 import asyncio
 import jinja2
-import io
+import os
+from datetime import datetime
 
 environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates"),
@@ -11,8 +12,7 @@ environment = jinja2.Environment(
 
 async def purgeTemplate(title,messages):
     template = environment.get_template("purge.html")
-    raw = io.RawIOBase()
-    stream = io.BufferedWriter(raw=raw)
-    template = await template.render_async(title=title,messages=messages)
-    stream.write(bytes(template,encoding="UTF-8"))
-    return discord.File(stream.flush(),"file.html")
+    with open(f"{datetime.utcnow().strftime()}.html","w",encoding="UTF-8") as f:
+        f.write(await template.render_async(title=title,messages=messages))
+        f.close()
+    return discord.File(f"{datetime.utcnow().strftime()}.html")

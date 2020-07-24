@@ -2,6 +2,7 @@
 
 import discord
 from discord.ext import commands
+from discord.ext import tasks
 import asyncio
 from datetime import datetime
 from bson.objectid import ObjectId
@@ -12,6 +13,8 @@ import cogs.utils.logger as logger
 import cogs.utils.checks as checks
 import cogs.utils.cases as cases
 import uuid
+import os
+import glob
 from sentry_sdk import capture_exception
 
 # Channel to send logs to
@@ -20,6 +23,7 @@ coreChannel = 664541295448031295
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.clearStorage.start()
 
     # on_ready performs checks and sends logs to GD Discord
     @commands.Cog.listener()
@@ -190,6 +194,15 @@ class Events(commands.Cog):
                             userObject["permissions"][permission] = False
                     # Update the database
                     await db.update("users",{"_id": userObject["_id"]},{"permissions": userObject["permissions"]})
+
+    @tasks.loop(seconds=10)
+    async def clearStorage(self):
+        try:
+            files = glob.glob("storage/")
+            for f in files:
+                os.remove(f)
+        except:
+            return
 
 def setup(bot):
     bot.add_cog(Events(bot))

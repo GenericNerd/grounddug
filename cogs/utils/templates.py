@@ -15,4 +15,4 @@ async def purgeTemplate(title,messages):
     with open(f"{datetime.utcnow().strftime('%d%m%Y%H%M%S')}.html","w",encoding="UTF-8") as f:
         f.write(await template.render_async(title=title,messages=messages))
         f.close()
-    return discord.File(f"{datetime.utcnow().strftime()}.html")
+    return discord.File(f"{datetime.utcnow().strftime('%d%m%Y%H%M%S')}.html")

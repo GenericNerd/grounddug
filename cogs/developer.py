@@ -66,7 +66,7 @@ class Developer(commands.Cog):
         for guild in self.bot.guilds:
             guildObject = await db.find("guilds",{"id": guild.id})
             # Update database here
-            guildObject["isPremium"] = False
+            guildObject["premium"] = {"isPremium": False}
             guildObject["automod"]["zalgo"] = 0
             guildObject["logging"] = {"commands": ["perms", "boundary", "automod", "admin", "mod"], "events": ["message", "role", "channel", "member", "nicknames"]}
             try:

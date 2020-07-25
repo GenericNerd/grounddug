@@ -252,6 +252,54 @@ class AutoModSetup(commands.Cog):
 
                 await message.delete()
 
+            # MASS-MENTION PROTECTION
+            e = await embed.generate("AutoMod Setup", "Would you like to enable Zalgo (Z͎̠͗ͣḁ̵͙̑l͖͙̫̲̉̃ͦ̾͊ͬ̀g͔̤̞͓̐̓̒̽o͓̳͇̔ͥ) text protection?")
+            await msg.edit(embed=e)
+
+            await msg.add_reaction(tick)
+            await msg.add_reaction(cross)
+
+            def check(reaction, user):
+                return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
+
+            try:
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                await msg.clear_reactions()
+                return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+
+            await msg.remove_reaction(reaction, user)
+
+            if str(reaction) == tick:
+                await msg.clear_reactions()
+
+                e = await embed.generate("AutoMod Setup", "What percentage suspicion should trigger Zalgo Detection? (Any number between 1-100)")
+
+                await msg.edit(embed=e)
+
+                def check(message):
+                    try:
+                        int(message.content)
+                    except Exception:
+                        pass
+                    else:
+                        return message.author == ctx.author
+
+                try:
+                    message = await self.bot.wait_for("message", timeout=60.0, check=check)
+                except asyncio.TimeoutError:
+                    await msg.clear_reactions()
+                    return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+
+                if int(message.content) > 100:
+                    guildSettings["automod"]["zalgo"] = 100
+                elif int(message.content) < 0:
+                    guildSettings["automod"]["zalgo"] = 0
+                else:
+                    guildSettings["automod"]["zalgo"] = int(message.content)
+
+                await message.delete()
+
             # ANTI INVITE
             e = await embed.generate("AutoMod Setup", "Would you like to enable Anti-Invite?")
             await msg.edit(embed=e)

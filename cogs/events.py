@@ -195,14 +195,14 @@ class Events(commands.Cog):
                     # Update the database
                     await db.update("users",{"_id": userObject["_id"]},{"permissions": userObject["permissions"]})
 
-    @tasks.loop(seconds=10)
-    async def clearStorage(self):
-        try:
-            files = glob.glob("storage/")
-            for f in files:
-                os.remove(f)
-        except:
-            return
+    # @tasks.loop(seconds=10)
+    # async def clearStorage(self):
+    #     try:
+    #         files = glob.glob("storage/")
+    #         for f in files:
+    #             os.remove(f)
+    #     except:
+    #         return
 
 def setup(bot):
     bot.add_cog(Events(bot))

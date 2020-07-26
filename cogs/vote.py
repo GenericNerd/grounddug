@@ -19,7 +19,7 @@ class Vote(commands.Cog):
             votes = await db.getVoteUser(ctx.author.id)
             msg = await embed.generate("Vote for GroundDug Premium","Here is how you can vote for GroundDug and your current information")
             msg = await embed.add_field(msg,"Voting","You can vote for GroundDug here:\n[Top.gg](https://top.gg/bot/553602353962549249/vote)")
-            msg = await embed.add_field(msg,"Current information",f"**Current votes:** {votes['votes']}\n**Linked user:** {votes['linkedTo']}")
+            msg = await embed.add_field(msg,"Current information",f"\n**Current votes:** {votes['votes']}\n**Linked user:** {votes['linkedTo']}")
             await ctx.send(embed=msg)
         
     @vote.command(name="redeem",description="| Redeem your current votes and turn them into Premium")
@@ -34,10 +34,14 @@ class Vote(commands.Cog):
             guild["premium"]["isPremium"] = True
             guild["premium"]["expires"] = (timestamp-datetime(1970,1,1)).total_seconds()
             await db.update("guilds",{"_id": guild["_id"]},{"premium": guild["premium"]})
+            await db.update("voteUsers",{"user": votes["user"]},{"votes": 0})
+            await ctx.send(embed=(await embed.generate(f"{votes['votes']} votes redeemed!",f"Your GroundDug Premium will expire on {datetime.utcfromtimestamp(guild['premium']['expires']).strftime('%A the %d of %B %Y at %H:%M:%S')}",0x0b9e00)))
         elif guild["premium"]["isPremium"] and votes["votes"] > 0:
             hours = 24 * votes["votes"]
             timestamp = guild["premium"]["expires"] + datetime.utcnow()+timedelta(hours=hours)
             await db.update("guilds",{"_id": guild["_id"]},{"premium": guild["premium"]})
+            await db.update("voteUsers",{"user": votes["user"]},{"votes": 0})
+            await ctx.send(embed=(await embed.generate(f"{votes['votes']} votes redeemed!",f"Your GroundDug Premium has been extended and will expire on {datetime.utcfromtimestamp(guild['premium']['expires']).strftime('%A the %d of %B %Y at %H:%M:%S')}",0x0b9e00)))
         else:
             await ctx.invoke(self.bot.get_command("vote"))
     

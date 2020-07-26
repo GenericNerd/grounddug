@@ -34,7 +34,7 @@ async def getVoteUser(user):
     except pymongo.errors.OperationFailure:
         voteUserData = {"user": user, "votes": 0, "linkedTo": None}
         await insert("voteUsers", voteUserData)
-        return await find("voteUsers", {"user": user})
+        return voteUserData
 
 async def remove(database,fltr):
     await asyncDB[database].delete_one(fltr)

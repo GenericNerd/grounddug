@@ -84,7 +84,8 @@ class Vote(commands.Cog):
     async def premiumCheck(self):
         for guild in self.bot.guilds:
             guildDB = await db.find("guilds",{"id": guild.id})
-            if guildDB["premium"]["isPremium"] and datetime.utcfromtimestamp(guildDB["premium"]["expires"]) > datetime.utcnow():
+            if guildDB["premium"]["isPremium"] and guildDB["premium"]["expires"] > (datetime.utcnow()-datetime(1970,1,1)).total_seconds():
+                print(guild.id)
                 try:
                     del guildDB["premium"]["expires"]
                     guildDB["premium"]["isPremium"] = False

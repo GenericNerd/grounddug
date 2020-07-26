@@ -85,13 +85,10 @@ class Vote(commands.Cog):
         for guild in self.bot.guilds:
             guildDB = await db.find("guilds",{"id": guild.id})
             if guildDB["premium"]["isPremium"] and guildDB["premium"]["expires"] < (datetime.utcnow()-datetime(1970,1,1)).total_seconds():
-                print(guild.id)
-                try:
-                    del guildDB["premium"]["expires"]
-                    guildDB["premium"]["isPremium"] = False
-                    await db.update("guilds",{"_id": guildDB["_id"]},{"premium": guildDB["premium"]})
-                except:
-                    pass
+                del guildDB["premium"]["expires"]
+                guildDB["premium"]["isPremium"] = False
+                await db.update("guilds",{"_id": guildDB["_id"]},{"premium": guildDB["premium"]})
+                await self.bot.get_channel(guildDB["channel"]).send(embed=(await embed.generate("GroundDug Premium expired!","Renew your GroundDug Premium now and keep the Premium features!",0xfa0000)))
             else:
                 continue
 

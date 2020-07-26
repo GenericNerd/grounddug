@@ -9,7 +9,7 @@ import cogs.utils.db as db
 import cogs.utils.misc as misc
 from datetime import datetime, timedelta
 
-class Votes(commands.Cog):
+class Vote(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
 
@@ -59,3 +59,6 @@ class Votes(commands.Cog):
             await ctx.send(embed=(await embed.generate("You have unlinked your votes")))
         else:
             await embed.error(ctx,"You do not have your votes linked to anyone!")
+
+def setup(bot):
+    bot.add_cog(Vote(bot))

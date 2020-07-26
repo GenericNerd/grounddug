@@ -35,7 +35,7 @@ sentry_sdk.init(
                   SanicIntegration()])
 
 # Cogs to load on bot ready
-startupExtensions = ["events","perms","core","admin","mod","developer","logs","automod","boundary","directoryAPI","votes"]
+startupExtensions = ["events","perms","core","admin","mod","developer","logs","automod","boundary","directoryAPI","vote"]
 # Get prefix depending on message context
 bot = commands.AutoShardedBot(command_prefix=misc.getPrefix)
 

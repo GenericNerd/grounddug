@@ -23,7 +23,7 @@ async def insert(database,data):
 async def getUser(guild,user):
     try:
         return await find("users",{"guild": guild, "user": user})
-    except pymongo.errors.OperationFailure as e:
+    except pymongo.errors.OperationFailure:
         userData = {"guild": guild, "user": user, "permissions": {"MANAGE_MESSAGES": False, "WARN_MEMBERS": False, "MUTE_MEMBERS": False, "KICK_MEMBERS": False, "BAN_MEMBERS": False, "ADMINISTRATOR": False}, "strikes": {}}
         await insert("users",userData)
         return userData
@@ -31,10 +31,10 @@ async def getUser(guild,user):
 async def getVoteUser(user):
     try:
         return await find("voteUsers", {"user": user})
-    except pymongo.errors.OperationFailure as e:
+    except pymongo.errors.OperationFailure:
         voteUserData = {"user": user, "votes": 0, "linkedTo": None}
         await insert("voteUsers", voteUserData)
-        return voteUserData
+        return await find("voteUsers", {"user": user})
 
 async def remove(database,fltr):
     await asyncDB[database].delete_one(fltr)

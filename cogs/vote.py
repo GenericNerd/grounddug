@@ -51,7 +51,7 @@ class Vote(commands.Cog):
             await ctx.send(embed=(await embed.generate(f"{votes['votes']} votes redeemed!",f"Your GroundDug Premium will expire on {datetime.utcfromtimestamp(guild['premium']['expires']).strftime('%A the %d of %B %Y at %H:%M:%S')}",0x0b9e00)))
         elif guild["premium"]["isPremium"] and votes["votes"] > 0:
             hours = 24 * votes["votes"]
-            timestamp = guild["premium"]["expires"] + timedelta(hours=hours).total_seconds()
+            guild["premium"]["expires"] += timedelta(hours=hours).total_seconds()
             await db.update("guilds",{"_id": guild["_id"]},{"premium": guild["premium"]})
             await db.update("voteUsers",{"user": votes["user"]},{"votes": 0})
             await ctx.send(embed=(await embed.generate(f"{votes['votes']} votes redeemed!",f"Your GroundDug Premium has been extended and will expire on {datetime.utcfromtimestamp(guild['premium']['expires']).strftime('%A the %d of %B %Y at %H:%M:%S')}",0x0b9e00)))

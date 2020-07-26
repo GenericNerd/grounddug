@@ -16,7 +16,7 @@ class Vote(commands.Cog):
     @commands.group(name="vote",description="Vote to receive GroundDug Premium")
     async def vote(self,ctx):
         if ctx.invoked_subcommand is None:
-            votes = await db.find("voteUsers",{"user": ctx.author.id})
+            votes = await db.getVoteUser(ctx.author.id)
             msg = await embed.generate("Vote for GroundDug Premium","Here is how you can vote for GroundDug and your current information")
             msg = await embed.add_field(msg,"Voting","You can vote for GroundDug here:\n[Top.gg](https://top.gg/bot/553602353962549249/vote)")
             msg = await embed.add_field(msg,"Current information",f"**Current votes:** {votes['votes']}\n**Linked user:** {votes['linkedTo']}")

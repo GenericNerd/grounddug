@@ -20,6 +20,7 @@ class Vote(commands.Cog):
             msg = await embed.generate("Vote for GroundDug Premium","Here is how you can vote for GroundDug and your current information")
             msg = await embed.add_field(msg,"Voting","You can vote for GroundDug here:\n[Top.gg](https://top.gg/bot/553602353962549249/vote)")
             msg = await embed.add_field(msg,"Current information",f"**Current votes:** {votes['votes']}\n**Linked user:** {votes['linkedTo']}")
+            await ctx.send(embed=msg)
         
     @vote.command(name="redeem",description="| Redeem your current votes and turn them into Premium")
     @commands.guild_only()

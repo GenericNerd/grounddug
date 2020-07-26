@@ -2,6 +2,7 @@
 
 import discord
 from discord.ext import commands
+from discord.ext import tasks
 import asyncio
 import cogs.utils.checks as checks
 import cogs.utils.embed as embed
@@ -12,6 +13,7 @@ from datetime import datetime, timedelta
 class Vote(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
+        self.premiumCheck.start()
 
     @commands.group(name="vote",description="Vote to receive GroundDug Premium")
     async def vote(self,ctx):
@@ -48,13 +50,13 @@ class Vote(commands.Cog):
             guild["premium"]["expires"] = (timestamp-datetime(1970,1,1)).total_seconds()
             await db.update("guilds",{"_id": guild["_id"]},{"premium": guild["premium"]})
             await db.update("voteUsers",{"user": votes["user"]},{"votes": 0})
-            await ctx.send(embed=(await embed.generate(f"{votes['votes']} votes redeemed!",f"Your GroundDug Premium will expire on {datetime.utcfromtimestamp(guild['premium']['expires']).strftime('%A the %d of %B %Y at %H:%M:%S')}",0x0b9e00)))
+            await ctx.send(embed=(await embed.generate(f"{votes['votes']} votes redeemed!",f"Your GroundDug Premium will expire on {datetime.utcfromtimestamp(guild['premium']['expires']).strftime('%A the %d of %B %Y at %H:%M:%S UTC')}",0x0b9e00)))
         elif guild["premium"]["isPremium"] and votes["votes"] > 0:
             hours = 24 * votes["votes"]
             guild["premium"]["expires"] += timedelta(hours=hours).total_seconds()
             await db.update("guilds",{"_id": guild["_id"]},{"premium": guild["premium"]})
             await db.update("voteUsers",{"user": votes["user"]},{"votes": 0})
-            await ctx.send(embed=(await embed.generate(f"{votes['votes']} votes redeemed!",f"Your GroundDug Premium has been extended and will expire on {datetime.utcfromtimestamp(guild['premium']['expires']).strftime('%A the %d of %B %Y at %H:%M:%S')}",0x0b9e00)))
+            await ctx.send(embed=(await embed.generate(f"{votes['votes']} votes redeemed!",f"Your GroundDug Premium has been extended and will expire on {datetime.utcfromtimestamp(guild['premium']['expires']).strftime('%A the %d of %B %Y at %H:%M:%S UTC')}",0x0b9e00)))
         else:
             await ctx.invoke(self.bot.get_command("vote"))
     
@@ -77,6 +79,20 @@ class Vote(commands.Cog):
             await ctx.send(embed=(await embed.generate("You have unlinked your votes",None)))
         else:
             await embed.error(ctx,"You do not have your votes linked to anyone!")
+
+    @tasks.loop(minutes=5)
+    async def premiumCheck(self):
+        for guild in self.bot.guilds:
+            guildDB = await db.find("guilds",{"id": guild.id})
+            if guild["premium"]["isPremium"] and datetime.utcfromtimestamp(guildDB["premium"]["expires"]) > datetime.utcnow():
+                try:
+                    del guildDB["premium"]["expires"]
+                    guildDB["premium"]["isPremium"] = False
+                    await db.update("guilds",{"_id": guildDB["_id"]},{"premium": guildDB["premium"]})
+                except:
+                    pass
+            else:
+                continue
 
 def setup(bot):
     bot.add_cog(Vote(bot))

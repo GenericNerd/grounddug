@@ -31,7 +31,7 @@ class Vote(commands.Cog):
         guild = await db.find("guilds",{"id": ctx.guild.id})
         prefix = await misc.getPrefix(self.bot,ctx)
         if guild["premium"]["isPremium"]:
-            await ctx.send(embed=(await embed.generate("GroundDug Premium Status",f"**Premium Guild?:** <:check:679095420202516480>\n**Expires on**: {datetime.utcfromtimestamp(guild['premium']['expires']).strftime('%A the %d of %B %Y at %H:%M:%S')}",0x0b9e00)))
+            await ctx.send(embed=(await embed.generate("GroundDug Premium Status",f"**Premium Guild?:** <:check:679095420202516480>\n**Expires on**: {datetime.utcfromtimestamp(guild['premium']['expires']).strftime('%A %d of %B %Y at %H:%M:%S UTC')}",0x0b9e00)))
         else:
             await ctx.send(embed=(await embed.generate("GroundDug Premium Status",f"**Premium Guild?:** <:cross:679095420319694898>\n*Use {prefix}vote to gain votes and redeem them to be a Premium guild*",0x9e0000)))
 
@@ -51,7 +51,7 @@ class Vote(commands.Cog):
             await ctx.send(embed=(await embed.generate(f"{votes['votes']} votes redeemed!",f"Your GroundDug Premium will expire on {datetime.utcfromtimestamp(guild['premium']['expires']).strftime('%A the %d of %B %Y at %H:%M:%S')}",0x0b9e00)))
         elif guild["premium"]["isPremium"] and votes["votes"] > 0:
             hours = 24 * votes["votes"]
-            timestamp = guild["premium"]["expires"] + (datetime.utcnow()+timedelta(hours=hours)).total_seconds()
+            timestamp = guild["premium"]["expires"] + timedelta(hours=hours).total_seconds()
             await db.update("guilds",{"_id": guild["_id"]},{"premium": guild["premium"]})
             await db.update("voteUsers",{"user": votes["user"]},{"votes": 0})
             await ctx.send(embed=(await embed.generate(f"{votes['votes']} votes redeemed!",f"Your GroundDug Premium has been extended and will expire on {datetime.utcfromtimestamp(guild['premium']['expires']).strftime('%A the %d of %B %Y at %H:%M:%S')}",0x0b9e00)))

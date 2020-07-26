@@ -8,8 +8,8 @@ import cogs.utils.embed as embed
 import cogs.utils.db as db
 import cogs.utils.cases as cases
 import cogs.utils.logger as logger
-import cogs.utils.templates as templates
-import os
+# import cogs.utils.templates as templates
+# import os
 
 async def modLog(self,ctx,title,desc):
     guildDB = await db.find("guilds",{"id": ctx.guild.id})

@@ -23,7 +23,7 @@ coreChannel = 664541295448031295
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.clearStorage.start()
+        # self.clearStorage.start()
 
     # on_ready performs checks and sends logs to GD Discord
     @commands.Cog.listener()

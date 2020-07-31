@@ -30,7 +30,7 @@ async def topgg(request):
 
 def registerVoteServer(loop, port=42069):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind(('localhost', port))
+    sock.bind(('0.0.0.0', port))
     sock.listen(5)
 
     srv_coro = app.create_server(

@@ -106,6 +106,40 @@ class Boundary(commands.Cog):
             except:
                 return await db.remove("boundary",{"_id": document["_id"]})
             guildDB = await db.find("guilds",{"id": document["guild"]})
+            if guildDB["premium"]["isPremium"]:
+                # If the role is not set, but the logs channel is set, send a message alerting mods/admins that Boundary role is not set
+                if guildDB["boundary"]["role"] == None and guildDB["channel"] != 0:
+                    await guild.get_channel(guildDB["channel"]).send(embed=(await embed.generate("Boundary role is not set!",f"You forgot to set a Boundary role! As users verify, the role is not given.\n\n**User**: {user.mention}",0xffcc4d)))
+                else:
+                    # Add the Boundary role to the user and send them a message to let them know they have verified
+                    try:
+                        await user.add_roles(guild.get_role(guildDB["boundary"]["role"]))
+                    except:
+                        if guildDB["channel"] != 0:
+                            await guild.get_channel(guildDB["channel"]).send(embed=(await embed.generate("Role not given!",f"GroundDug could not set the role to a user.\n\n**User**: {user.mention}",0xff0000)))
+                    try:
+                        await user.send(embed=(await embed.generate("You have been verified!",f"You are now a verified member in {guild.name}!",0xffcc4d)))
+                    except:
+                        pass
+                # Remove the verification document from the database
+                await db.remove("boundary",{"_id": document["_id"]})
+            else:
+                continue
+
+    @tasks.loop(minutes=1)
+    async def boundary_check(self):
+        # Wait until the bot is ready (mainly to avoid errors on_ready)
+        await self.bot.wait_until_ready()
+        # Find and iterate through each verified user
+        documents = await db.findAll("boundary",{"verified": True})
+        async for document in documents:
+            # Find their member and guild objects (Discord and DB objects)
+            try:
+                guild = self.bot.get_guild(document["guild"])
+                user = guild.get_member(document["user"])
+            except:
+                return await db.remove("boundary",{"_id": document["_id"]})
+            guildDB = await db.find("guilds",{"id": document["guild"]})
             # If the role is not set, but the logs channel is set, send a message alerting mods/admins that Boundary role is not set
             if guildDB["boundary"]["role"] == None and guildDB["channel"] != 0:
                 await guild.get_channel(guildDB["channel"]).send(embed=(await embed.generate("Boundary role is not set!",f"You forgot to set a Boundary role! As users verify, the role is not given.\n\n**User**: {user.mention}",0xffcc4d)))

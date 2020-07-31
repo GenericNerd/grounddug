@@ -68,7 +68,7 @@ class AutoModListener(commands.Cog):
                     elif guild["automod"]["antiURL"] and re.search(url_Regex,ctx.content):
                         await attemptSend(logChannel,await RuleViolator(ctx,"tried to post a link",True))
                     # If short-URL is on and the message contains a URL, check if it is shortened
-                    elif guild["automod"]["shortURL"] and re.search(url_Regex,ctx.content):
+                    elif guild["premium"]["isPremium"] and guild["automod"]["shortURL"] and re.search(url_Regex,ctx.content):
                         shortened_URLs = []
                         # Find every URL in message
                         for url in re.findall(url_Regex,ctx.content):
@@ -356,7 +356,7 @@ class AutoModSetup(commands.Cog):
                 guildSettings["automod"]["profanity"] = True
 
             # SHORT URLS
-            e = await embed.generate("AutoMod Setup", "Would you like to enable short URL detection?")
+            e = await embed.generate("AutoMod Setup", "Would you like to enable short URL detection? (Premium Only)")
             await msg.edit(embed=e)
 
             def check(reaction, user):

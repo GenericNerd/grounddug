@@ -7,6 +7,7 @@ import cogs.utils.checks as checks
 import cogs.utils.misc as misc
 import cogs.utils.embed as embed
 import cogs.utils.db as db
+from cogs.logs import sendLog
 
 async def changePermission(bot,ctx,user,permChangeTo,permission=None):
     # Get the current user permissions
@@ -63,15 +64,7 @@ class Perms(commands.Cog):
         if ctx.invoked_subcommand is None:
             await ctx.invoke(self.bot.get_command("help"),"perms")
         else:
-            # Check whether logging for perms is enabled
-            guild = await db.find("guilds",{"id": ctx.guild.id})
-            if guild["logs"]["perms"]:
-                # Get the logging channel for the guild
-                channel = self.bot.get_channel(guild["channel"])
-                try:
-                    await channel.send(embed=(await embed.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in #{ctx.channel.name}")))
-                except:
-                    pass
+            await sendLog(self,ctx,"perms")
 
     @perms.command(name="give",description="<user> [permission] | Give a user a GroundDug (`GD`) permission")
     @commands.guild_only()

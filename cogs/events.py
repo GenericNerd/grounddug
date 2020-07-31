@@ -2,6 +2,7 @@
 
 import discord
 from discord.ext import commands
+from discord.ext import tasks
 import asyncio
 from datetime import datetime
 from bson.objectid import ObjectId
@@ -12,6 +13,8 @@ import cogs.utils.logger as logger
 import cogs.utils.checks as checks
 import cogs.utils.cases as cases
 import uuid
+import os
+import glob
 from sentry_sdk import capture_exception
 
 # Channel to send logs to
@@ -20,11 +23,12 @@ coreChannel = 664541295448031295
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        # self.clearStorage.start()
 
     # on_ready performs checks and sends logs to GD Discord
     @commands.Cog.listener()
     async def on_ready(self):
-        logger.info("Online")
+        logger.success("Online")
         prefix = await misc.getPrefix(self.bot,None)
         # Change bot status to online when bot is ready
         await self.bot.change_presence(status=discord.Status.online,activity=discord.Game(f"{prefix}help to get started"))
@@ -44,7 +48,6 @@ class Events(commands.Cog):
             "prefix": "g!",
             "channel": 0,
             "logs": {
-                "misc": False,
                 "logs": False,
                 "mod": False,
                 "perms": False,
@@ -55,10 +58,11 @@ class Events(commands.Cog):
             "cases": 0,
             "automod": {
                 "caps": 0,
+                "zalgo": 0,
+                "massMentions": 0,
                 "antiInvite": False,
                 "antiURL": False,
                 "profanity": False,
-                "massMentions": 0,
                 "shortURL": False,
                 "warnOnRemove": False,
             },
@@ -108,7 +112,8 @@ class Events(commands.Cog):
                 try:
                     await member.send(embed=(await embed.generate("Verification needed!",f"Verify here: https://grounddug.xyz/boundary/{str(boundaryID)}",0xffcc4d)))
                 except:
-                    pass
+                    if guildDB["channel"] != 0:
+                        await self.bot.get_channel(guildDB["channel"]).send(embed=(await embed.generate(f"{member.name} was not sent a link!",f"Some manual verification may be required, but here is the link for them to verify:\nhttps://grounddug.xyz/boundary/{str(boundaryID)}")))
         else:
             # Create an invite to send to the user
             invite = await member.guild.create_invite(max_uses=1,reason="Raid mode activated - Providing link to user")
@@ -135,12 +140,6 @@ class Events(commands.Cog):
         currentUsers = await db.find("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})
         currentUsers["userCount"] = int(currentUsers["userCount"])-1
         await db.update("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")},{"userCount": currentUsers["userCount"]})
-
-    @commands.Cog.listener()
-    async def on_command(self,ctx):
-        # Misc command logging here, if we chose to keep it
-        if ctx.guild is not None:
-            pass
 
     @commands.Cog.listener()
     async def on_command_error(self,ctx,error):
@@ -170,7 +169,7 @@ class Events(commands.Cog):
             await embed.error(ctx,f"{error} - Report sent to developer")
             await self.bot.get_channel(coreChannel).send(embed=(await embed.generate(f"Error raised! Sentry issue created",None,0xff0000)))
             capture_exception(error)
-        
+
     @commands.Cog.listener()
     async def on_member_update(self,before,after):
         # If the roles are not the same, check whether a role has been added or removed
@@ -195,6 +194,15 @@ class Events(commands.Cog):
                             userObject["permissions"][permission] = False
                     # Update the database
                     await db.update("users",{"_id": userObject["_id"]},{"permissions": userObject["permissions"]})
+
+    # @tasks.loop(seconds=10)
+    # async def clearStorage(self):
+    #     try:
+    #         files = glob.glob("storage/")
+    #         for f in files:
+    #             os.remove(f)
+    #     except:
+    #         return
 
 def setup(bot):
     bot.add_cog(Events(bot))

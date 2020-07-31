@@ -3,6 +3,7 @@
 import discord
 from discord.ext import commands
 import asyncio
+from datetime import datetime
 import cogs.utils.checks as checks
 import cogs.utils.levels as levels
 import cogs.utils.embed as embed
@@ -66,9 +67,15 @@ class Developer(commands.Cog):
         for guild in self.bot.guilds:
             guildObject = await db.find("guilds",{"id": guild.id})
             # Update database here
-            guildObject["boundary"] = {"enabled": False, "role": None}
+            guildObject["premium"] = {"isPremium": True, "expires": 1596758400}
+            guildObject["automod"]["zalgo"] = 0
+            guildObject["logging"] = {"commands": [], "events": []}
             try:
                 del guildObject["logs"]["misc"]
+            except:
+                pass
+            try:
+                await self.bot.get_channel(guildObject["channel"]).send(embed=(await embed.generate("You now have GroundDug Premium!",f"Your GroundDug Premium will expire on {datetime.utcfromtimestamp(guildObject['premium']['expires']).strftime('%A the %d of %B %Y at %H:%M:%S UTC')}",0x0b9e00)))
             except:
                 pass
             # for user in guild.members:
@@ -86,6 +93,11 @@ class Developer(commands.Cog):
         mainDB["levels"] = {"1": [149252578125938690, 485472170760339477], "2": [], "3": [280584515045425152], "4": [], "5": [179292162037514241, 96269247411400704, 206309860038410240]}
         await db.update("settings",{"_id": mainDB["_id"]}, mainDB)
         await ctx.send("Done")
+
+    @developer.command(name="test",hidden=True)
+    @checks.hasRequiredLevel(5)
+    async def test(self,ctx):
+        await ctx.send(ctx.channel.history(limit=1).flatten())
 
 def setup(bot):
     bot.add_cog(Developer(bot))

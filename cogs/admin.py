@@ -6,6 +6,7 @@ import asyncio
 import cogs.utils.checks as checks
 import cogs.utils.embed as embed
 import cogs.utils.db as db
+from cogs.logs import sendLog
 
 class Admin(commands.Cog):
     def __init__(self,bot):
@@ -18,15 +19,7 @@ class Admin(commands.Cog):
         if ctx.invoked_subcommand is None:
             await ctx.invoke(self.bot.get_command("help"),"admin")
         else:
-            # Check whether logging for admin is enabled
-            guild = await db.find("guilds",{"id": ctx.guild.id})
-            if guild["logs"]["admin"]:
-                # Get the logging channel for the guild
-                channel = self.bot.get_channel(guild["channel"])
-                try:
-                    await channel.send(embed=(await embed.generate(f"{ctx.author.name}#{ctx.author.discriminator}",f"Ran `{ctx.message.content}` in <#{ctx.channel.id}>")))
-                except:
-                    pass
+            await sendLog(self,ctx,"admin")
         
     @admin.command(name="raid",description="<true/false> | Enables or disables raid mode")
     @commands.guild_only()

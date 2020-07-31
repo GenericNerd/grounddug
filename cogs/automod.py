@@ -7,14 +7,17 @@ import cogs.utils.embed as embed
 import cogs.utils.db as db
 import cogs.utils.cases as cases
 import cogs.utils.checks as checks
+from cogs.utils.misc import zalgoDetect
+from cogs.utils.misc import zalgoClean
+import cogs.utils.logger as logger
+from cogs.logs import sendLog
 
 import re
-import httpx
+import aiohttp
 from profanity_filter import ProfanityFilter
 
 # Variables required for automod to work in future
 pf = ProfanityFilter()
-httpxClient = httpx.AsyncClient()
 
 class AutoModListener(commands.Cog):
     def __init__(self, bot):
@@ -23,7 +26,7 @@ class AutoModListener(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self,ctx):
         # If message is not in a guild
-        if ctx.guild is not None:
+        if ctx.guild != None and ctx.author.bot is False:
             # Check whether the user has got bypass automod
             user = await db.find("users",{"guild": ctx.guild.id, "user": ctx.author.id})
             try:
@@ -42,11 +45,16 @@ class AutoModListener(commands.Cog):
                         removed = True
                         if guild["automod"]["warnOnRemove"]:
                             # Create a case for automod violation if the guild decides to warn on remove
-                            await cases.createCase(ctx.guild,ctx.author,ctx.guild.me,"message deleted",text.capitalize())
+                            await cases.createCase(ctx.guild,ctx.author,ctx.guild.me,"deleted message",text.capitalize())
                         # Return an embed with the text variable
-                        return await embed.generate(f"{ctx.author.name}#{ctx.author.discriminator} {text} in #{ctx.channel.name}",f"`{ctx.content}`")
+                    msg = await embed.generate(f"{ctx.author.name}#{ctx.author.discriminator} {text} in #{ctx.channel.name}",f"`{ctx.content}`",0x8a0000)
+                    msg.set_footer(text="GroundDug Auto-Moderator | 2020",icon_url="https://cdn.discordapp.com/avatars/553602353962549249/641fcc61b43b5ce4b4cbe94c8c0270fa.webp?size=128")
+                    return msg
                 async def attemptSend(channel, embed):
                     try:
+                        webhook = await ctx.channel.create_webhook(name="GroundDug Auto-Moderator")
+                        await webhook.send(content="[Messaged removed by GroundDug Auto-Moderator]",username=f"{ctx.author.name}#{ctx.author.discriminator}",avatar_url=ctx.author.avatar_url)
+                        await webhook.delete()
                         await channel.send(embed=embed)
                     except:
                         pass
@@ -60,20 +68,22 @@ class AutoModListener(commands.Cog):
                     elif guild["automod"]["antiURL"] and re.search(url_Regex,ctx.content):
                         await attemptSend(logChannel,await RuleViolator(ctx,"tried to post a link",True))
                     # If short-URL is on and the message contains a URL, check if it is shortened
-                    elif guild["automod"]["shortURL"] and re.search(url_Regex,ctx.content):
+                    elif guild["premium"]["isPremium"] and guild["automod"]["shortURL"] and re.search(url_Regex,ctx.content):
                         shortened_URLs = []
                         # Find every URL in message
                         for url in re.findall(url_Regex,ctx.content):
                             # Emulate a browser to allow redirects
-                            browser = await httpxClient.head(url,allow_redirects=True)
+                            async with aiohttp.ClientSession() as session:
+                                async with session.get(url, allow_redirects=True) as response:
+                                    redirect = str(response).split("Location': \'")[1].split("\'")[0]
                             # If the browser URL after redirects is not the URL it was given, append it to shortenedURLs
-                            if browser.url != url:
-                                shortened_URLs.append(str(browser.url))
+                            if redirect != url:
+                                shortened_URLs.append(redirect)
                         if shortened_URLs is not []:
                             # Embed description
                             description = ""
                             for url in shortened_URLs:
-                                description += f"{url} "
+                                description += f"{url}, "
                             await ctx.channel.send(embed=(await embed.generate("Shortened URLs detected!",f"{ctx.author.mention} posted a shortened link(s) leading to {description}")))
                     # If the message contains swearing, invoke RuleViolator
                     elif guild["automod"]["profanity"] and pf.is_profane(ctx.content):
@@ -84,7 +94,10 @@ class AutoModListener(commands.Cog):
                     # If mass mentions are not disabled, and more than mass mentions were mentioned, invoke RuleViolator
                     elif guild["automod"]["massMentions"] > 0 and len(ctx.raw_mentions) >= guild["automod"]["massMentions"]:
                         await attemptSend(logChannel,await RuleViolator(ctx,"pinged too many people",True))
-
+                    # If Zalgo text detection is not disabled, and Zalgo is detected above the specified amount, invoke RuleViolator4
+                    elif guild["automod"]["zalgo"] > 0 and ((await zalgoDetect(ctx.content)*100)>guild["automod"]["zalgo"]):
+                        await ctx.channel.send(embed=(await embed.generate(f"{ctx.author.name} used Zalgo text!",f"Here is what they actually meant to say:\n\n{await zalgoClean(ctx.content)}")))
+                        await attemptSend(logChannel,await RuleViolator(ctx,"used Zalgo text",False))
 
 class AutoModSetup(commands.Cog):
     def __init__(self, bot):
@@ -95,6 +108,8 @@ class AutoModSetup(commands.Cog):
     async def automod(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.invoke(self.bot.get_command("help"),"automod")
+        else:
+            await sendLog(self,ctx,"automod")
 
     @automod.command(name="setup",description="| AutoMod Setup Wizard")
     @commands.guild_only()
@@ -133,11 +148,12 @@ class AutoModSetup(commands.Cog):
                 "automod": {
                     "caps": 0,
                     "massMentions": 0,
+                    "zalgo": 0,
                     "antiInvite": False,
                     "antiURL": False,
                     "profanity": False,
                     "shortURL": False,
-                    "warnOnRemove": False
+                    "warnOnRemove": False,
                 }
             }
 
@@ -236,6 +252,54 @@ class AutoModSetup(commands.Cog):
 
                 await message.delete()
 
+            # MASS-MENTION PROTECTION
+            e = await embed.generate("AutoMod Setup", "Would you like to enable Zalgo (Z͎̠͗ͣḁ̵͙̑l͖͙̫̲̉̃ͦ̾͊ͬ̀g͔̤̞͓̐̓̒̽o͓̳͇̔ͥ) text protection?")
+            await msg.edit(embed=e)
+
+            await msg.add_reaction(tick)
+            await msg.add_reaction(cross)
+
+            def check(reaction, user):
+                return user == ctx.author and (str(reaction.emoji) == tick or str(reaction.emoji) == cross)
+
+            try:
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                await msg.clear_reactions()
+                return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+
+            await msg.remove_reaction(reaction, user)
+
+            if str(reaction) == tick:
+                await msg.clear_reactions()
+
+                e = await embed.generate("AutoMod Setup", "What percentage suspicion should trigger Zalgo Detection? (Any number between 1-100)")
+
+                await msg.edit(embed=e)
+
+                def check(message):
+                    try:
+                        int(message.content)
+                    except Exception:
+                        pass
+                    else:
+                        return message.author == ctx.author
+
+                try:
+                    message = await self.bot.wait_for("message", timeout=60.0, check=check)
+                except asyncio.TimeoutError:
+                    await msg.clear_reactions()
+                    return await msg.edit(embed=(await embed.generate("You ran out of time!","Due to inactivity, `automod setup` has cancelled.")))
+
+                if int(message.content) > 100:
+                    guildSettings["automod"]["zalgo"] = 100
+                elif int(message.content) < 0:
+                    guildSettings["automod"]["zalgo"] = 0
+                else:
+                    guildSettings["automod"]["zalgo"] = int(message.content)
+
+                await message.delete()
+
             # ANTI INVITE
             e = await embed.generate("AutoMod Setup", "Would you like to enable Anti-Invite?")
             await msg.edit(embed=e)
@@ -292,7 +356,7 @@ class AutoModSetup(commands.Cog):
                 guildSettings["automod"]["profanity"] = True
 
             # SHORT URLS
-            e = await embed.generate("AutoMod Setup", "Would you like to enable short URL detection?")
+            e = await embed.generate("AutoMod Setup", "Would you like to enable short URL detection? (Premium Only)")
             await msg.edit(embed=e)
 
             def check(reaction, user):
@@ -357,6 +421,11 @@ class AutoModSetup(commands.Cog):
             else:
                 e = await embed.add_field(e, "Mass-Mention Protection", f"{tick} - Activated at {guildSettings['automod']['massMentions']} mentions.")
 
+            if guildSettings["automod"]["zalgo"] == 0:
+                e = await embed.add_field(e, "Zalgo Text Detection", cross)
+            else:
+                e = await embed.add_field(e, "Zalgo Text Detection", f"{tick} - Activated at {guildSettings['automod']['massMentions']}% suspicion")
+
             e = await embed.add_field(e, "Anti-Invite", emoteReturn(guildSettings["automod"]["antiInvite"]))
             e = await embed.add_field(e, "Anti-URL", emoteReturn(guildSettings["automod"]["antiURL"]))
             e = await embed.add_field(e, "Profanity Filter", emoteReturn(guildSettings["automod"]["profanity"]))
@@ -364,7 +433,6 @@ class AutoModSetup(commands.Cog):
             e = await embed.add_field(e, "Warn on Remove", emoteReturn(guildSettings["automod"]["warnOnRemove"]))
 
             await msg.edit(embed=e)
-
 
 def setup(bot):
     bot.add_cog(AutoModListener(bot))

@@ -17,7 +17,7 @@ async def topgg(request):
     if 'Authorization' in request.headers:
         if request.headers['Authorization'] == 'f1jwhEi935knOndspVht':
             voteCount = 2 if request.json['isWeekend'] else 1
-            userData = await db.getVoteUser(request.json['user'])
+            userData = await db.getVoteUser(int(request.json['user']))
             if userData['linkedTo'] is not None:
                 userData = await db.getVoteUser(userData['linkedTo'])
             userData['votes'] += voteCount

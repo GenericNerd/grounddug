@@ -47,12 +47,9 @@ class Events(commands.Cog):
             "id": guild.id,
             "prefix": "g!",
             "channel": 0,
-            "logs": {
-                "logs": False,
-                "mod": False,
-                "perms": False,
-                "automod": False,
-                "admin": False,
+            "logging": {
+                "commands": [],
+                "events": []
                 },
             "raid_mode": False,
             "cases": 0,
@@ -70,7 +67,8 @@ class Events(commands.Cog):
             "boundary":{
                 "enabled": False,
                 "role": None
-            }}
+            },
+            "premium": {"isPremium": False}}
         await db.insert("guilds",data)
         # Get the current user count and update the DB
         currentUsers = await db.find("settings",{"_id": ObjectId("5e18fd4d123a50ef10d8332e")})

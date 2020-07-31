@@ -77,7 +77,7 @@ class Developer(commands.Cog):
             try:
                 await self.bot.get_channel(guildObject["channel"]).send(embed=(await embed.generate("You now have GroundDug Premium!",f"Your GroundDug Premium will expire on {datetime.utcfromtimestamp(guild['premium']['expires']).strftime('%A the %d of %B %Y at %H:%M:%S UTC')}",0x0b9e00)))
             except:
-                pass
+                raise BaseException()
             # for user in guild.members:
             #     userObject = await db.find("users",{"guild": guild.id, "user": user.id})
             #     if userObject is None:

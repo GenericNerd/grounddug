@@ -188,6 +188,9 @@ class Mod(commands.Cog):
         except:
             await embed.error(ctx,f"Strike number {strike} not found in {user.name}")
         else:
+            # Check if strike is already forgiven
+            if str(userDB["strikes"][str(strike)]["reason"])[-10:] == "(Forgiven)":
+                return await embed.error(ctx,"This strike has already been forgiven")
             # Add forgiven to end of strike
             userDB["strikes"][str(strike)]["reason"] += " (Forgiven)"
             # Send a message and update DB to reflect

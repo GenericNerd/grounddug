@@ -327,7 +327,7 @@ class Logging(commands.Cog):
                 msg = await embed.add_field(msg,"Description changed",f"**Was:** {before.topic if before.topic != None else 'No description'}\n**Now:**: {after.topic if after.topic != None else 'No description'}")
             if before.type != after.type:
                 msg = await embed.add_field(msg,"Type changed!",f"**Was:** {str(before.type).title()} channel\n**Now:**: {str(after.type).title()}")
-            if before.overwrites != after.overwrites:
+            if before.overwrites != after.overwrites and not isinstance(before,discord.VoiceChannel):
                 overwriteString = ""
                 for obj, value in before.overwrites.items():
                     beforeOverwriteString = ""

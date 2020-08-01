@@ -314,7 +314,7 @@ class Logging(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_update(self,before,after):
         guildDB = await db.find("guilds",{"id": before.guild.id})
-        if "channel" in guildDB["logging"]["events"] and (isinstance(before,discord.TextChannel) or isinstance(before,discord.VoiceChannel)):
+        if "channel" in guildDB["logging"]["events"] and isinstance(before,discord.TextChannel):
             msg = await embed.generate(f"{str(before.type).title()} channel #{before.name} was updated!",None,0xff9900)
             try:
                 async for entry in before.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_update):
@@ -327,7 +327,7 @@ class Logging(commands.Cog):
                 msg = await embed.add_field(msg,"Description changed",f"**Was:** {before.topic if before.topic != None else 'No description'}\n**Now:**: {after.topic if after.topic != None else 'No description'}")
             if before.type != after.type:
                 msg = await embed.add_field(msg,"Type changed!",f"**Was:** {str(before.type).title()} channel\n**Now:**: {str(after.type).title()}")
-            if before.overwrites != after.overwrites and not isinstance(before,discord.VoiceChannel):
+            if before.overwrites != after.overwrites:
                 overwriteString = ""
                 for obj, value in before.overwrites.items():
                     beforeOverwriteString = ""

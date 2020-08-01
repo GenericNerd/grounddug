@@ -131,27 +131,29 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_edit(self,before,after):
-        if before.content == after.content:
-            return
-        guildDB = await db.find("guilds",{"id": before.guild.id})
-        if "message" in guildDB["logging"]["events"]:
-            msg = await embed.generate(f"{before.author.name} edited a message!",None,0xff9900)
-            msg = await embed.add_field(msg,"Channel",f"{before.channel.mention}\n[Jump to message]({before.jump_url})")
-            msg = await embed.add_field(msg,"Previous message",before.content)
-            msg = await embed.add_field(msg,"Message now",after.content)
-            if guildDB["channel"] != 0:
-                await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
+        if before.guild != None:
+            if before.content == after.content:
+                return
+            guildDB = await db.find("guilds",{"id": before.guild.id})
+            if "message" in guildDB["logging"]["events"]:
+                msg = await embed.generate(f"{before.author.name} edited a message!",None,0xff9900)
+                msg = await embed.add_field(msg,"Channel",f"{before.channel.mention}\n[Jump to message]({before.jump_url})")
+                msg = await embed.add_field(msg,"Previous message",before.content)
+                msg = await embed.add_field(msg,"Message now",after.content)
+                if guildDB["channel"] != 0:
+                    await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
     @commands.Cog.listener()
     async def on_message_delete(self,message):
-        guildDB = await db.find("guilds",{"id": message.guild.id})
-        if "message" in guildDB["logging"]["events"]:
-            msg = await embed.generate(f"{message.author.name} deleted a message",f"Message was deleted from {message.channel.mention}",0xf00000)
-            msg = await embed.add_field(msg,"Content",message.content)
-            try:
-                await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
-            except:
-                pass
+        if message.guild != None:
+            guildDB = await db.find("guilds",{"id": message.guild.id})
+            if "message" in guildDB["logging"]["events"]:
+                msg = await embed.generate(f"{message.author.name} deleted a message",f"Message was deleted from {message.channel.mention}",0xf00000)
+                msg = await embed.add_field(msg,"Content",message.content)
+                try:
+                    await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
+                except:
+                    pass
 
     # Member specific events
 
@@ -159,8 +161,11 @@ class Logging(commands.Cog):
     async def on_member_update(self,before,after):
         guildDB = await db.find("guilds",{"id": before.guild.id})
         if before.roles != after.roles and "role" in guildDB["logging"]["events"]:
-            async for entry in before.guild.audit_logs(limit=1,action=discord.AuditLogAction.member_role_update):
-                auditLogEntry = entry
+            try:
+                async for entry in before.guild.audit_logs(limit=1,action=discord.AuditLogAction.member_role_update):
+                    auditLogEntry = entry
+            except:
+                auditLogEntry = None
             if list(set(after.roles)-set(before.roles)) == []:
                 roleDif = list(set(before.roles)-set(after.roles))
                 roleDif.append("removed")
@@ -178,7 +183,8 @@ class Logging(commands.Cog):
             msg = await embed.generate(f"{before.name} changed their name!",None,0x10009e)
             msg = await embed.add_field(msg,"Name before",before.display_name)
             msg = await embed.add_field(msg,"Name now",after.display_name)
-            msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
+            if auditLogEntry != None:
+                msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
         elif before.avatar_url != after.avatar_url and "member" in guildDB["logging"]["events"]:
@@ -193,8 +199,11 @@ class Logging(commands.Cog):
     async def on_guild_role_create(self,role):
         guildDB = await db.find("guilds",{"id": role.guild.id})
         if "role" in guildDB["logging"]["events"]:
-            async for entry in role.guild.audit_logs(limit=1, action=discord.AuditLogAction.role_create):
-                auditLogEntry = entry
+            try:
+                async for entry in role.guild.audit_logs(limit=1, action=discord.AuditLogAction.role_create):
+                    auditLogEntry = entry
+            except:
+                auditLogEntry = None
             msg = await embed.generate(f"Role {role.name} was created!",None,0x0b9e00)
             permissions = dict()
             permsString = str()
@@ -205,7 +214,8 @@ class Logging(commands.Cog):
                 permsString += str(permission).replace('_',' ').title() + " - <:check:679095420202516480>\n"
             permsString = permsString[:-1]
             msg = await embed.add_field(msg, "Role permissions",permsString)
-            msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
+            if auditLogEntry != None:
+                msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
@@ -213,10 +223,14 @@ class Logging(commands.Cog):
     async def on_guild_role_delete(self,role):
         guildDB = await db.find("guilds",{"id": role.guild.id})
         if "role" in guildDB["logging"]["events"]:
-            async for entry in role.guild.audit_logs(limit=1, action=discord.AuditLogAction.role_delete):
-                auditLogEntry = entry
+            try:
+                async for entry in role.guild.audit_logs(limit=1, action=discord.AuditLogAction.role_delete):
+                    auditLogEntry = entry
+            except:
+                auditLogEntry = None
             msg = await embed.generate(f"Role {role.name} was deleted!",None,0x9e0000)
-            msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
+            if auditLogEntry != None:
+                msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
@@ -240,9 +254,13 @@ class Logging(commands.Cog):
                 msg = await embed.add_field(msg,f"Permissions changed",permsString)
             if before.hoist != after.hoist or before.color != after.color:
                 msg = await embed.add_field(msg,"Special Attributes",f"**Hoisted**\nBefore: {'<:check:679095420202516480>' if before.hoist else '<:cross:679095420319694898>'}\nNow: {'<:check:679095420202516480>' if after.hoist else '<:cross:679095420319694898>'}\n\n**Color**\nBefore: {before.color}\nNow: {after.color}")
-            async for entry in before.guild.audit_logs(limit=1, action=discord.AuditLogAction.role_update):
-                auditLogEntry = entry
-            msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
+            try:
+                async for entry in before.guild.audit_logs(limit=1, action=discord.AuditLogAction.role_update):
+                    auditLogEntry = entry
+            except:
+                auditLogEntry = None
+            if auditLogEntry != None:
+                msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
@@ -253,8 +271,11 @@ class Logging(commands.Cog):
         guildDB = await db.find("guilds",{"id": channel.guild.id})
         if "channel" in guildDB["logging"]["events"]:
             msg = await embed.generate(f"{str(channel.type).title()} channel #{channel.name} was created!",None,0x0b9e00)
-            async for entry in channel.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_create):
-                auditLogEntry = entry
+            try:
+                async for entry in channel.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_create):
+                    auditLogEntry = entry
+            except:
+                auditLogEntry = None
             msg = await embed.add_field(msg,"Under category",channel.category if channel.category != None else "No category")
             for role, value in channel.overwrites.items():
                 permissionPair = value.pair()
@@ -269,7 +290,8 @@ class Logging(commands.Cog):
                     if val:
                         overwriteString += f"{permission.replace('_',' ').title()} - <:cross:679095420319694898>\n"
                 msg = await embed.add_field(msg,f"Permissions for {role.name}",overwriteString)
-            msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
+            if auditLogEntry != None:
+                msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
@@ -278,10 +300,14 @@ class Logging(commands.Cog):
         guildDB = await db.find("guilds",{"id": channel.guild.id})
         if "channel" in guildDB["logging"]["events"]:
             msg = await embed.generate(f"{str(channel.type).title()} channel #{channel.name} was created!",None,0x9e0000)
-            async for entry in channel.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_delete):
-                auditLogEntry = entry
+            try:
+                async for entry in channel.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_delete):
+                    auditLogEntry = entry
+            except:
+                auditLogEntry = None
             msg = await embed.add_field(msg,"Under category",channel.category if channel.category != None else "No category")
-            msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
+            if auditLogEntry != None:
+                msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 
@@ -290,8 +316,11 @@ class Logging(commands.Cog):
         guildDB = await db.find("guilds",{"id": before.guild.id})
         if "channel" in guildDB["logging"]["events"]:
             msg = await embed.generate(f"{str(before.type).title()} channel #{before.name} was updated!",None,0xff9900)
-            async for entry in before.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_update):
-                auditLogEntry = entry
+            try:
+                async for entry in before.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_update):
+                    auditLogEntry = entry
+            except:
+                auditLogEntry = None
             if before.name != after.name:
                 msg = await embed.add_field(msg,"Name changed",f"**Was:** {before.name}\n**Now:** {after.name}")
             if before.topic != after.topic:
@@ -322,7 +351,8 @@ class Logging(commands.Cog):
                             afterOverwriteString += f"{permission.replace('_',' ').title()} - <:cross:679095420319694898>\n"
                     overwriteString += f"**{obj.mention}'s permissions now**\n{afterOverwriteString}\n"
                 msg = await embed.add_field(msg,"Permissions changed",overwriteString)
-            msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
+            if auditLogEntry != None:
+                msg.set_footer(text=f"{auditLogEntry.user.name}#{auditLogEntry.user.discriminator} (ID: {auditLogEntry.user.id})",icon_url=auditLogEntry.user.avatar_url)
             if guildDB["channel"] != 0:
                 await self.bot.get_channel(guildDB["channel"]).send(embed=msg)
 

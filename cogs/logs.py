@@ -314,7 +314,7 @@ class Logging(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_update(self,before,after):
         guildDB = await db.find("guilds",{"id": before.guild.id})
-        if "channel" in guildDB["logging"]["events"]:
+        if "channel" in guildDB["logging"]["events"] and (isinstance(before,discord.TextChannel) or isinstance(before,discord.VoiceChannel)):
             msg = await embed.generate(f"{str(before.type).title()} channel #{before.name} was updated!",None,0xff9900)
             try:
                 async for entry in before.guild.audit_logs(limit=1, action=discord.AuditLogAction.channel_update):
